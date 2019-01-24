@@ -1,0 +1,5 @@
+@Library("jenlib") _
+
+wafDefaultPipeline(projects: ["fisch"],
+                   container: [app: "visionary-dls"],
+                   notificationChannel: "#dls-software")
