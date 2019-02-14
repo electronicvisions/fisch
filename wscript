@@ -36,6 +36,15 @@ def build(bld):
         use = ['fisch_vx'],
     )
 
+    bld(
+        features = 'cxx cxxprogram gtest',
+        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
+        target = 'fisch_hwtests_vx',
+        use = ['fisch_vx'],
+        test_main = 'tests/hw/fisch/vx/main.cpp',
+        skip_run = True,
+    )
+
     # Create test summary (to stdout and XML file)
     bld.add_post_fun(summary)
 
