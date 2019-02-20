@@ -3,6 +3,7 @@
 #include "fisch/cerealization.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/timer.h"
 
 using namespace fisch::vx;
 
@@ -16,7 +17,8 @@ typedef ::testing::Types<
     JTAGPLLRegister,
     ResetChip,
     ResetJTAGTap,
-    JTAGClockScaler>
+    JTAGClockScaler,
+    Timer>
     SerializableTypes;
 
 TYPED_TEST_CASE(CommonSerializationTests, SerializableTypes);

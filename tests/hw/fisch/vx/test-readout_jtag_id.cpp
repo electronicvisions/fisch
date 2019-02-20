@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/playback_executor.h"
+#include "fisch/vx/reset.h"
 #include "hxcomm/vx/simconnection.h"
 
 extern std::string simulation_ip;
@@ -11,7 +12,14 @@ TEST(JTAGIdCode, Readout)
 {
 	fisch::vx::PlaybackProgramBuilder builder;
 
-	builder.reset();
+	fisch::vx::ResetChip reset;
+	reset.set(true);
+	builder.write<fisch::vx::ResetChip>(halco::hicann_dls::vx::ResetChipOnDLS(), reset);
+	builder.write<fisch::vx::Timer>(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer());
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10));
+	reset.set(false);
+	builder.write<fisch::vx::ResetChip>(halco::hicann_dls::vx::ResetChipOnDLS(), reset);
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(100));
 
 	fisch::vx::JTAGClockScaler jtag_clock_scaler;
 	jtag_clock_scaler.set(fisch::vx::JTAGClockScaler::Value(3));
@@ -22,7 +30,7 @@ TEST(JTAGIdCode, Readout)
 
 	auto ticket = builder.read<fisch::vx::JTAGIdCode>(halco::hicann_dls::vx::JTAGOnDLS());
 
-	builder.wait_until(1000);
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(1000));
 	builder.halt();
 	auto program = builder.done();
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fisch/vx/timer.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -95,8 +96,12 @@ public:
 	/** Default constructor. */
 	PlaybackProgramBuilder();
 
-	void wait_until(size_t time);
-	void reset();
+	/**
+	 * Add wait instruction blocking further execution until timer reaches specified value.
+	 * @param coord Timer coordinate
+	 * @param time Timer time value until to wait
+	 */
+	void wait_until(Timer::coordinate_type const& coord, Timer::Value time);
 
 	/**
 	 * Add write instruction for container.

@@ -1,0 +1,57 @@
+#include "fisch/vx/timer.h"
+
+namespace fisch::vx {
+
+Timer::Timer() : m_value() {}
+
+Timer::Timer(Value const value) : m_value(value) {}
+
+Timer::Value Timer::get() const
+{
+	return m_value;
+}
+
+void Timer::set(Value const& value)
+{
+	if (value.value() != 0) {
+		throw std::runtime_error("Setting Timer to value different from 0 not supported for now.");
+	}
+	m_value = value;
+}
+
+bool Timer::operator==(Timer const& other) const
+{
+	return (m_value == other.m_value);
+}
+
+bool Timer::operator!=(Timer const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, Timer::encode_read_ut_message_count>
+Timer::encode_read(coordinate_type const& /* coord */)
+{
+	return {};
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, Timer::encode_write_ut_message_count>
+Timer::encode_write(coordinate_type const& /* coord */) const
+{
+	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::setup>()};
+}
+
+void Timer::decode(
+    std::array<hxcomm::vx::ut_message_from_fpga_variant, Timer::decode_ut_message_count> const&
+    /*messages*/)
+{}
+
+template <class Archive>
+void Timer::cerealize(Archive& ar)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Timer)
+
+} // namespace fisch::vx

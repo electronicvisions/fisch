@@ -3,6 +3,8 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/playback_executor.h"
+#include "fisch/vx/reset.h"
+#include "fisch/vx/timer.h"
 #include "hxcomm/vx/simconnection.h"
 
 
@@ -13,7 +15,14 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 {
 	fisch::vx::PlaybackProgramBuilder builder;
 
-	builder.reset();
+	fisch::vx::ResetChip reset;
+	reset.set(true);
+	builder.write<fisch::vx::ResetChip>(halco::hicann_dls::vx::ResetChipOnDLS(), reset);
+	builder.write<fisch::vx::Timer>(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer());
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10));
+	reset.set(false);
+	builder.write<fisch::vx::ResetChip>(halco::hicann_dls::vx::ResetChipOnDLS(), reset);
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(100));
 
 	fisch::vx::JTAGClockScaler jtag_clock_scaler;
 	jtag_clock_scaler.set(fisch::vx::JTAGClockScaler::Value(3));
@@ -23,7 +32,9 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 	    halco::hicann_dls::vx::JTAGOnDLS(), fisch::vx::ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
-	builder.wait_until(22 * fisch::vx::fpga_clock_cycles_per_us);
+	builder.wait_until(
+	    halco::hicann_dls::vx::TimerOnDLS(),
+	    fisch::vx::Timer::Value(22 * fisch::vx::fpga_clock_cycles_per_us));
 
 	fisch::vx::OmnibusOnChipOverJTAG config;
 	// random data
@@ -36,7 +47,7 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 	auto ticket = builder.read<fisch::vx::OmnibusOnChipOverJTAG>(addr);
 	EXPECT_FALSE(ticket.valid());
 
-	builder.wait_until(10000);
+	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10000));
 	builder.halt();
 	auto program = builder.done();
 

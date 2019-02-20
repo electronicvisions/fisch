@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/timer.h"
 
 namespace fisch::vx {
 
@@ -119,28 +120,12 @@ PlaybackProgramBuilder::PlaybackProgramBuilder() :
     m_jtag_receive_queue_size(0)
 {}
 
-void PlaybackProgramBuilder::wait_until(size_t time)
+// TODO: to be modified once multi-timer support available
+void PlaybackProgramBuilder::wait_until(
+    Timer::coordinate_type const& /* coord */, Timer::Value time)
 {
 	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::wait_until>(time));
-}
-
-void PlaybackProgramBuilder::reset()
-{
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::reset>(
-	        hxcomm::vx::instruction::system::reset::payload_type(true)));
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::setup>());
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::wait_until>(
-	        hxcomm::vx::instruction::timing::wait_until::payload_type(10)));
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::reset>(
-	        hxcomm::vx::instruction::system::reset::payload_type(false)));
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::wait_until>(
-	        hxcomm::vx::instruction::timing::wait_until::payload_type(100)));
+	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::wait_until>(time.value()));
 }
 
 template <class ContainerT>
