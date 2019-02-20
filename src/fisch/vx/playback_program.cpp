@@ -1,5 +1,7 @@
 #include "fisch/vx/playback_program.h"
+
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/reset.h"
 
 namespace fisch::vx {
 

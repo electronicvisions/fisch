@@ -2,6 +2,7 @@
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/reset.h"
 
 using namespace fisch::vx;
 
@@ -9,7 +10,8 @@ template <class T>
 class CommonSerializationTests : public ::testing::Test
 {};
 
-typedef ::testing::Types<OmnibusOnChipOverJTAG, JTAGIdCode, JTAGPLLRegister> SerializableTypes;
+typedef ::testing::Types<OmnibusOnChipOverJTAG, JTAGIdCode, JTAGPLLRegister, ResetChip>
+    SerializableTypes;
 
 TYPED_TEST_CASE(CommonSerializationTests, SerializableTypes);
 
