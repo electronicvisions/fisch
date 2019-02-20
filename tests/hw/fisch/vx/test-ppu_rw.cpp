@@ -14,7 +14,14 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 	fisch::vx::PlaybackProgramBuilder builder;
 
 	builder.reset();
-	builder.jtag_init();
+
+	fisch::vx::JTAGClockScaler jtag_clock_scaler;
+	jtag_clock_scaler.set(fisch::vx::JTAGClockScaler::Value(3));
+	builder.write<fisch::vx::JTAGClockScaler>(
+	    halco::hicann_dls::vx::JTAGOnDLS(), jtag_clock_scaler);
+	builder.write<fisch::vx::ResetJTAGTap>(
+	    halco::hicann_dls::vx::JTAGOnDLS(), fisch::vx::ResetJTAGTap());
+
 	// wait until Omnibus is up (22 us)
 	builder.wait_until(22 * fisch::vx::fpga_clock_cycles_per_us);
 

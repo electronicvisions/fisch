@@ -12,7 +12,13 @@ TEST(JTAGIdCode, Readout)
 	fisch::vx::PlaybackProgramBuilder builder;
 
 	builder.reset();
-	builder.jtag_init();
+
+	fisch::vx::JTAGClockScaler jtag_clock_scaler;
+	jtag_clock_scaler.set(fisch::vx::JTAGClockScaler::Value(3));
+	builder.write<fisch::vx::JTAGClockScaler>(
+	    halco::hicann_dls::vx::JTAGOnDLS(), jtag_clock_scaler);
+	builder.write<fisch::vx::ResetJTAGTap>(
+	    halco::hicann_dls::vx::JTAGOnDLS(), fisch::vx::ResetJTAGTap());
 
 	auto ticket = builder.read<fisch::vx::JTAGIdCode>(halco::hicann_dls::vx::JTAGOnDLS());
 

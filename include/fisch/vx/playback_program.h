@@ -95,7 +95,6 @@ public:
 	/** Default constructor. */
 	PlaybackProgramBuilder();
 
-	void jtag_init();
 	void wait_until(size_t time);
 	void reset();
 

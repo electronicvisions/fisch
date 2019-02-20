@@ -119,14 +119,6 @@ PlaybackProgramBuilder::PlaybackProgramBuilder() :
     m_jtag_receive_queue_size(0)
 {}
 
-void PlaybackProgramBuilder::jtag_init()
-{
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::scaler>(3));
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::init>());
-}
-
 void PlaybackProgramBuilder::wait_until(size_t time)
 {
 	m_program->m_instructions.push_back(

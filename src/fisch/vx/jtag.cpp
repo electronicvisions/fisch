@@ -9,6 +9,91 @@
 
 namespace fisch::vx {
 
+ResetJTAGTap::ResetJTAGTap() {}
+
+bool ResetJTAGTap::operator==(ResetJTAGTap const& /*other*/) const
+{
+	return true;
+}
+
+bool ResetJTAGTap::operator!=(ResetJTAGTap const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetJTAGTap::encode_read_ut_message_count>
+ResetJTAGTap::encode_read(coordinate_type const& /* coord */)
+{
+	return {};
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetJTAGTap::encode_write_ut_message_count>
+ResetJTAGTap::encode_write(coordinate_type const& /* coord */) const
+{
+	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::init>()};
+}
+
+void ResetJTAGTap::decode(std::array<
+                          hxcomm::vx::ut_message_from_fpga_variant,
+                          decode_ut_message_count> const& /* messages */)
+{}
+
+template <class Archive>
+void ResetJTAGTap::cerealize(Archive& /*ar*/)
+{}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetJTAGTap)
+
+JTAGClockScaler::JTAGClockScaler() : m_value() {}
+
+JTAGClockScaler::JTAGClockScaler(Value const value) : m_value(value) {}
+
+JTAGClockScaler::Value JTAGClockScaler::get() const
+{
+	return m_value;
+}
+
+void JTAGClockScaler::set(Value const& value)
+{
+	m_value = value;
+}
+
+bool JTAGClockScaler::operator==(JTAGClockScaler const& other) const
+{
+	return (m_value == other.m_value);
+}
+
+bool JTAGClockScaler::operator!=(JTAGClockScaler const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGClockScaler::encode_read_ut_message_count>
+JTAGClockScaler::encode_read(coordinate_type const& /* coord */)
+{
+	return {};
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGClockScaler::encode_write_ut_message_count>
+JTAGClockScaler::encode_write(coordinate_type const& /* coord */) const
+{
+	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::scaler>(
+	    hxcomm::vx::instruction::to_fpga_jtag::scaler::payload_type(m_value.value()))};
+}
+
+void JTAGClockScaler::decode(std::array<
+                             hxcomm::vx::ut_message_from_fpga_variant,
+                             decode_ut_message_count> const& /* messages */)
+{}
+
+template <class Archive>
+void JTAGClockScaler::cerealize(Archive& ar)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
+
 OmnibusOnChipOverJTAG::OmnibusOnChipOverJTAG() : m_data() {}
 
 OmnibusOnChipOverJTAG::OmnibusOnChipOverJTAG(value_type const& value) : m_data(value) {}
