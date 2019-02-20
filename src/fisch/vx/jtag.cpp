@@ -160,4 +160,61 @@ void JTAGIdCode::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGIdCode)
 
+JTAGPLLRegister::JTAGPLLRegister() : m_value() {}
+
+JTAGPLLRegister::JTAGPLLRegister(Value const value) : m_value(value) {}
+
+void JTAGPLLRegister::set(Value const value)
+{
+	m_value = value;
+}
+
+bool JTAGPLLRegister::operator==(JTAGPLLRegister const& other) const
+{
+	return (m_value == other.m_value);
+}
+
+bool JTAGPLLRegister::operator!=(JTAGPLLRegister const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPLLRegister::encode_read_ut_message_count>
+JTAGPLLRegister::encode_read(coordinate_type const& /* coord */)
+{
+	return {};
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPLLRegister::encode_write_ut_message_count>
+JTAGPLLRegister::encode_write(coordinate_type const& coord) const
+{
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::PLL_TARGET_REG);
+
+	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
+	    data::payload_type(false, data::payload_type::NumBits(3), coord.value()));
+
+	ret[2] = hxcomm::vx::ut_message_to_fpga<ins>(ins::SHIFT_PLL);
+
+	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
+	    data::payload_type(false, data::payload_type::NumBits(32), m_value.value()));
+	return ret;
+}
+
+void JTAGPLLRegister::decode(
+    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+    /*messages*/)
+{}
+
+template <class Archive>
+void JTAGPLLRegister::cerealize(Archive& ar)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPLLRegister)
+
 } // namespace fisch::vx

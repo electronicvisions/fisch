@@ -110,8 +110,63 @@ private:
 	void cerealize(Archive& ar);
 };
 
+
+/**
+ * Container for writing a PLL register.
+ * Writing this container does not lead to an update in the registerfile of omnibus access to the
+ * same PLL configuration. Data written with this container can therefore never be read out again.
+ */
+class JTAGPLLRegister
+{
+public:
+	typedef halco::hicann_dls::vx::PLLRegisterOnDLS coordinate_type;
+
+	/** PLL register value type. */
+	struct Value : public halco::common::detail::BaseType<Value, uint32_t>
+	{
+		explicit Value(value_type const value = 0) : base_t(value) {}
+	};
+
+	/** Default constructor. */
+	JTAGPLLRegister();
+
+	/**
+	 * Construct register by its value.
+	 * @param value Value to set on cosntruction
+	 */
+	JTAGPLLRegister(Value value);
+
+	/**
+	 * Set register value.
+	 * @param value Value to set
+	 */
+	void set(Value value);
+
+	bool operator==(JTAGPLLRegister const& other) const;
+	bool operator!=(JTAGPLLRegister const& other) const;
+
+	constexpr static size_t encode_read_ut_message_count = 0;
+	constexpr static size_t encode_write_ut_message_count = 4;
+	constexpr static size_t decode_ut_message_count = 0;
+
+	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
+	encode_read(coordinate_type const& coord);
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
+	    coordinate_type const& coord) const;
+	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+	                messages);
+
+private:
+	Value m_value;
+
+	friend class cereal::access;
+	template <class Archive>
+	void cerealize(Archive& ar);
+};
+
 } // namespace fisch::vx
 
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGIdCode::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPLLRegister::Value)
 } // namespace std
