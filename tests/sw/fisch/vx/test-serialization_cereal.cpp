@@ -9,7 +9,7 @@ template <class T>
 class CommonSerializationTests : public ::testing::Test
 {};
 
-typedef ::testing::Types<OmnibusOnChipOverJTAG> SerializableTypes;
+typedef ::testing::Types<OmnibusOnChipOverJTAG, JTAGIdCode> SerializableTypes;
 
 TYPED_TEST_CASE(CommonSerializationTests, SerializableTypes);
 

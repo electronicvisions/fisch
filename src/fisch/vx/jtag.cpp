@@ -106,4 +106,58 @@ void OmnibusOnChipOverJTAG::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusOnChipOverJTAG)
 
+JTAGIdCode::JTAGIdCode() : m_value() {}
+
+JTAGIdCode::Value JTAGIdCode::get() const
+{
+	return m_value;
+}
+
+bool JTAGIdCode::operator==(JTAGIdCode const& other) const
+{
+	return (m_value == other.m_value);
+}
+
+bool JTAGIdCode::operator!=(JTAGIdCode const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGIdCode::encode_read_ut_message_count>
+JTAGIdCode::encode_read(coordinate_type const& /* coord */)
+{
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count> ret;
+	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::IDCODE);
+
+	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
+	    data::payload_type(true, data::payload_type::NumBits(32), 0));
+	return ret;
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGIdCode::encode_write_ut_message_count>
+JTAGIdCode::encode_write(coordinate_type const& /* coord */) const
+{
+	return {};
+}
+
+void JTAGIdCode::decode(
+    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const& messages)
+{
+	using data = hxcomm::vx::instruction::jtag_from_hicann::data;
+
+	m_value = Value(static_cast<uint32_t>(
+	    boost::get<hxcomm::vx::ut_message_from_fpga<data> >(messages[0]).decode()));
+}
+
+template <class Archive>
+void JTAGIdCode::cerealize(Archive& ar)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGIdCode)
+
 } // namespace fisch::vx

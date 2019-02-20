@@ -3,5 +3,6 @@
 #endif
 
 PLAYBACK_CONTAINER(OmnibusOnChipOverJTAG, fisch::vx::OmnibusOnChipOverJTAG)
+PLAYBACK_CONTAINER(JTAGIdCode, fisch::vx::JTAGIdCode)
 
 #undef PLAYBACK_CONTAINER
