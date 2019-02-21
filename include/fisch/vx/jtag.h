@@ -4,18 +4,19 @@
 #include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/vx/utmessage.h"
 
+#include "fisch/vx/genpybind.h"
 #include "fisch/vx/omnibus.h"
 
 namespace cereal {
 class access;
 } // namespace cereal
 
-namespace fisch::vx {
+namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for resetting JTAG state-machine.
  */
-class ResetJTAGTap
+class GENPYBIND(visible) ResetJTAGTap
 {
 public:
 	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
@@ -26,16 +27,16 @@ public:
 	bool operator==(ResetJTAGTap const& other) const;
 	bool operator!=(ResetJTAGTap const& other) const;
 
-	constexpr static size_t encode_read_ut_message_count = 0;
-	constexpr static size_t encode_write_ut_message_count = 1;
-	constexpr static size_t decode_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord);
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const;
+	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages);
+	                messages) GENPYBIND(hidden);
 
 private:
 	friend class cereal::access;
@@ -47,15 +48,16 @@ private:
 /**
  * Container writing JTAG clock-scaler value.
  */
-class JTAGClockScaler
+class GENPYBIND(visible) JTAGClockScaler
 {
 public:
 	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
 
 	/** Clock-scaler value type. The JTAG clock scales with 1 / (value + 2). */
-	struct Value : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 255, 0>
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 255, 0>
 	{
-		explicit Value(uintmax_t const value = 0) : rant_t(value) {}
+		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
 	/** Default constructor. */
@@ -82,16 +84,16 @@ public:
 	bool operator==(JTAGClockScaler const& other) const;
 	bool operator!=(JTAGClockScaler const& other) const;
 
-	constexpr static size_t encode_read_ut_message_count = 0;
-	constexpr static size_t encode_write_ut_message_count = 1;
-	constexpr static size_t decode_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord);
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const;
+	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages);
+	                messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;
@@ -105,7 +107,7 @@ private:
 /**
  * Container for reading and writing an omnibus word over JTAG.
  */
-class OmnibusOnChipOverJTAG
+class GENPYBIND(visible) OmnibusOnChipOverJTAG
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
@@ -135,16 +137,16 @@ public:
 	bool operator==(OmnibusOnChipOverJTAG const& other) const;
 	bool operator!=(OmnibusOnChipOverJTAG const& other) const;
 
-	constexpr static size_t encode_read_ut_message_count = 6;
-	constexpr static size_t encode_write_ut_message_count = 6;
-	constexpr static size_t decode_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 6;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord);
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const;
+	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages);
+	                messages) GENPYBIND(hidden);
 
 private:
 	value_type m_data;
@@ -158,15 +160,16 @@ private:
 /**
  * Container for reading the JTAG IDCODE.
  */
-class JTAGIdCode
+class GENPYBIND(visible) JTAGIdCode
 {
 public:
 	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
 
 	/** JTAG IDCODE value type. */
-	struct Value : public halco::common::detail::BaseType<Value, uint32_t>
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::BaseType<Value, uint32_t>
 	{
-		explicit Value(value_type const value = 0) : base_t(value) {}
+		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 	};
 
 	/** Default constructor. */
@@ -181,16 +184,16 @@ public:
 	bool operator==(JTAGIdCode const& other) const;
 	bool operator!=(JTAGIdCode const& other) const;
 
-	constexpr static size_t encode_read_ut_message_count = 2;
-	constexpr static size_t encode_write_ut_message_count = 0;
-	constexpr static size_t decode_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 2;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord);
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const;
+	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages);
+	                messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;
@@ -206,15 +209,16 @@ private:
  * Writing this container does not lead to an update in the registerfile of omnibus access to the
  * same PLL configuration. Data written with this container can therefore never be read out again.
  */
-class JTAGPLLRegister
+class GENPYBIND(visible) JTAGPLLRegister
 {
 public:
 	typedef halco::hicann_dls::vx::PLLRegisterOnDLS coordinate_type;
 
 	/** PLL register value type. */
-	struct Value : public halco::common::detail::BaseType<Value, uint32_t>
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::BaseType<Value, uint32_t>
 	{
-		explicit Value(value_type const value = 0) : base_t(value) {}
+		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 	};
 
 	/** Default constructor. */
@@ -235,16 +239,16 @@ public:
 	bool operator==(JTAGPLLRegister const& other) const;
 	bool operator!=(JTAGPLLRegister const& other) const;
 
-	constexpr static size_t encode_read_ut_message_count = 0;
-	constexpr static size_t encode_write_ut_message_count = 4;
-	constexpr static size_t decode_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord);
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const;
+	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages);
+	                messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;

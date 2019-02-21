@@ -190,6 +190,20 @@ void PlaybackProgramBuilder::halt()
 	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::halt>());
 }
 
+template <class ContainerT>
+PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
+    typename ContainerT::coordinate_type const& coord, ContainerT const& /*config*/)
+{
+	return read<ContainerT>(coord);
+}
+
+template <class ContainerT>
+PlaybackProgram::ContainerVectorTicket<ContainerT> PlaybackProgramBuilder::read(
+    std::vector<typename ContainerT::coordinate_type> const& coords, ContainerT const& /*config*/)
+{
+	return read<ContainerT>(coords);
+}
+
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
 	std::shared_ptr<PlaybackProgram> ret(m_program);
@@ -206,6 +220,10 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 	    typename Name::coordinate_type const& coord);                                              \
 	template PlaybackProgram::ContainerVectorTicket<Name> PlaybackProgramBuilder::read<Name>(      \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
+	template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(            \
+	    typename Name::coordinate_type const& coord, Name const& config);                          \
+	template PlaybackProgram::ContainerVectorTicket<Name> PlaybackProgramBuilder::read<Name>(      \
+	    std::vector<typename Name::coordinate_type> const& coord, Name const& config);             \
 	template void PlaybackProgramBuilder::write<Name>(                                             \
 	    typename Name::coordinate_type const& coord, Name const& config);                          \
 	template void PlaybackProgramBuilder::write<Name>(                                             \

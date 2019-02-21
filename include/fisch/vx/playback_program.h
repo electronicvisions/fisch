@@ -1,14 +1,21 @@
 #pragma once
 
+#include "fisch/vx/genpybind.h"
 #include "fisch/vx/timer.h"
 #include "hxcomm/vx/utmessage.h"
 
-namespace fisch::vx {
+#ifdef __GENPYBIND__
+#include "fisch/vx/jtag.h"
+#include "fisch/vx/reset.h"
+#endif // __GENPYBIND__
+
+namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
 
 /** Playback program. */
-class PlaybackProgram : public std::enable_shared_from_this<PlaybackProgram>
+class GENPYBIND(visible, holder_type("std::shared_ptr<fisch::vx::PlaybackProgram>")) PlaybackProgram
+    : public std::enable_shared_from_this<PlaybackProgram>
 {
 public:
 	/**
@@ -39,12 +46,19 @@ public:
 		std::shared_ptr<PlaybackProgram const> pbp;
 	};
 
+#ifdef __GENPYBIND__
+// Explicit instantiation of template class for all valid playback container types.
+#define PLAYBACK_CONTAINER(Name, Type)                                                             \
+	typedef PlaybackProgram::ContainerTicket<Type> _##Name##ContainerTicket GENPYBIND(opaque);
+#include "fisch/vx/container.def"
+#endif // __GENPYBIND__
+
 	/**
 	 * Read-ticket for multiple containers.
 	 * @tparam ContainerT Container type of corresponding data
 	 */
 	template <class ContainerT>
-	struct ContainerVectorTicket
+	class ContainerVectorTicket
 	{
 	public:
 		/** Ticket constructor. FIXME: Make private. */
@@ -69,18 +83,27 @@ public:
 		std::shared_ptr<PlaybackProgram const> pbp;
 	};
 
-	typedef hxcomm::vx::ut_message_to_fpga_variant send_message_type;
-	typedef hxcomm::vx::ut_message_from_fpga_variant receive_message_type;
+#ifdef __GENPYBIND__
+// Explicit instantiation of template class for all valid playback container types.
+#define PLAYBACK_CONTAINER(Name, Type)                                                             \
+	typedef PlaybackProgram::ContainerVectorTicket<Type> _##Name##ContainerVectorTicket GENPYBIND( \
+	    opaque);
+#include "fisch/vx/container.def"
+#endif // __GENPYBIND__
+
+	typedef hxcomm::vx::ut_message_to_fpga_variant send_message_type GENPYBIND(hidden);
+	typedef hxcomm::vx::ut_message_from_fpga_variant receive_message_type GENPYBIND(hidden);
 
 	/**
 	 * Print instruction UT messages to ostream.
 	 * @return Altered ostream
 	 */
+	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program);
 
 	/** FIXME: make private */
-	std::vector<send_message_type> const& get_send_messages() const;
-	void push_received_message(receive_message_type const& message);
+	std::vector<send_message_type> const& get_send_messages() const GENPYBIND(hidden);
+	void push_received_message(receive_message_type const& message) GENPYBIND(hidden);
 
 private:
 	friend class PlaybackProgramBuilder;
@@ -90,7 +113,7 @@ private:
 	    m_receive_queue_jtag;
 };
 
-class PlaybackProgramBuilder
+class GENPYBIND(visible) PlaybackProgramBuilder
 {
 public:
 	/** Default constructor. */
@@ -149,6 +172,31 @@ public:
 	void halt();
 
 	/**
+	 * Add halt instruction to indicate end of playback program execution.
+	 * Add read instruction for container. This is only needed for python wrapping with non-unique
+	 * coordinates for overload resolution.
+	 * @tparam ContainerT Container type
+	 * @param coord Container coordinate
+	 * @param config Container data (unused)
+	 * @return Ticket accessor to response data
+	 */
+	template <class ContainerT>
+	PlaybackProgram::ContainerTicket<ContainerT> read(
+	    typename ContainerT::coordinate_type const& coord, ContainerT const& config);
+
+	/**
+	 * Add read instruction for multiple containers. This is only needed for python wrapping with
+	 * non-unique coordinates for overload resolution.
+	 * @tparam ContainerT Container type
+	 * @param coords Container coordinates
+	 * @param config Container data (unused)
+	 * @return Ticket accessor to response data
+	 */
+	template <class ContainerT>
+	PlaybackProgram::ContainerVectorTicket<ContainerT> read(
+	    std::vector<typename ContainerT::coordinate_type> const& coords, ContainerT const& config);
+
+	/**
 	 * Finish playback program creation and return built program. Resets the state of the builder.
 	 * @return Built playback program
 	 */
@@ -158,5 +206,25 @@ private:
 	std::shared_ptr<PlaybackProgram> m_program;
 	size_t m_jtag_receive_queue_size;
 };
+
+#ifdef __GENPYBIND__
+// Explicit instantiation of template member functions for all valid playback container types.
+#define PLAYBACK_CONTAINER(Name, _Type)                                                            \
+	extern template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(     \
+	    typename Name::coordinate_type const& coord);                                              \
+	extern template PlaybackProgram::ContainerVectorTicket<Name>                                   \
+	PlaybackProgramBuilder::read<Name>(                                                            \
+	    std::vector<typename Name::coordinate_type> const& coord, Name const& config);             \
+	extern template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(     \
+	    typename Name::coordinate_type const& coord, Name const& config);                          \
+	extern template PlaybackProgram::ContainerVectorTicket<Name>                                   \
+	PlaybackProgramBuilder::read<Name>(std::vector<typename Name::coordinate_type> const& coord);  \
+	extern template void PlaybackProgramBuilder::write<Name>(                                      \
+	    typename Name::coordinate_type const& coord, Name const& config);                          \
+	extern template void PlaybackProgramBuilder::write<Name>(                                      \
+	    std::vector<typename Name::coordinate_type> const& coords,                                 \
+	    std::vector<Name> const& configs);
+#include "fisch/vx/container.def"
+#endif // __GENPYBIND__
 
 } // namespace fisch::vx

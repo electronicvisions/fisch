@@ -1,7 +1,11 @@
 #pragma once
+#include "hxcomm/vx/arqconnection.h"
+#include "hxcomm/vx/simconnection.h"
+
+#include "fisch/vx/genpybind.h"
 #include "fisch/vx/playback_program.h"
 
-namespace fisch::vx {
+namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Executor for playback program.
@@ -51,5 +55,20 @@ public:
 private:
 	Connection m_connection;
 };
+
+template class fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
+template fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection>::PlaybackProgramExecutor(
+    hxcomm::vx::SimConnection::ip_t, hxcomm::vx::SimConnection::port_t);
+
+template class fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
+template fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>::PlaybackProgramExecutor(
+    hxcomm::vx::ARQConnection::ip_t);
+
+#ifdef __GENPYBIND__
+typedef fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection> PlaybackProgramSimExecutor
+    GENPYBIND(opaque);
+typedef fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection> PlaybackProgramARQExecutor
+    GENPYBIND(opaque);
+#endif // __GENPYBIND__
 
 } // namespace fisch::vx

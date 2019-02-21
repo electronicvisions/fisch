@@ -1,6 +1,4 @@
 #include "fisch/vx/playback_executor.h"
-#include "hxcomm/vx/arqconnection.h"
-#include "hxcomm/vx/simconnection.h"
 
 namespace fisch::vx {
 
@@ -43,8 +41,5 @@ std::vector<PlaybackProgram::receive_message_type> PlaybackProgramExecutor<Conne
 	}
 	return messages;
 }
-
-template class PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
-template class PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
 
 } // namespace fisch::vx

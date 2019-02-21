@@ -3,18 +3,21 @@ from waflib.extras.test_base import summary
 def depends(dep):
     dep('halco')
     dep('hxcomm')
+    dep.recurse('pyfisch')
 
 
 def options(opt):
     opt.load('compiler_cxx')
     opt.load('gtest')
     opt.load('test_base')
+    opt.recurse('pyfisch')
 
 
 def configure(cfg):
     cfg.load('compiler_cxx')
     cfg.load('gtest')
     cfg.load('test_base')
+    cfg.recurse('pyfisch')
 
 
 def build(bld):
@@ -26,7 +29,7 @@ def build(bld):
     bld.shlib(
         source = bld.path.ant_glob('src/fisch/vx/*.cpp'),
         target = 'fisch_vx',
-        use = ['fisch_inc', 'hx_comm_inc', 'hx_comm'],
+        use = ['fisch_inc', 'hx_comm_inc', 'hx_comm', 'halco_hicann_dls_vx'],
     )
 
     bld(
@@ -44,6 +47,8 @@ def build(bld):
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = True,
     )
+
+    bld.recurse('pyfisch')
 
     # Create test summary (to stdout and XML file)
     bld.add_post_fun(summary)
