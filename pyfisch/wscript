@@ -49,7 +49,7 @@ def build(bld):
 
     bld(
         target='pyfisch_hwtests_vx',
-        tests='tests/hw/fisch-sim_ppu_rw.py',
+        tests=bld.path.ant_glob('tests/hw/*.py'),
         features='use pytest',
         use='pyfisch_vx',
         install_path='${PREFIX}/bin',

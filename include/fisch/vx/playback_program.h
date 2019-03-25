@@ -27,7 +27,7 @@ public:
 	{
 	public:
 		/** Ticket constructor. FIXME: Make private. */
-		ContainerTicket(size_t jtag_pos, std::shared_ptr<PlaybackProgram const> pbp);
+		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
 
 		/**
 		 * Get container data.
@@ -42,7 +42,7 @@ public:
 		bool valid() const;
 
 	private:
-		size_t jtag_pos;
+		size_t pos;
 		std::shared_ptr<PlaybackProgram const> pbp;
 	};
 
@@ -79,7 +79,7 @@ public:
 
 	private:
 		size_t container_count;
-		size_t jtag_pos;
+		size_t pos;
 		std::shared_ptr<PlaybackProgram const> pbp;
 	};
 
@@ -111,6 +111,8 @@ private:
 	std::vector<send_message_type> m_instructions;
 	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> >
 	    m_receive_queue_jtag;
+	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::omnibus_from_fpga::data> >
+	    m_receive_queue_omnibus;
 };
 
 class GENPYBIND(visible) PlaybackProgramBuilder
@@ -205,6 +207,7 @@ public:
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
 	size_t m_jtag_receive_queue_size;
+	size_t m_omnibus_receive_queue_size;
 };
 
 #ifdef __GENPYBIND__

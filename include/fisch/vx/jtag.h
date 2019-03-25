@@ -5,7 +5,7 @@
 #include "hxcomm/vx/utmessage.h"
 
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/omnibus.h"
+#include "fisch/vx/omnibus_data.h"
 
 namespace cereal {
 class access;

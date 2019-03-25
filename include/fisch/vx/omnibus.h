@@ -1,19 +1,71 @@
 #pragma once
-#include "fisch/vx/genpybind.h"
+
 #include "halco/common/geometry.h"
+#include "halco/hicann-dls/vx/coordinates.h"
+#include "hxcomm/vx/utmessage.h"
+
+#include "fisch/vx/genpybind.h"
+#include "fisch/vx/omnibus_data.h"
+
+namespace cereal {
+class access;
+} // namespace cereal
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
-/** Typesafe omnibus data */
-struct GENPYBIND(inline_base("*")) OmnibusData
-    : public halco::common::detail::BaseType<OmnibusData, uint32_t>
+/**
+ * Container for reading and writing an omnibus word to the FPGA.
+ */
+class GENPYBIND(visible) Omnibus
 {
-	OmnibusData() : base_t(0) {}
-	explicit OmnibusData(value_type const value) GENPYBIND(implicit_conversion) : base_t(value) {}
+public:
+	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
+	typedef OmnibusData value_type;
+
+	/** Default constructor. */
+	Omnibus();
+
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Omnibus word value to construct instance with
+	 */
+	Omnibus(value_type value);
+
+	/**
+	 * Get value.
+	 * @return Omnibus word value
+	 */
+	value_type get() const;
+
+	/**
+	 * Set value.
+	 * @param value Omnibus word value to set
+	 */
+	void set(value_type value);
+
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, Omnibus const& word);
+
+	bool operator==(Omnibus const& other) const;
+	bool operator!=(Omnibus const& other) const;
+
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
+
+	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
+	    coordinate_type const& coord) const GENPYBIND(hidden);
+	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+	                messages) GENPYBIND(hidden);
+
+private:
+	value_type m_data;
+
+	friend class cereal::access;
+	template <class Archive>
+	void cerealize(Archive& ar);
 };
 
 } // namespace fisch::vx
-
-namespace std {
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::OmnibusData)
-} // namespace std

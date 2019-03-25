@@ -7,6 +7,7 @@
 #endif
 
 PLAYBACK_CONTAINER(OmnibusOnChipOverJTAG, fisch::vx::OmnibusOnChipOverJTAG)
+PLAYBACK_CONTAINER(Omnibus, fisch::vx::Omnibus)
 PLAYBACK_CONTAINER(JTAGClockScaler, fisch::vx::JTAGClockScaler)
 PLAYBACK_CONTAINER(JTAGIdCode, fisch::vx::JTAGIdCode)
 PLAYBACK_CONTAINER(JTAGPLLRegister, fisch::vx::JTAGPLLRegister)

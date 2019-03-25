@@ -9,6 +9,8 @@ class StrConversion(unittest.TestCase):
         self.assertEqual(str(fisch.ResetJTAGTap()), "ResetJTAGTap()")
         self.assertEqual(str(fisch.OmnibusOnChipOverJTAG(12)),
             "OmnibusOnChipOverJTAG(0d12 0xc 0b00000000000000000000000000001100)")
+        self.assertEqual(str(fisch.Omnibus(12)),
+            "Omnibus(0d12 0xc 0b00000000000000000000000000001100)")
         self.assertEqual(str(fisch.JTAGPLLRegister(12)),
             "JTAGPLLRegister(0d12 0xc 0b00000000000000000000000000001100)")
         self.assertEqual(str(fisch.ResetChip(True)), "ResetChip(true)")

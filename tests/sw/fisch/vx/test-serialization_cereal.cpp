@@ -2,6 +2,7 @@
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/omnibus.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/timer.h"
 
@@ -13,6 +14,7 @@ class CommonSerializationTests : public ::testing::Test
 
 typedef ::testing::Types<
     OmnibusOnChipOverJTAG,
+    Omnibus,
     JTAGIdCode,
     JTAGPLLRegister,
     ResetChip,
