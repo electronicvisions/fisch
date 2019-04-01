@@ -2,12 +2,17 @@
 #define PLAYBACK_CONTAINER(Name, Type)
 #endif
 
+#ifndef LAST_PLAYBACK_CONTAINER
+#define LAST_PLAYBACK_CONTAINER(Name, Type) PLAYBACK_CONTAINER(Name, Type)
+#endif
+
 PLAYBACK_CONTAINER(OmnibusOnChipOverJTAG, fisch::vx::OmnibusOnChipOverJTAG)
+PLAYBACK_CONTAINER(JTAGClockScaler, fisch::vx::JTAGClockScaler)
 PLAYBACK_CONTAINER(JTAGIdCode, fisch::vx::JTAGIdCode)
 PLAYBACK_CONTAINER(JTAGPLLRegister, fisch::vx::JTAGPLLRegister)
-PLAYBACK_CONTAINER(JTAGClockScaler, fisch::vx::JTAGClockScaler)
 PLAYBACK_CONTAINER(ResetJTAGTap, fisch::vx::ResetJTAGTap)
 PLAYBACK_CONTAINER(ResetChip, fisch::vx::ResetChip)
-PLAYBACK_CONTAINER(Timer, fisch::vx::Timer)
+LAST_PLAYBACK_CONTAINER(Timer, fisch::vx::Timer)
 
 #undef PLAYBACK_CONTAINER
+#undef LAST_PLAYBACK_CONTAINER
