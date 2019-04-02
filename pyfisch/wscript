@@ -40,7 +40,7 @@ def build(bld):
 
     bld(
         target='pyfisch_swtests_vx',
-        tests='tests/sw/fisch-python_bindings.py',
+        tests=bld.path.ant_glob('tests/sw/*.py'),
         features='use pytest',
         use='pyfisch_vx',
         install_path='${PREFIX}/bin',

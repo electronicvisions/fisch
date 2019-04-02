@@ -32,6 +32,19 @@ TEST(ResetChip, General)
 	    boost::get<ut_message_to_fpga<instruction::system::reset>>(encoded.front()).decode(), true);
 }
 
+TEST(ResetChip, Ostream)
+{
+	using namespace fisch::vx;
+
+	ResetChip obj;
+	obj.set(true);
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "ResetChip(true)");
+}
+
 TEST(ResetChip, CerealizeCoverage)
 {
 	using namespace fisch::vx;

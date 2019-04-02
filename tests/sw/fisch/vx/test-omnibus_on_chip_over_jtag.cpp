@@ -26,6 +26,18 @@ TEST(OmnibusOnChipOverJTAG, General)
 	EXPECT_NE(default_config, value_config);
 }
 
+TEST(OmnibusOnChipOverJTAG, Ostream)
+{
+	using namespace fisch::vx;
+
+	OmnibusOnChipOverJTAG obj(OmnibusData(13));
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "OmnibusOnChipOverJTAG(0d13 0xd 0b00000000000000000000000000001101)");
+}
+
 TEST(OmnibusOnChipOverJTAG, CerealizeCoverage)
 {
 	using namespace fisch::vx;

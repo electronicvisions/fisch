@@ -50,6 +50,9 @@ public:
 	 */
 	void set(Value const& value);
 
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, Timer const& timer) SYMBOL_VISIBLE;
+
 	bool operator==(Timer const& other) const;
 	bool operator!=(Timer const& other) const;
 

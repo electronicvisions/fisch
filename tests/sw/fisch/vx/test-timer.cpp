@@ -25,6 +25,18 @@ TEST(Timer, General)
 	EXPECT_EQ(other_config, config);
 }
 
+TEST(Timer, Ostream)
+{
+	using namespace fisch::vx;
+
+	Timer obj;
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "Timer(0)");
+}
+
 TEST(Timer, CerealizeCoverage)
 {
 	using namespace fisch::vx;

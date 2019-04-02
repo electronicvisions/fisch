@@ -19,6 +19,14 @@ void Timer::set(Value const& value)
 	m_value = value;
 }
 
+std::ostream& operator<<(std::ostream& os, Timer const& timer)
+{
+	std::stringstream ss;
+	ss << std::dec << timer.m_value.value();
+	os << "Timer(" << ss.str() << ")";
+	return os;
+}
+
 bool Timer::operator==(Timer const& other) const
 {
 	return (m_value == other.m_value);

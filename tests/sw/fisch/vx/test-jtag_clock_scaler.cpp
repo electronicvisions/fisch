@@ -29,6 +29,19 @@ TEST(JTAGClockScaler, General)
 	EXPECT_NE(JTAGClockScaler(), config);
 }
 
+TEST(JTAGClockScaler, Ostream)
+{
+	using namespace fisch::vx;
+
+	JTAGClockScaler obj;
+	obj.set(JTAGClockScaler::Value(12));
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "JTAGClockScaler(12)");
+}
+
 TEST(JTAGClockScaler, CerealizeCoverage)
 {
 	using namespace fisch::vx;

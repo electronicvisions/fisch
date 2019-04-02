@@ -15,6 +15,18 @@ TEST(ResetJTAGTap, General)
 	EXPECT_EQ(other_config, config);
 }
 
+TEST(ResetJTAGTap, Ostream)
+{
+	using namespace fisch::vx;
+
+	ResetJTAGTap obj;
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "ResetJTAGTap()");
+}
+
 TEST(ResetJTAGTap, CerealizeCoverage)
 {
 	using namespace fisch::vx;

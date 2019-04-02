@@ -13,6 +13,14 @@ void ResetChip::set(bool const value)
 	m_value = value;
 }
 
+std::ostream& operator<<(std::ostream& os, ResetChip const& reset)
+{
+	std::stringstream ss;
+	ss << std::boolalpha << reset.m_value;
+	os << "ResetChip(" << ss.str() << ")";
+	return os;
+}
+
 bool ResetChip::operator==(ResetChip const& other) const
 {
 	return (m_value == other.m_value);

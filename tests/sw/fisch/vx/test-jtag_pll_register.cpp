@@ -34,6 +34,19 @@ TEST(JTAGPLLRegister, General)
 	EXPECT_EQ(payload, data.value());
 }
 
+TEST(JTAGPLLRegister, Ostream)
+{
+	using namespace fisch::vx;
+
+	JTAGPLLRegister obj;
+	obj.set(JTAGPLLRegister::Value(12));
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "JTAGPLLRegister(0d12 0xc 0b00000000000000000000000000001100)");
+}
+
 TEST(JTAGPLLRegister, CerealizeCoverage)
 {
 	using namespace fisch::vx;

@@ -11,6 +11,12 @@ namespace fisch::vx {
 
 ResetJTAGTap::ResetJTAGTap() {}
 
+std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& /*reset*/)
+{
+	os << "ResetJTAGTap()";
+	return os;
+}
+
 bool ResetJTAGTap::operator==(ResetJTAGTap const& /*other*/) const
 {
 	return true;
@@ -56,6 +62,14 @@ JTAGClockScaler::Value JTAGClockScaler::get() const
 void JTAGClockScaler::set(Value const& value)
 {
 	m_value = value;
+}
+
+std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler)
+{
+	std::stringstream ss;
+	ss << std::dec << scaler.m_value.value();
+	os << "JTAGClockScaler(" << ss.str() << ")";
+	return os;
 }
 
 bool JTAGClockScaler::operator==(JTAGClockScaler const& other) const
@@ -106,6 +120,17 @@ OmnibusOnChipOverJTAG::value_type OmnibusOnChipOverJTAG::get() const
 void OmnibusOnChipOverJTAG::set(value_type const& value)
 {
 	m_data = value;
+}
+
+std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word)
+{
+	std::stringstream ss_d;
+	ss_d << "0d" << std::dec << word.m_data.value();
+	std::stringstream ss_x;
+	ss_x << "0x" << std::hex << word.m_data.value();
+	hate::bitset<sizeof(typename OmnibusOnChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(word.m_data.value());
+	os << "OmnibusOnChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
+	return os;
 }
 
 bool OmnibusOnChipOverJTAG::operator==(OmnibusOnChipOverJTAG const& other) const
@@ -198,6 +223,14 @@ JTAGIdCode::Value JTAGIdCode::get() const
 	return m_value;
 }
 
+std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id)
+{
+	std::stringstream ss;
+	ss << "0x" << std::hex << id.m_value.value();
+	os << "JTAGIdCode(" << ss.str() << ")";
+	return os;
+}
+
 bool JTAGIdCode::operator==(JTAGIdCode const& other) const
 {
 	return (m_value == other.m_value);
@@ -252,6 +285,17 @@ JTAGPLLRegister::JTAGPLLRegister(Value const value) : m_value(value) {}
 void JTAGPLLRegister::set(Value const value)
 {
 	m_value = value;
+}
+
+std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg)
+{
+	std::stringstream ss_d;
+	ss_d << "0d" << std::dec << reg.m_value.value();
+	std::stringstream ss_x;
+	ss_x << "0x" << std::hex << reg.m_value.value();
+	hate::bitset<sizeof(typename JTAGPLLRegister::Value::value_type) * CHAR_BIT> bits(reg.m_value.value());
+	os << "JTAGPLLRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
+	return os;
 }
 
 bool JTAGPLLRegister::operator==(JTAGPLLRegister const& other) const

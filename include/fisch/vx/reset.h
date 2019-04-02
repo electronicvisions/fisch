@@ -36,6 +36,9 @@ public:
 	 */
 	void set(bool const value);
 
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset) SYMBOL_VISIBLE;
+
 	bool operator==(ResetChip const& other) const;
 	bool operator!=(ResetChip const& other) const;
 

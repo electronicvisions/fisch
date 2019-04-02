@@ -26,6 +26,24 @@ TEST(JTAGIdCode, General)
 	EXPECT_NE(JTAGIdCode(), config);
 }
 
+TEST(JTAGIdCode, Ostream)
+{
+	using namespace fisch::vx;
+
+	JTAGIdCode obj;
+
+	JTAGIdCode::Value id(0x12345678);
+	hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> message(
+	    hxcomm::vx::instruction::jtag_from_hicann::data::payload_type(id.value()));
+
+	obj.decode({message});
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "JTAGIdCode(0x12345678)");
+}
+
 TEST(JTAGIdCode, CerealizeCoverage)
 {
 	using namespace fisch::vx;
