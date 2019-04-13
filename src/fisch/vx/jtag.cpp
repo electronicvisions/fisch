@@ -128,7 +128,8 @@ std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word)
 	ss_d << "0d" << std::dec << word.m_data.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<sizeof(typename OmnibusOnChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(word.m_data.value());
+	hate::bitset<sizeof(typename OmnibusOnChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(
+	    word.m_data.value());
 	os << "OmnibusOnChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
@@ -293,7 +294,8 @@ std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg)
 	ss_d << "0d" << std::dec << reg.m_value.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << reg.m_value.value();
-	hate::bitset<sizeof(typename JTAGPLLRegister::Value::value_type) * CHAR_BIT> bits(reg.m_value.value());
+	hate::bitset<sizeof(typename JTAGPLLRegister::Value::value_type) * CHAR_BIT> bits(
+	    reg.m_value.value());
 	os << "JTAGPLLRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
