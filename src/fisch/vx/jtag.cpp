@@ -348,4 +348,74 @@ void JTAGPLLRegister::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPLLRegister)
 
+JTAGPhyRegister::JTAGPhyRegister() : m_value() {}
+
+JTAGPhyRegister::JTAGPhyRegister(Value const value) : m_value(value) {}
+
+JTAGPhyRegister::Value JTAGPhyRegister::get() const
+{
+	return m_value;
+}
+
+void JTAGPhyRegister::set(Value const& value)
+{
+	m_value = value;
+}
+
+std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg)
+{
+	std::stringstream ss_d;
+	ss_d << "0d" << std::dec << reg.m_value.value();
+	std::stringstream ss_x;
+	ss_x << "0x" << std::hex << reg.m_value.value();
+	hate::bitset<22> bits(reg.m_value.value());
+	os << "JTAGPhyRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
+	return os;
+}
+
+bool JTAGPhyRegister::operator==(JTAGPhyRegister const& other) const
+{
+	return (m_value == other.m_value);
+}
+
+bool JTAGPhyRegister::operator!=(JTAGPhyRegister const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPhyRegister::encode_read_ut_message_count>
+JTAGPhyRegister::encode_read(coordinate_type const& /* coord */)
+{
+	return {};
+}
+
+std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPhyRegister::encode_write_ut_message_count>
+JTAGPhyRegister::encode_write(coordinate_type const& coord) const
+{
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(
+	    ins::payload_type((1 << 6) | (coord.toEnum() << 3) | 4));
+
+	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
+	    data::payload_type(false, data::payload_type::NumBits(22), m_value.value()));
+
+	return ret;
+}
+
+void JTAGPhyRegister::decode(std::array<
+                             hxcomm::vx::ut_message_from_fpga_variant,
+                             decode_ut_message_count> const& /* messages */)
+{}
+
+template <class Archive>
+void JTAGPhyRegister::cerealize(Archive& ar)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPhyRegister)
+
 } // namespace fisch::vx

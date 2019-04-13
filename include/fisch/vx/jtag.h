@@ -273,10 +273,72 @@ private:
 	void cerealize(Archive& ar);
 };
 
+/**
+ * Container writing Phy configuration on the Chip.
+ */
+class GENPYBIND(visible) JTAGPhyRegister
+{
+public:
+	typedef halco::hicann_dls::vx::PhyOnDLS coordinate_type;
+
+	/** Register value type. */
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 4194303 /* 2^22-1 */, 0>
+	{
+		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
+	};
+
+	/** Default constructor. */
+	JTAGPhyRegister();
+
+	/**
+	 * Construct register with value.
+	 * @param value Value to construct register with
+	 */
+	JTAGPhyRegister(Value value);
+
+	/**
+	 * Get register value.
+	 * @return Register value
+	 */
+	Value get() const;
+
+	/**
+	 * Set register value.
+	 * @param Register value to set
+	 */
+	void set(Value const& value);
+
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg) SYMBOL_VISIBLE;
+
+	bool operator==(JTAGPhyRegister const& other) const;
+	bool operator!=(JTAGPhyRegister const& other) const;
+
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
+
+	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
+	    coordinate_type const& coord) const GENPYBIND(hidden);
+	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+	                messages) GENPYBIND(hidden);
+
+private:
+	Value m_value;
+
+	friend class cereal::access;
+	template <class Archive>
+	void cerealize(Archive& ar);
+};
+
 } // namespace fisch::vx
 
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGIdCode::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPLLRegister::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGClockScaler::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPhyRegister::Value)
 } // namespace std

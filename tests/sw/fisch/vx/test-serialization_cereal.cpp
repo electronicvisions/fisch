@@ -17,6 +17,7 @@ typedef ::testing::Types<
     Omnibus,
     JTAGIdCode,
     JTAGPLLRegister,
+    JTAGPhyRegister,
     ResetChip,
     ResetJTAGTap,
     JTAGClockScaler,
