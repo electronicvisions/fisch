@@ -25,7 +25,7 @@ public:
 	ResetJTAGTap();
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& reset) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& reset);
 
 	bool operator==(ResetJTAGTap const& other) const;
 	bool operator!=(ResetJTAGTap const& other) const;
@@ -85,7 +85,7 @@ public:
 	void set(Value const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler);
 
 	bool operator==(JTAGClockScaler const& other) const;
 	bool operator!=(JTAGClockScaler const& other) const;
@@ -141,7 +141,7 @@ public:
 	void set(value_type const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word);
 
 	bool operator==(OmnibusOnChipOverJTAG const& other) const;
 	bool operator!=(OmnibusOnChipOverJTAG const& other) const;
@@ -191,7 +191,7 @@ public:
 	Value get() const;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id);
 
 	bool operator==(JTAGIdCode const& other) const;
 	bool operator!=(JTAGIdCode const& other) const;
@@ -249,7 +249,7 @@ public:
 	void set(Value value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg);
 
 	bool operator==(JTAGPLLRegister const& other) const;
 	bool operator!=(JTAGPLLRegister const& other) const;
@@ -310,7 +310,7 @@ public:
 	void set(Value const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg);
 
 	bool operator==(JTAGPhyRegister const& other) const;
 	bool operator!=(JTAGPhyRegister const& other) const;
