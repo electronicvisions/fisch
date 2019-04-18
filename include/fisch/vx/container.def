@@ -14,7 +14,8 @@ PLAYBACK_CONTAINER(JTAGPLLRegister, fisch::vx::JTAGPLLRegister)
 PLAYBACK_CONTAINER(JTAGPhyRegister, fisch::vx::JTAGPhyRegister)
 PLAYBACK_CONTAINER(ResetJTAGTap, fisch::vx::ResetJTAGTap)
 PLAYBACK_CONTAINER(ResetChip, fisch::vx::ResetChip)
-LAST_PLAYBACK_CONTAINER(Timer, fisch::vx::Timer)
+PLAYBACK_CONTAINER(Timer, fisch::vx::Timer)
+LAST_PLAYBACK_CONTAINER(SPIShiftRegister, fisch::vx::SPIShiftRegister)
 
 #undef PLAYBACK_CONTAINER
 #undef LAST_PLAYBACK_CONTAINER

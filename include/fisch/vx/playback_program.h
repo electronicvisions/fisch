@@ -7,6 +7,7 @@
 #ifdef __GENPYBIND__
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/spi.h"
 #endif // __GENPYBIND__
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
