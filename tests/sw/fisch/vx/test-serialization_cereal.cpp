@@ -14,8 +14,9 @@ class CommonSerializationTests : public ::testing::Test
 {};
 
 typedef ::testing::Types<
-    OmnibusOnChipOverJTAG,
-    Omnibus,
+    OmnibusChipOverJTAG,
+    OmnibusChip,
+    OmnibusFPGA,
     JTAGIdCode,
     JTAGPLLRegister,
     JTAGPhyRegister,

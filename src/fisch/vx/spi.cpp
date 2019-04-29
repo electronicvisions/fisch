@@ -3,6 +3,7 @@
 #include "hxcomm/vx/utmessage.h"
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "fisch/vx/spi.h"
 
@@ -54,26 +55,29 @@ SPIShiftRegister::encode_read(coordinate_type const& /*coord*/)
 std::array<hxcomm::vx::ut_message_to_fpga_variant, SPIShiftRegister::encode_write_ut_message_count>
 SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 {
-	using address = hxcomm::vx::instruction::omnibus_to_fpga::address;
-	using data = hxcomm::vx::instruction::omnibus_to_fpga::data;
-
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
 
-	auto addr = hxcomm::vx::ut_message_to_fpga<address>(
-	    address::payload_type(spi_over_omnibus_mask | 1, false));
+	auto addr = OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | 1);
 
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
-	ret[0] = addr;
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 2)));
-	ret[2] = addr;
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 1)));
-	ret[4] = addr;
-	ret[5] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())));
+	auto encoded1 =
+	    OmnibusFPGA(OmnibusFPGA::value_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 2)))
+	        .encode_write(addr);
+	ret[0] = encoded1[0];
+	ret[1] = encoded1[1];
+	auto encoded2 =
+	    OmnibusFPGA(OmnibusFPGA::value_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 1)))
+	        .encode_write(addr);
+	ret[2] = encoded2[0];
+	ret[3] = encoded2[1];
+	auto encoded3 =
+	    OmnibusFPGA(OmnibusFPGA::value_type(
+	                    spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
+	        .encode_write(addr);
+	ret[4] = encoded3[0];
+	ret[5] = encoded3[1];
 
 	return ret;
 }
@@ -137,24 +141,27 @@ std::
     array<hxcomm::vx::ut_message_to_fpga_variant, SPIDACDataRegister::encode_write_ut_message_count>
     SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 {
-	using address = hxcomm::vx::instruction::omnibus_to_fpga::address;
-	using data = hxcomm::vx::instruction::omnibus_to_fpga::data;
-
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
 
-	auto addr = hxcomm::vx::ut_message_to_fpga<address>(
-	    address::payload_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()), false));
+	auto addr =
+	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
 
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
-	ret[0] = addr;
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(data::payload_type(
-	    ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | (m_data.value() >> CHAR_BIT))));
-
-	ret[2] = addr;
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())));
+	auto encoded1 =
+	    OmnibusFPGA(
+	        OmnibusFPGA::value_type(
+	            ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | (m_data.value() >> CHAR_BIT))))
+	        .encode_write(addr);
+	ret[0] = encoded1[0];
+	ret[1] = encoded1[1];
+	auto encoded2 =
+	    OmnibusFPGA(OmnibusFPGA::value_type(
+	                    spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
+	        .encode_write(addr);
+	ret[2] = encoded2[0];
+	ret[3] = encoded2[1];
 
 	// Write single update LDAC value.
 	SPIDACControlRegister update_control(SPIDACControlRegister::Value(0x2));

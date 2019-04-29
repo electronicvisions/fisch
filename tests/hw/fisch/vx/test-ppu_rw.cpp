@@ -7,7 +7,7 @@
 
 #include "executor.h"
 
-TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
+TEST(OmnibusChipOverJTAG, PPUWriteRead)
 {
 	fisch::vx::PlaybackProgramBuilder builder;
 
@@ -29,15 +29,15 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 	    halco::hicann_dls::vx::TimerOnDLS(),
 	    fisch::vx::Timer::Value(22 * fisch::vx::fpga_clock_cycles_per_us));
 
-	fisch::vx::OmnibusOnChipOverJTAG config;
+	fisch::vx::OmnibusChipOverJTAG config;
 	// random data
 	config.set(fisch::vx::OmnibusData(10));
 
 	// Omnibus address of first PPU memory word of top PPU
-	halco::hicann_dls::vx::OmnibusAddress addr(0x02000000 + (1 << 23));
+	halco::hicann_dls::vx::OmnibusChipOverJTAGAddress addr(0x02000000 + (1 << 23));
 
 	builder.write(addr, config);
-	auto ticket = builder.read<fisch::vx::OmnibusOnChipOverJTAG>(addr);
+	auto ticket = builder.read<fisch::vx::OmnibusChipOverJTAG>(addr);
 	EXPECT_FALSE(ticket.valid());
 
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10000));

@@ -113,20 +113,20 @@ private:
 /**
  * Container for reading and writing an omnibus word over JTAG.
  */
-class GENPYBIND(visible) OmnibusOnChipOverJTAG
+class GENPYBIND(visible) OmnibusChipOverJTAG
 {
 public:
-	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
+	typedef halco::hicann_dls::vx::OmnibusChipOverJTAGAddress coordinate_type;
 	typedef OmnibusData value_type;
 
 	/** Default constructor. */
-	OmnibusOnChipOverJTAG();
+	OmnibusChipOverJTAG();
 
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Omnibus word value to construct instance with
 	 */
-	OmnibusOnChipOverJTAG(value_type const& value);
+	OmnibusChipOverJTAG(value_type const& value);
 
 	/**
 	 * Get value.
@@ -141,10 +141,10 @@ public:
 	void set(value_type const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word);
+	friend std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word);
 
-	bool operator==(OmnibusOnChipOverJTAG const& other) const;
-	bool operator!=(OmnibusOnChipOverJTAG const& other) const;
+	bool operator==(OmnibusChipOverJTAG const& other) const;
+	bool operator!=(OmnibusChipOverJTAG const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 6;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;

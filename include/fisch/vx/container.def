@@ -6,8 +6,9 @@
 #define LAST_PLAYBACK_CONTAINER(Name, Type) PLAYBACK_CONTAINER(Name, Type)
 #endif
 
-PLAYBACK_CONTAINER(OmnibusOnChipOverJTAG, fisch::vx::OmnibusOnChipOverJTAG)
-PLAYBACK_CONTAINER(Omnibus, fisch::vx::Omnibus)
+PLAYBACK_CONTAINER(OmnibusChipOverJTAG, fisch::vx::OmnibusChipOverJTAG)
+PLAYBACK_CONTAINER(OmnibusChip, fisch::vx::OmnibusChip)
+PLAYBACK_CONTAINER(OmnibusFPGA, fisch::vx::OmnibusFPGA)
 PLAYBACK_CONTAINER(JTAGClockScaler, fisch::vx::JTAGClockScaler)
 PLAYBACK_CONTAINER(JTAGIdCode, fisch::vx::JTAGIdCode)
 PLAYBACK_CONTAINER(JTAGPLLRegister, fisch::vx::JTAGPLLRegister)

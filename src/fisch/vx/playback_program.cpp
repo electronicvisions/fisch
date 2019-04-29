@@ -12,20 +12,13 @@ namespace fisch::vx {
 
 namespace {
 
-typedef hate::type_list<
-    JTAGClockScaler,
-    JTAGIdCode,
-    JTAGPLLRegister,
-    OmnibusOnChipOverJTAG,
-    ResetJTAGTap>
-    jtag_queue_container_list;
+typedef hate::
+    type_list<JTAGClockScaler, JTAGIdCode, JTAGPLLRegister, OmnibusChipOverJTAG, ResetJTAGTap>
+        jtag_queue_container_list;
 
-typedef hate::type_list<
-    Omnibus,
-    SPIShiftRegister,
-    SPIDACDataRegister,
-    SPIDACControlRegister>
-    omnibus_queue_container_list;
+typedef hate::
+    type_list<OmnibusChip, OmnibusFPGA, SPIShiftRegister, SPIDACDataRegister, SPIDACControlRegister>
+        omnibus_queue_container_list;
 
 } // namespace
 

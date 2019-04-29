@@ -7,10 +7,12 @@ class StrConversion(unittest.TestCase):
         self.assertEqual(str(fisch.JTAGIdCode()), "JTAGIdCode(0x0)")
         self.assertEqual(str(fisch.JTAGClockScaler(3)), "JTAGClockScaler(3)")
         self.assertEqual(str(fisch.ResetJTAGTap()), "ResetJTAGTap()")
-        self.assertEqual(str(fisch.OmnibusOnChipOverJTAG(12)),
-            "OmnibusOnChipOverJTAG(0d12 0xc 0b00000000000000000000000000001100)")
-        self.assertEqual(str(fisch.Omnibus(12)),
-            "Omnibus(0d12 0xc 0b00000000000000000000000000001100)")
+        self.assertEqual(str(fisch.OmnibusChipOverJTAG(12)),
+            "OmnibusChipOverJTAG(0d12 0xc 0b00000000000000000000000000001100)")
+        self.assertEqual(str(fisch.OmnibusChip(12)),
+            "OmnibusChip(0d12 0xc 0b00000000000000000000000000001100)")
+        self.assertEqual(str(fisch.OmnibusFPGA(12)),
+            "OmnibusFPGA(0d12 0xc 0b00000000000000000000000000001100)")
         self.assertEqual(str(fisch.JTAGPLLRegister(12)),
             "JTAGPLLRegister(0d12 0xc 0b00000000000000000000000000001100)")
         self.assertEqual(str(fisch.ResetChip(True)), "ResetChip(true)")

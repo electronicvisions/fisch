@@ -6,6 +6,7 @@
 
 #ifdef __GENPYBIND__
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/omnibus.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/spi.h"
 #endif // __GENPYBIND__

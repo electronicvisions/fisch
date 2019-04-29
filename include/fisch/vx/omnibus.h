@@ -14,40 +14,96 @@ class access;
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
- * Container for reading and writing an omnibus word to the FPGA.
+ * Container for reading and writing an omnibus word on the Chip.
  */
-class GENPYBIND(visible) Omnibus
+class GENPYBIND(visible) OmnibusChip
 {
 public:
-	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
+	typedef halco::hicann_dls::vx::OmnibusChipAddress coordinate_type;
 	typedef OmnibusData value_type;
 
 	/** Default constructor. */
-	Omnibus();
+	OmnibusChip();
 
 	/**
 	 * Construct an instance with a word value.
-	 * @param value Omnibus word value to construct instance with
+	 * @param value OmnibusChip word value to construct instance with
 	 */
-	Omnibus(value_type value);
+	OmnibusChip(value_type value);
 
 	/**
 	 * Get value.
-	 * @return Omnibus word value
+	 * @return OmnibusChip word value
 	 */
 	value_type get() const;
 
 	/**
 	 * Set value.
-	 * @param value Omnibus word value to set
+	 * @param value OmnibusChip word value to set
 	 */
 	void set(value_type value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, Omnibus const& word);
+	friend std::ostream& operator<<(std::ostream& os, OmnibusChip const& word);
 
-	bool operator==(Omnibus const& other) const;
-	bool operator!=(Omnibus const& other) const;
+	bool operator==(OmnibusChip const& other) const;
+	bool operator!=(OmnibusChip const& other) const;
+
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
+
+	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
+	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
+	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
+	    coordinate_type const& coord) const GENPYBIND(hidden);
+	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+	                messages) GENPYBIND(hidden);
+
+private:
+	value_type m_data;
+
+	friend class cereal::access;
+	template <class Archive>
+	void cerealize(Archive& ar);
+};
+
+
+/**
+ * Container for reading and writing an omnibus word on the FPGA.
+ */
+class GENPYBIND(visible) OmnibusFPGA
+{
+public:
+	typedef halco::hicann_dls::vx::OmnibusFPGAAddress coordinate_type;
+	typedef OmnibusData value_type;
+
+	/** Default constructor. */
+	OmnibusFPGA();
+
+	/**
+	 * Construct an instance with a word value.
+	 * @param value OmnibusFPGA word value to construct instance with
+	 */
+	OmnibusFPGA(value_type value);
+
+	/**
+	 * Get value.
+	 * @return OmnibusFPGA word value
+	 */
+	value_type get() const;
+
+	/**
+	 * Set value.
+	 * @param value OmnibusFPGA word value to set
+	 */
+	void set(value_type value);
+
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, OmnibusFPGA const& word);
+
+	bool operator==(OmnibusFPGA const& other) const;
+	bool operator!=(OmnibusFPGA const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 1;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;

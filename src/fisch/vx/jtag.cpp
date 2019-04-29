@@ -108,46 +108,45 @@ void JTAGClockScaler::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
 
-OmnibusOnChipOverJTAG::OmnibusOnChipOverJTAG() : m_data() {}
+OmnibusChipOverJTAG::OmnibusChipOverJTAG() : m_data() {}
 
-OmnibusOnChipOverJTAG::OmnibusOnChipOverJTAG(value_type const& value) : m_data(value) {}
+OmnibusChipOverJTAG::OmnibusChipOverJTAG(value_type const& value) : m_data(value) {}
 
-OmnibusOnChipOverJTAG::value_type OmnibusOnChipOverJTAG::get() const
+OmnibusChipOverJTAG::value_type OmnibusChipOverJTAG::get() const
 {
 	return m_data;
 }
 
-void OmnibusOnChipOverJTAG::set(value_type const& value)
+void OmnibusChipOverJTAG::set(value_type const& value)
 {
 	m_data = value;
 }
 
-std::ostream& operator<<(std::ostream& os, OmnibusOnChipOverJTAG const& word)
+std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word)
 {
 	std::stringstream ss_d;
 	ss_d << "0d" << std::dec << word.m_data.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<sizeof(typename OmnibusOnChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(
+	hate::bitset<sizeof(typename OmnibusChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(
 	    word.m_data.value());
-	os << "OmnibusOnChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
+	os << "OmnibusChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
-bool OmnibusOnChipOverJTAG::operator==(OmnibusOnChipOverJTAG const& other) const
+bool OmnibusChipOverJTAG::operator==(OmnibusChipOverJTAG const& other) const
 {
 	return (m_data == other.m_data);
 }
 
-bool OmnibusOnChipOverJTAG::operator!=(OmnibusOnChipOverJTAG const& other) const
+bool OmnibusChipOverJTAG::operator!=(OmnibusChipOverJTAG const& other) const
 {
 	return !(*this == other);
 }
 
-std::array<
-    hxcomm::vx::ut_message_to_fpga_variant,
-    OmnibusOnChipOverJTAG::encode_read_ut_message_count>
-OmnibusOnChipOverJTAG::encode_read(coordinate_type const& coord)
+std::
+    array<hxcomm::vx::ut_message_to_fpga_variant, OmnibusChipOverJTAG::encode_read_ut_message_count>
+    OmnibusChipOverJTAG::encode_read(coordinate_type const& coord)
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
@@ -175,8 +174,8 @@ OmnibusOnChipOverJTAG::encode_read(coordinate_type const& coord)
 
 std::array<
     hxcomm::vx::ut_message_to_fpga_variant,
-    OmnibusOnChipOverJTAG::encode_write_ut_message_count>
-OmnibusOnChipOverJTAG::encode_write(coordinate_type const& coord) const
+    OmnibusChipOverJTAG::encode_write_ut_message_count>
+OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
@@ -200,7 +199,7 @@ OmnibusOnChipOverJTAG::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void OmnibusOnChipOverJTAG::decode(
+void OmnibusChipOverJTAG::decode(
     std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const& messages)
 {
 	using data = hxcomm::vx::instruction::jtag_from_hicann::data;
@@ -210,12 +209,12 @@ void OmnibusOnChipOverJTAG::decode(
 }
 
 template <class Archive>
-void OmnibusOnChipOverJTAG::cerealize(Archive& ar)
+void OmnibusChipOverJTAG::cerealize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_data));
 }
 
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusOnChipOverJTAG)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusChipOverJTAG)
 
 JTAGIdCode::JTAGIdCode() : m_value() {}
 
