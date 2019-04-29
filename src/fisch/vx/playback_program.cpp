@@ -35,16 +35,16 @@ ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
 	decltype(pbp->m_receive_queue_jtag.cbegin()) it;
 	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		// FIXME: unnecessary copy, Issue 3132
-		std::copy(
+		std::transform(
 		    pbp->m_receive_queue_omnibus.cbegin() + pos,
 		    pbp->m_receive_queue_omnibus.cbegin() + pos + ContainerT::decode_ut_message_count,
-		    messages.begin());
+		    messages.begin(), [](auto const& res) { return res.message; });
 	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		// FIXME: unnecessary copy, Issue 3132
-		std::copy(
+		std::transform(
 		    pbp->m_receive_queue_jtag.cbegin() + pos,
 		    pbp->m_receive_queue_jtag.cbegin() + pos + ContainerT::decode_ut_message_count,
-		    messages.begin());
+		    messages.begin(), [](auto const& res) { return res.message; });
 	} else {
 		throw std::logic_error("Container response queue not implemented.");
 	}
@@ -65,6 +65,24 @@ bool PlaybackProgram::ContainerTicket<ContainerT>::valid() const
 		throw std::logic_error("Container response queue not implemented.");
 	}
 	return (queue_size >= (pos + ContainerT::decode_ut_message_count));
+}
+
+template <class ContainerT>
+FPGATime PlaybackProgram::ContainerTicket<ContainerT>::fpga_time() const
+{
+	if (!valid()) {
+		throw std::runtime_error("Data not available.");
+	}
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+		return (pbp->m_receive_queue_omnibus.cbegin() + pos + ContainerT::decode_ut_message_count -
+		        1)
+		    ->time;
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+		return (pbp->m_receive_queue_jtag.cbegin() + pos + ContainerT::decode_ut_message_count - 1)
+		    ->time;
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
+	}
 }
 
 template <class ContainerT>
@@ -89,12 +107,12 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 			std::array<hxcomm::vx::UTMessageFromFPGAVariant, ContainerT::decode_ut_message_count>
 			    messages;
 			// FIXME: unnecessary copy, Issue 3132
-			std::copy(
+			std::transform(
 			    pbp->m_receive_queue_omnibus.begin() + pos +
 			        (c * ContainerT::decode_ut_message_count),
 			    pbp->m_receive_queue_omnibus.begin() + pos +
 			        (c + 1) * ContainerT::decode_ut_message_count,
-			    messages.begin());
+			    messages.begin(), [](auto const& res) { return res.message; });
 			ContainerT config;
 			config.decode(messages);
 			containers.push_back(config);
@@ -104,11 +122,11 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 			std::array<hxcomm::vx::UTMessageFromFPGAVariant, ContainerT::decode_ut_message_count>
 			    messages;
 			// FIXME: unnecessary copy, Issue 3132
-			std::copy(
+			std::transform(
 			    pbp->m_receive_queue_jtag.begin() + pos + (c * ContainerT::decode_ut_message_count),
 			    pbp->m_receive_queue_jtag.begin() + pos +
 			        (c + 1) * ContainerT::decode_ut_message_count,
-			    messages.begin());
+			    messages.begin(), [](auto const& res) { return res.message; });
 			ContainerT config;
 			config.decode(messages);
 			containers.push_back(config);
@@ -137,8 +155,58 @@ PlaybackProgram::PlaybackProgram() :
     m_instructions(),
     m_receive_queue_jtag(),
     m_receive_queue_omnibus(),
-    m_decoder(m_receive_queue_jtag, m_receive_queue_omnibus)
+    m_spike_response_queue(),
+    m_madc_sample_response_queue(),
+    m_spike_pack_counts(),
+    m_madc_sample_pack_counts(),
+    m_decoder(
+        m_receive_queue_jtag,
+        m_receive_queue_omnibus,
+        m_spike_response_queue,
+        m_madc_sample_response_queue,
+        m_spike_pack_counts,
+        m_madc_sample_pack_counts)
 {}
+
+template <class ContainerT>
+FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
+{
+	if (!valid()) {
+		throw std::runtime_error("Data not available.");
+	}
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+		return (pbp->m_receive_queue_omnibus.begin() + pos +
+		        container_count * ContainerT::decode_ut_message_count - 1)
+		    ->time;
+	} else if (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+		return (pbp->m_receive_queue_jtag.begin() + pos +
+		        container_count * ContainerT::decode_ut_message_count - 1)
+		    ->time;
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
+	}
+}
+
+PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
+{
+	return m_spike_pack_counts;
+}
+
+PlaybackProgram::madc_sample_pack_counts_type const& PlaybackProgram::get_madc_samples_pack_counts()
+    const
+{
+	return m_madc_sample_pack_counts;
+}
+
+PlaybackProgram::spike_from_chip_events_type const& PlaybackProgram::get_spikes() const
+{
+	return m_spike_response_queue;
+}
+
+PlaybackProgram::madc_sample_from_chip_events_type const& PlaybackProgram::get_madc_samples() const
+{
+	return m_madc_sample_response_queue;
+}
 
 std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 {
@@ -167,6 +235,10 @@ void PlaybackProgram::clear_from_fpga_messages()
 {
 	m_receive_queue_jtag.clear();
 	m_receive_queue_omnibus.clear();
+	m_spike_response_queue.clear();
+	m_madc_sample_response_queue.clear();
+	m_spike_pack_counts.fill(0);
+	m_madc_sample_pack_counts.fill(0);
 }
 
 

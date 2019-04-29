@@ -8,6 +8,8 @@
 #include <cereal/archives/portable_binary.hpp>
 #include <cereal/archives/xml.hpp>
 
+#include "hate/visibility.h"
+
 #define EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(CLASS_NAME)                                          \
 	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::BinaryOutputArchive&);             \
 	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::BinaryInputArchive&);              \

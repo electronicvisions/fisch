@@ -4,7 +4,9 @@
 #include "fisch/vx/genpybind.h"
 #include "hxcomm/vx/utmessage.h"
 
+#include "fisch/vx/event.h"
 #include "fisch/vx/playback_decoder.h"
+#include "fisch/vx/systime.h"
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
@@ -34,6 +36,14 @@ public:
 		 * @return Boolean value
 		 */
 		bool valid() const;
+
+		/**
+		 * Get FPGA executor timestamp of last response message if time annotation is enabled.
+		 * If time annotation is not enabled, get message count since last time annotation or
+		 * from the beginning of the response stream.
+		 * @return FPGATime value
+		 */
+		FPGATime fpga_time() const;
 
 	private:
 		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
@@ -71,6 +81,14 @@ public:
 		 */
 		bool valid() const;
 
+		/**
+		 * Get FPGA executor timestamp of last container response if time annotation is enabled.
+		 * If time annotation is not enabled, get message count since last time annotation or
+		 * from the beginning of the response stream.
+		 * @return FPGATime value
+		 */
+		FPGATime fpga_time() const;
+
 	private:
 		ContainerVectorTicket(
 		    size_t container_count, size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
@@ -92,6 +110,42 @@ public:
 
 	/** Default constructor */
 	PlaybackProgram();
+
+	typedef std::vector<SpikeFromChipEvent> spike_from_chip_events_type;
+	typedef std::vector<MADCSampleFromChipEvent> madc_sample_from_chip_events_type;
+
+	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>
+	    spike_pack_counts_type GENPYBIND(opaque(false));
+	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::MADCSamplePackFromFPGAOnDLS>
+	    madc_sample_pack_counts_type GENPYBIND(opaque(false));
+
+	/**
+	 * Get number of occurences of spike packing from chip.
+	 * @return Array of packing occurences
+	 */
+	GENPYBIND(getter_for(spikes_pack_counts))
+	spike_pack_counts_type const& get_spikes_pack_counts() const;
+
+	/**
+	 * Get number of occurences of MADC sample packing from chip.
+	 * @return Array of packing occurences
+	 */
+	GENPYBIND(getter_for(madc_samples_pack_counts))
+	madc_sample_pack_counts_type const& get_madc_samples_pack_counts() const;
+
+	/**
+	 * Get vector of time-annotated spike events.
+	 * @return Vector of spike events
+	 */
+	GENPYBIND(getter_for(spikes))
+	spike_from_chip_events_type const& get_spikes() const;
+
+	/**
+	 * Get vector of time-annotated MADC sample events.
+	 * @return Vector of sample events
+	 */
+	GENPYBIND(getter_for(madc_samples))
+	madc_sample_from_chip_events_type const& get_madc_samples() const;
 
 	/**
 	 * Print instruction UT messages to ostream.
@@ -126,10 +180,18 @@ private:
 	friend class PlaybackProgramBuilder;
 
 	std::vector<to_fpga_message_type> m_instructions;
-	std::vector<hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>>
+	std::vector<PlaybackDecoder::TimedResponse<
+	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>>>
 	    m_receive_queue_jtag;
-	std::vector<hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>>
+	std::vector<PlaybackDecoder::TimedResponse<
+	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>>>
 	    m_receive_queue_omnibus;
+
+	std::vector<SpikeFromChipEvent> m_spike_response_queue;
+	std::vector<MADCSampleFromChipEvent> m_madc_sample_response_queue;
+
+	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
+	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 
 	PlaybackDecoder m_decoder;
 };

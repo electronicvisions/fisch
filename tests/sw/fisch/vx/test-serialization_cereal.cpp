@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/event.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/spi.h"
+#include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
 
 using namespace fisch::vx;
@@ -24,7 +26,16 @@ typedef ::testing::Types<
     ResetJTAGTap,
     JTAGClockScaler,
     SPIShiftRegister,
-    Timer>
+    Timer,
+    SystimeSync,
+    SpikePack1ToChip,
+    SpikePack2ToChip,
+    SpikePack3ToChip,
+    SpikeLabel,
+    SpikeFromChip,
+    MADCSampleFromChip,
+    SpikeFromChipEvent,
+    MADCSampleFromChipEvent>
     SerializableTypes;
 
 TYPED_TEST_CASE(CommonSerializationTests, SerializableTypes);

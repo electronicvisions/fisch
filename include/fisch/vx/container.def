@@ -6,6 +6,10 @@
 #define LAST_PLAYBACK_CONTAINER(Name, Type) PLAYBACK_CONTAINER(Name, Type)
 #endif
 
+PLAYBACK_CONTAINER(SystimeSync, fisch::vx::SystimeSync)
+PLAYBACK_CONTAINER(SpikePack1ToChip, fisch::vx::SpikePack1ToChip)
+PLAYBACK_CONTAINER(SpikePack2ToChip, fisch::vx::SpikePack2ToChip)
+PLAYBACK_CONTAINER(SpikePack3ToChip, fisch::vx::SpikePack3ToChip)
 PLAYBACK_CONTAINER(OmnibusChipOverJTAG, fisch::vx::OmnibusChipOverJTAG)
 PLAYBACK_CONTAINER(OmnibusChip, fisch::vx::OmnibusChip)
 PLAYBACK_CONTAINER(OmnibusFPGA, fisch::vx::OmnibusFPGA)
