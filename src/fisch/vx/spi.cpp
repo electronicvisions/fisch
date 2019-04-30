@@ -156,6 +156,18 @@ std::
 	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
 	    data::payload_type(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())));
 
+	// Write single update LDAC value.
+	SPIDACControlRegister update_control(SPIDACControlRegister::Value(0x2));
+	auto update_control_messages =
+	    update_control.encode_write(halco::hicann_dls::vx::SPIDACControlRegisterOnBoard(
+	        halco::hicann_dls::vx::SPIDACControlRegisterOnDAC::LDAC, coord.toDACOnBoard()));
+	static_assert(
+	    update_control_messages.size() == 4,
+	    "SPIDACControlRegister does not need 4 messages to be written.");
+	ret[4] = update_control_messages[0];
+	ret[5] = update_control_messages[1];
+	ret[6] = update_control_messages[2];
+	ret[7] = update_control_messages[3];
 	return ret;
 }
 
