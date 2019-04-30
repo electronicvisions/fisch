@@ -6,7 +6,28 @@
 #include "fisch/vx/spi.h"
 #include "fisch/vx/timer.h"
 
+#include "hate/type_list.h"
+
 namespace fisch::vx {
+
+namespace {
+
+typedef hate::type_list<
+    JTAGClockScaler,
+    JTAGIdCode,
+    JTAGPLLRegister,
+    OmnibusOnChipOverJTAG,
+    ResetJTAGTap>
+    jtag_queue_container_list;
+
+typedef hate::type_list<
+    Omnibus,
+    SPIShiftRegister,
+    SPIDACDataRegister,
+    SPIDACControlRegister>
+    omnibus_queue_container_list;
+
+} // namespace
 
 template <class ContainerT>
 PlaybackProgram::ContainerTicket<ContainerT>::ContainerTicket(
@@ -24,18 +45,20 @@ ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
 	std::array<hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
 	    messages;
 	decltype(pbp->m_receive_queue_jtag.cbegin()) it;
-	if constexpr (std::is_same<Omnibus, ContainerT>::value) {
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		// FIXME: unnecessary copy, Issue 3132
 		std::copy(
 		    pbp->m_receive_queue_omnibus.cbegin() + pos,
 		    pbp->m_receive_queue_omnibus.cbegin() + pos + ContainerT::decode_ut_message_count,
 		    messages.begin());
-	} else {
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		// FIXME: unnecessary copy, Issue 3132
 		std::copy(
 		    pbp->m_receive_queue_jtag.cbegin() + pos,
 		    pbp->m_receive_queue_jtag.cbegin() + pos + ContainerT::decode_ut_message_count,
 		    messages.begin());
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	ContainerT config;
 	config.decode(messages);
@@ -45,11 +68,13 @@ ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
 template <class ContainerT>
 bool PlaybackProgram::ContainerTicket<ContainerT>::valid() const
 {
-	size_t queue_size;
-	if constexpr (std::is_same<Omnibus, ContainerT>::value) {
+	size_t queue_size = 0;
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		queue_size = pbp->m_receive_queue_omnibus.size();
-	} else {
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		queue_size = pbp->m_receive_queue_jtag.size();
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	return (queue_size >= (pos + ContainerT::decode_ut_message_count));
 }
@@ -71,7 +96,7 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 
 	std::vector<ContainerT> containers;
 
-	if constexpr (std::is_same<Omnibus, ContainerT>::value) {
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		for (size_t c = 0; c < container_count; ++c) {
 			std::array<
 			    hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
@@ -87,7 +112,7 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 			config.decode(messages);
 			containers.push_back(config);
 		}
-	} else {
+	} else if (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		for (size_t c = 0; c < container_count; ++c) {
 			std::array<
 			    hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
@@ -102,6 +127,8 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 			config.decode(messages);
 			containers.push_back(config);
 		}
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	return containers;
 }
@@ -110,10 +137,12 @@ template <class ContainerT>
 bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
 {
 	size_t queue_size;
-	if constexpr (std::is_same<Omnibus, ContainerT>::value) {
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		queue_size = pbp->m_receive_queue_omnibus.size();
-	} else {
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		queue_size = pbp->m_receive_queue_jtag.size();
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	return (queue_size >= (pos + (container_count * ContainerT::decode_ut_message_count)));
 }
@@ -206,12 +235,14 @@ PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
 	    m_program->m_instructions.end(), messages.begin(), messages.end());
 
 	size_t pos;
-	if constexpr (std::is_same<ContainerT, Omnibus>::value) {
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		pos = m_omnibus_receive_queue_size;
 		m_omnibus_receive_queue_size += ContainerT::decode_ut_message_count;
-	} else {
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		pos = m_jtag_receive_queue_size;
 		m_jtag_receive_queue_size += ContainerT::decode_ut_message_count;
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	return PlaybackProgram::ContainerTicket<ContainerT>(pos, m_program);
 }
@@ -228,12 +259,14 @@ PlaybackProgram::ContainerVectorTicket<ContainerT> PlaybackProgramBuilder::read(
 	}
 
 	size_t pos;
-	if constexpr (std::is_same<ContainerT, Omnibus>::value) {
+	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		pos = m_omnibus_receive_queue_size;
 		m_omnibus_receive_queue_size += coords.size() * ContainerT::decode_ut_message_count;
-	} else {
+	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		pos = m_jtag_receive_queue_size;
 		m_jtag_receive_queue_size += coords.size() * ContainerT::decode_ut_message_count;
+	} else {
+		throw std::logic_error("Container response queue not implemented.");
 	}
 	return PlaybackProgram::ContainerVectorTicket<ContainerT>(coords.size(), pos, m_program);
 }
