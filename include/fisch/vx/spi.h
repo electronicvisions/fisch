@@ -116,7 +116,7 @@ public:
 	bool operator!=(SPIDACDataRegister const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
@@ -177,7 +177,7 @@ public:
 	bool operator!=(SPIDACControlRegister const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
+	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
 	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>

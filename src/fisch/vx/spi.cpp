@@ -150,7 +150,7 @@ std::
 	// set. Then the collected data is communicated to the client.
 	ret[0] = addr;
 	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(data::payload_type(
-	    ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | m_data.value()) >> CHAR_BIT));
+	    ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | (m_data.value() >> CHAR_BIT))));
 
 	ret[2] = addr;
 	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
