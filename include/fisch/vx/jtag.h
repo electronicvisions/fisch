@@ -224,7 +224,7 @@ private:
 class GENPYBIND(visible) JTAGPLLRegister
 {
 public:
-	typedef halco::hicann_dls::vx::PLLRegisterOnDLS coordinate_type;
+	typedef halco::hicann_dls::vx::JTAGPLLRegisterOnDLS coordinate_type;
 
 	/** PLL register value type. */
 	struct GENPYBIND(inline_base("*")) Value
