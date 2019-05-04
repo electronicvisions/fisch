@@ -42,4 +42,21 @@ std::vector<PlaybackProgram::receive_message_type> PlaybackProgramExecutor<Conne
 	return messages;
 }
 
+template <class Connection>
+void PlaybackProgramExecutor<Connection>::run(std::shared_ptr<PlaybackProgram> const& program)
+{
+	transfer(program);
+	execute();
+	fetch(program);
+}
+
+template <class Connection>
+std::vector<PlaybackProgram::receive_message_type> PlaybackProgramExecutor<Connection>::run(
+    std::vector<PlaybackProgram::send_message_type> const& messages)
+{
+	transfer(messages);
+	execute();
+	return fetch();
+}
+
 } // namespace fisch::vx

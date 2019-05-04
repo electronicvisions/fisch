@@ -52,6 +52,20 @@ public:
 	 */
 	std::vector<PlaybackProgram::receive_message_type> fetch();
 
+	/**
+	 * Transfer and execute the given playback program and fetch results.
+	 * @param program PlaybackProgram to run
+	 */
+	void run(std::shared_ptr<PlaybackProgram> const& program);
+
+	/**
+	 * Transfer and execute the given messages and return responses.
+	 * @param messages UT messages to transfer
+	 * @return Response UT messages
+	 */
+	std::vector<PlaybackProgram::receive_message_type> run(
+	    std::vector<PlaybackProgram::send_message_type> const& messages);
+
 private:
 	Connection m_connection;
 };
