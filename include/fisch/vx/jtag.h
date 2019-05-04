@@ -279,7 +279,7 @@ private:
 class GENPYBIND(visible) JTAGPhyRegister
 {
 public:
-	typedef halco::hicann_dls::vx::PhyOnDLS coordinate_type;
+	typedef halco::hicann_dls::vx::JTAGPhyRegisterOnDLS coordinate_type;
 
 	/** Register value type. */
 	struct GENPYBIND(inline_base("*")) Value
