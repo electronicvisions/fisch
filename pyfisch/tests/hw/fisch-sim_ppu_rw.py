@@ -20,8 +20,8 @@ class PPUWordWriteRead(unittest.TestCase):
         builder.wait_until(halco.TimerOnDLS(), 22 * fisch.fpga_clock_cycles_per_us)
 
         # JTAG init
-        builder.write(halco.JTAGOnDLS(), fisch.JTAGClockScaler(3))
-        builder.write(halco.JTAGOnDLS(), fisch.ResetJTAGTap())
+        builder.write(halco.JTAGClockScalerOnDLS(), fisch.JTAGClockScaler(3))
+        builder.write(halco.ResetJTAGTapOnDLS(), fisch.ResetJTAGTap())
 
         # write PPU word
         ppu_top_base = 0x02000000 + (1 << 23)

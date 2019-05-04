@@ -19,7 +19,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 class GENPYBIND(visible) ResetJTAGTap
 {
 public:
-	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
+	typedef halco::hicann_dls::vx::ResetJTAGTapOnDLS coordinate_type;
 
 	/** Default constructor. */
 	ResetJTAGTap();
@@ -54,7 +54,7 @@ private:
 class GENPYBIND(visible) JTAGClockScaler
 {
 public:
-	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
+	typedef halco::hicann_dls::vx::JTAGClockScalerOnDLS coordinate_type;
 
 	/** Clock-scaler value type. The JTAG clock scales with 1 / (value + 2). */
 	struct GENPYBIND(inline_base("*")) Value
@@ -172,7 +172,7 @@ private:
 class GENPYBIND(visible) JTAGIdCode
 {
 public:
-	typedef halco::hicann_dls::vx::JTAGOnDLS coordinate_type;
+	typedef halco::hicann_dls::vx::JTAGIdCodeOnDLS coordinate_type;
 
 	/** JTAG IDCODE value type. */
 	struct GENPYBIND(inline_base("*")) Value

@@ -20,10 +20,9 @@ TEST(OmnibusOnChipOverJTAG, PPUWriteRead)
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(100));
 
 	builder.write<fisch::vx::JTAGClockScaler>(
-	    halco::hicann_dls::vx::JTAGOnDLS(),
-	    fisch::vx::JTAGClockScaler(fisch::vx::JTAGClockScaler::Value(3)));
+	    halco::hicann_dls::vx::JTAGClockScalerOnDLS(), fisch::vx::JTAGClockScaler(fisch::vx::JTAGClockScaler::Value(3)));
 	builder.write<fisch::vx::ResetJTAGTap>(
-	    halco::hicann_dls::vx::JTAGOnDLS(), fisch::vx::ResetJTAGTap());
+	    halco::hicann_dls::vx::ResetJTAGTapOnDLS(), fisch::vx::ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
 	builder.wait_until(
