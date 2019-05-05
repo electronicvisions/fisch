@@ -40,10 +40,29 @@ def build(bld):
     )
 
     bld(
+        target = 'fisch_hwtest_vx_inc',
+        export_includes = 'tests/hw/fisch/vx/executor_hw/',
+    )
+
+    bld(
+        target = 'fisch_simtest_vx_inc',
+        export_includes = 'tests/hw/fisch/vx/executor_sim/',
+    )
+
+    bld(
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
         target = 'fisch_hwtests_vx',
-        use = ['fisch_vx'],
+        use = ['fisch_vx', 'fisch_hwtest_vx_inc'],
+        test_main = 'tests/hw/fisch/vx/main.cpp',
+        skip_run = True,
+    )
+
+    bld(
+        features = 'cxx cxxprogram gtest',
+        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
+        target = 'fisch_simtests_vx',
+        use = ['fisch_vx', 'fisch_simtest_vx_inc'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = True,
     )
