@@ -296,6 +296,7 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 	std::shared_ptr<PlaybackProgram> ret(m_program);
 	m_program = std::make_shared<PlaybackProgram>();
 	m_jtag_receive_queue_size = 0;
+	m_omnibus_receive_queue_size = 0;
 	return ret;
 }
 
