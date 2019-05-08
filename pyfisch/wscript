@@ -47,14 +47,4 @@ def build(bld):
         pythonpath=['tests'],
     )
 
-    bld(
-        target='pyfisch_hwtests_vx',
-        tests=bld.path.ant_glob('tests/hw/*.py'),
-        features='use pytest',
-        use='pyfisch_vx',
-        install_path='${PREFIX}/bin',
-        skip_run=True,
-        pythonpath=['tests'],
-    )
-
     bld.add_post_fun(summary)
