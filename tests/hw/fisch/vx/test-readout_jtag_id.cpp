@@ -29,9 +29,7 @@ TEST(JTAGIdCode, Readout)
 	auto program = builder.done();
 
 	auto executor = generate_playback_program_test_executor();
-	executor.transfer(program);
-	executor.execute();
-	executor.fetch(program);
+	executor.run(program);
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
