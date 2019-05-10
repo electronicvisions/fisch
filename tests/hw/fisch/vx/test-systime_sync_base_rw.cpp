@@ -37,7 +37,7 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 	halco::hicann_dls::vx::OmnibusChipOverJTAGAddress addr(0x0);
 
 	builder.write(addr, config);
-	auto ticket = builder.read<fisch::vx::OmnibusChipOverJTAG>(addr);
+	auto ticket = builder.read(addr);
 	EXPECT_FALSE(ticket.valid());
 
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10000));

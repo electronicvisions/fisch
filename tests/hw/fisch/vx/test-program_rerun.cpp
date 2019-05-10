@@ -39,7 +39,7 @@ get_read_program(OmnibusChipOverJTAGAddress address)
 {
 	PlaybackProgramBuilder builder;
 
-	auto ticket = builder.read<OmnibusChipOverJTAG>(address);
+	auto ticket = builder.read(address);
 
 	builder.write<Timer>(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10000));

@@ -225,10 +225,13 @@ void PlaybackProgramBuilder::write(
 	}
 }
 
-template <class ContainerT>
-PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
-    typename ContainerT::coordinate_type const& coord)
+template <class CoordinateT>
+PlaybackProgram::ContainerTicket<
+    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+PlaybackProgramBuilder::read(CoordinateT const& coord)
 {
+	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
+
 	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
 		std::stringstream ss;
 
@@ -254,10 +257,13 @@ PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
 	return PlaybackProgram::ContainerTicket<ContainerT>(pos, m_program);
 }
 
-template <class ContainerT>
-PlaybackProgram::ContainerVectorTicket<ContainerT> PlaybackProgramBuilder::read(
-    std::vector<typename ContainerT::coordinate_type> const& coords)
+template <class CoordinateT>
+PlaybackProgram::ContainerVectorTicket<
+    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 {
+	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
+
 	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
 		std::stringstream ss;
 		ss << "Coordinates [";
@@ -297,20 +303,6 @@ void PlaybackProgramBuilder::halt()
 	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::halt>());
 }
 
-template <class ContainerT>
-PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
-    typename ContainerT::coordinate_type const& coord, ContainerT const& /*config*/)
-{
-	return read<ContainerT>(coord);
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerVectorTicket<ContainerT> PlaybackProgramBuilder::read(
-    std::vector<typename ContainerT::coordinate_type> const& coords, ContainerT const& /*config*/)
-{
-	return read<ContainerT>(coords);
-}
-
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
 	std::shared_ptr<PlaybackProgram> ret(m_program);
@@ -324,14 +316,12 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	template class PlaybackProgram::ContainerTicket<Name>;                                         \
 	template class PlaybackProgram::ContainerVectorTicket<Name>;                                   \
-	template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(            \
+	template PlaybackProgram::ContainerTicket<Name>                                                \
+	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    typename Name::coordinate_type const& coord);                                              \
-	template PlaybackProgram::ContainerVectorTicket<Name> PlaybackProgramBuilder::read<Name>(      \
+	template PlaybackProgram::ContainerVectorTicket<Name>                                          \
+	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
-	template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(            \
-	    typename Name::coordinate_type const& coord, Name const& config);                          \
-	template PlaybackProgram::ContainerVectorTicket<Name> PlaybackProgramBuilder::read<Name>(      \
-	    std::vector<typename Name::coordinate_type> const& coord, Name const& config);             \
 	template void PlaybackProgramBuilder::write<Name>(                                             \
 	    typename Name::coordinate_type const& coord, Name const& config);                          \
 	template void PlaybackProgramBuilder::write<Name>(                                             \

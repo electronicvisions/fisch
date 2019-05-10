@@ -22,7 +22,7 @@ TEST(JTAGIdCode, Readout)
 	builder.write<fisch::vx::ResetJTAGTap>(
 	    halco::hicann_dls::vx::ResetJTAGTapOnDLS(), fisch::vx::ResetJTAGTap());
 
-	auto ticket = builder.read<fisch::vx::JTAGIdCode>(halco::hicann_dls::vx::JTAGIdCodeOnDLS());
+	auto ticket = builder.read(halco::hicann_dls::vx::JTAGIdCodeOnDLS());
 
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(1000));
 	builder.halt();

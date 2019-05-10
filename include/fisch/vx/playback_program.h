@@ -1,12 +1,8 @@
 #pragma once
 
-#include "fisch/vx/genpybind.h"
-#include "fisch/vx/timer.h"
-#include "hxcomm/vx/utmessage.h"
-
-#ifdef __GENPYBIND__
 #include "fisch/vx/container.h"
-#endif // __GENPYBIND__
+#include "fisch/vx/genpybind.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
@@ -131,6 +127,51 @@ private:
 	    m_receive_queue_omnibus;
 };
 
+
+namespace detail {
+
+#define LAST_PLAYBACK_CONTAINER(Name, Type) Type
+#define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
+/**
+ * List of container types used to resolve a container type from a coordinate type.
+ */
+typedef hate::type_list<
+#include "fisch/vx/container.def"
+    >
+    container_list;
+
+#define LAST_PLAYBACK_CONTAINER(Name, Type) typename Type::coordinate_type
+#define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
+/**
+ * List of coordinate types sorted the same way as the container list.
+ */
+typedef hate::type_list<
+#include "fisch/vx/container.def"
+    >
+    coordinate_list;
+
+/**
+ * Given a coordinate type, resolves the corresponding unique container type.
+ * @tparam CoordinateT Coordinate type to resolve container type for
+ */
+template <typename CoordinateT>
+struct coordinate_type_to_container_type
+{
+	typedef typename hate::index_type_list_by_integer<
+	    hate::index_type_list_by_type<CoordinateT, coordinate_list>::value,
+	    container_list>::type type;
+};
+
+// The struct has to resolve a container type for vector<coordinate>, because it is always
+// evaluated, even if the fully specified read function signature does not match.
+template <typename CoordinateT>
+struct coordinate_type_to_container_type<std::vector<CoordinateT>>
+{
+	typedef void type; // void because it is never used
+};
+
+} // namespace detail
+
 class GENPYBIND(visible) PlaybackProgramBuilder
 {
 public:
@@ -166,13 +207,14 @@ public:
 
 	/**
 	 * Add read instruction for container.
-	 * @tparam ContainerT Container type
+	 * @tparam CoordinateT Coordinate type
 	 * @param coord Container coordinate
 	 * @return Ticket accessor to response data
 	 */
-	template <class ContainerT>
-	PlaybackProgram::ContainerTicket<ContainerT> read(
-	    typename ContainerT::coordinate_type const& coord);
+	template <class CoordinateT>
+	PlaybackProgram::ContainerTicket<
+	    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+	read(CoordinateT const& coord);
 
 	/**
 	 * Add read instruction for multiple containers.
@@ -180,39 +222,15 @@ public:
 	 * @param coords Container coordinates
 	 * @return Ticket accessor to response data
 	 */
-	template <class ContainerT>
-	PlaybackProgram::ContainerVectorTicket<ContainerT> read(
-	    std::vector<typename ContainerT::coordinate_type> const& coords);
+	template <class CoordinateT>
+	PlaybackProgram::ContainerVectorTicket<
+	    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+	read(std::vector<CoordinateT> const& coords);
 
 	/**
 	 * Add halt instruction to indicate end of playback program execution.
 	 */
 	void halt();
-
-	/**
-	 * Add halt instruction to indicate end of playback program execution.
-	 * Add read instruction for container. This is only needed for python wrapping with non-unique
-	 * coordinates for overload resolution.
-	 * @tparam ContainerT Container type
-	 * @param coord Container coordinate
-	 * @param config Container data (unused)
-	 * @return Ticket accessor to response data
-	 */
-	template <class ContainerT>
-	PlaybackProgram::ContainerTicket<ContainerT> read(
-	    typename ContainerT::coordinate_type const& coord, ContainerT const& config);
-
-	/**
-	 * Add read instruction for multiple containers. This is only needed for python wrapping with
-	 * non-unique coordinates for overload resolution.
-	 * @tparam ContainerT Container type
-	 * @param coords Container coordinates
-	 * @param config Container data (unused)
-	 * @return Ticket accessor to response data
-	 */
-	template <class ContainerT>
-	PlaybackProgram::ContainerVectorTicket<ContainerT> read(
-	    std::vector<typename ContainerT::coordinate_type> const& coords, ContainerT const& config);
 
 	/**
 	 * Finish playback program creation and return built program. Resets the state of the builder.
@@ -229,15 +247,12 @@ private:
 #ifdef __GENPYBIND__
 // Explicit instantiation of template member functions for all valid playback container types.
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
-	extern template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(     \
+	extern template PlaybackProgram::ContainerTicket<Name>                                         \
+	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    typename Name::coordinate_type const& coord);                                              \
 	extern template PlaybackProgram::ContainerVectorTicket<Name>                                   \
-	PlaybackProgramBuilder::read<Name>(                                                            \
-	    std::vector<typename Name::coordinate_type> const& coord, Name const& config);             \
-	extern template PlaybackProgram::ContainerTicket<Name> PlaybackProgramBuilder::read<Name>(     \
-	    typename Name::coordinate_type const& coord, Name const& config);                          \
-	extern template PlaybackProgram::ContainerVectorTicket<Name>                                   \
-	PlaybackProgramBuilder::read<Name>(std::vector<typename Name::coordinate_type> const& coord);  \
+	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
+	    std::vector<typename Name::coordinate_type> const& coord);                                 \
 	extern template void PlaybackProgramBuilder::write<Name>(                                      \
 	    typename Name::coordinate_type const& coord, Name const& config);                          \
 	extern template void PlaybackProgramBuilder::write<Name>(                                      \
