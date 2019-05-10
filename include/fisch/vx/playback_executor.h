@@ -34,8 +34,8 @@ public:
 	 * @param messages UT messages to transfer
 	 * @return Response UT messages
 	 */
-	std::vector<PlaybackProgram::receive_message_type> run(
-	    std::vector<PlaybackProgram::send_message_type> const& messages);
+	std::vector<PlaybackProgram::from_fpga_message_type> run(
+	    std::vector<PlaybackProgram::to_fpga_message_type> const& messages) GENPYBIND(hidden);
 
 private:
 	Connection m_connection;

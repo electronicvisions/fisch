@@ -92,9 +92,6 @@ public:
 #include "fisch/vx/container.def"
 #endif // __GENPYBIND__
 
-	typedef hxcomm::vx::ut_message_to_fpga_variant send_message_type GENPYBIND(hidden);
-	typedef hxcomm::vx::ut_message_from_fpga_variant receive_message_type GENPYBIND(hidden);
-
 	/**
 	 * Print instruction UT messages to ostream.
 	 * @return Altered ostream
@@ -102,14 +99,32 @@ public:
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program);
 
-	/** FIXME: make private */
-	std::vector<send_message_type> const& get_send_messages() const GENPYBIND(hidden);
-	void push_received_message(receive_message_type const& message) GENPYBIND(hidden);
+	typedef hxcomm::vx::ut_message_to_fpga_variant to_fpga_message_type;
+	typedef hxcomm::vx::ut_message_from_fpga_variant from_fpga_message_type;
+
+	/**
+	 * Get to FPGA instruction sequence.
+	 * @return Vector of UT messages
+	 */
+	std::vector<to_fpga_message_type> const& get_to_fpga_messages() const GENPYBIND(hidden);
+
+	/**
+	 * Push a UT message from FPGA into the response decoder.
+	 * The message is processed and maybe put into a data response queue.
+	 * @param message UT message to push into the decoder
+	 */
+	void push_from_fpga_message(from_fpga_message_type const& message) GENPYBIND(hidden);
+
+	/**
+	 * Clear the content of response data queues in order to refill them through a successive
+	 * execution.
+	 */
+	void clear_from_fpga_messages();
 
 private:
 	friend class PlaybackProgramBuilder;
 
-	std::vector<send_message_type> m_instructions;
+	std::vector<to_fpga_message_type> m_instructions;
 	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> >
 	    m_receive_queue_jtag;
 	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::omnibus_from_fpga::data> >

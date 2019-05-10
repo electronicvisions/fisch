@@ -138,7 +138,7 @@ bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
 
 std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 {
-	auto const& messages = program.get_send_messages();
+	auto const& messages = program.get_to_fpga_messages();
 	for (auto it = messages.cbegin(); it < messages.cend(); ++it) {
 		if (it != messages.cbegin()) {
 			os << std::endl;
@@ -148,12 +148,13 @@ std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 	return os;
 }
 
-std::vector<PlaybackProgram::send_message_type> const& PlaybackProgram::get_send_messages() const
+std::vector<PlaybackProgram::to_fpga_message_type> const& PlaybackProgram::get_to_fpga_messages()
+    const
 {
 	return m_instructions;
 }
 
-void PlaybackProgram::push_received_message(receive_message_type const& message)
+void PlaybackProgram::push_from_fpga_message(from_fpga_message_type const& message)
 {
 	if (auto jtag_message_ptr =
 	        boost::get<typename decltype(m_receive_queue_jtag)::value_type>(&message)) {
@@ -172,6 +173,12 @@ void PlaybackProgram::push_received_message(receive_message_type const& message)
 		ss << " unimplemented.";
 		throw std::runtime_error(ss.str());
 	}
+}
+
+void PlaybackProgram::clear_from_fpga_messages()
+{
+	m_receive_queue_jtag.clear();
+	m_receive_queue_omnibus.clear();
 }
 
 
