@@ -27,9 +27,6 @@ public:
 	class ContainerTicket
 	{
 	public:
-		/** Ticket constructor. FIXME: Make private. */
-		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
-
 		/**
 		 * Get container data.
 		 * @return Container filled with decoded data from playback program results.
@@ -43,6 +40,10 @@ public:
 		bool valid() const;
 
 	private:
+		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
+
+		friend class PlaybackProgramBuilder;
+
 		size_t pos;
 		std::shared_ptr<PlaybackProgram const> pbp;
 	};
@@ -62,10 +63,6 @@ public:
 	class ContainerVectorTicket
 	{
 	public:
-		/** Ticket constructor. FIXME: Make private. */
-		ContainerVectorTicket(
-		    size_t container_count, size_t jtag_pos, std::shared_ptr<PlaybackProgram const> pbp);
-
 		/**
 		 * Get data of containers.
 		 * @return Containers filled with decoded data from playback program results
@@ -79,6 +76,11 @@ public:
 		bool valid() const;
 
 	private:
+		ContainerVectorTicket(
+		    size_t container_count, size_t jtag_pos, std::shared_ptr<PlaybackProgram const> pbp);
+
+		friend class PlaybackProgramBuilder;
+
 		size_t container_count;
 		size_t pos;
 		std::shared_ptr<PlaybackProgram const> pbp;
