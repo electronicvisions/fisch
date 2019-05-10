@@ -1,10 +1,6 @@
 #include "fisch/vx/playback_program.h"
 
-#include "fisch/vx/jtag.h"
-#include "fisch/vx/omnibus.h"
-#include "fisch/vx/reset.h"
-#include "fisch/vx/spi.h"
-#include "fisch/vx/timer.h"
+#include "fisch/vx/container.h"
 
 #include "hate/type_list.h"
 
