@@ -1,4 +1,6 @@
+import os
 from waflib.extras.test_base import summary
+
 
 def depends(dep):
     dep('halco')
@@ -21,6 +23,8 @@ def configure(cfg):
 
 
 def build(bld):
+    bld.env.DLSvx_HARDWARE_AVAILABLE = "cube" == os.environ.get("SLURM_JOB_PARTITION")
+
     bld(
         target          = 'fisch_inc',
         export_includes = 'include',
@@ -55,7 +59,7 @@ def build(bld):
         target = 'fisch_hwtests_vx',
         use = ['fisch_vx', 'fisch_hwtest_vx_inc'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = True,
+        skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE
     )
 
     bld(

@@ -7,7 +7,7 @@
 
 #include "executor.h"
 
-TEST(OmnibusChipOverJTAG, PPUWriteRead)
+TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 {
 	fisch::vx::PlaybackProgramBuilder builder;
 
@@ -33,8 +33,8 @@ TEST(OmnibusChipOverJTAG, PPUWriteRead)
 	// random data
 	config.set(fisch::vx::OmnibusData(10));
 
-	// Omnibus address of first PPU memory word of top PPU
-	halco::hicann_dls::vx::OmnibusChipOverJTAGAddress addr(0x02000000 + (1 << 23));
+	// Omnibus address of SystimeSyncBase
+	halco::hicann_dls::vx::OmnibusChipOverJTAGAddress addr(0x0);
 
 	builder.write(addr, config);
 	auto ticket = builder.read<fisch::vx::OmnibusChipOverJTAG>(addr);
