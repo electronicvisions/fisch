@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/omnibus_constants.h"
 #include "fisch/vx/spi.h"
 
 TEST(SPIShiftRegister, General)
@@ -24,6 +25,49 @@ TEST(SPIShiftRegister, General)
 
 	EXPECT_EQ(other_config, value_config);
 	EXPECT_NE(default_config, value_config);
+}
+
+TEST(SPIShiftRegister, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	SPIShiftRegister obj;
+	obj.set(SPIShiftRegister::Value(0x123456));
+
+	typename SPIShiftRegister::coordinate_type coord;
+	auto messages = obj.encode_write(coord);
+
+	EXPECT_EQ(messages.size(), 6);
+	auto addr = ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
+	    instruction::omnibus_to_fpga::address::payload_type(
+	        1ul | spi_over_omnibus_mask | executor_omnibus_mask, false));
+
+	auto message_addr_1 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	EXPECT_EQ(message_addr_1, addr);
+	auto message_data_1 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(1));
+	EXPECT_EQ(
+	    message_data_1, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
+	                        instruction::omnibus_to_fpga::data::payload_type(0x12)));
+	auto message_addr_2 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(2));
+	EXPECT_EQ(message_addr_2, addr);
+	auto message_data_2 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(3));
+	EXPECT_EQ(
+	    message_data_2, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
+	                        instruction::omnibus_to_fpga::data::payload_type(0x34)));
+	auto message_addr_3 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(4));
+	EXPECT_EQ(message_addr_3, addr);
+	auto message_data_3 =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(5));
+	EXPECT_EQ(
+	    message_data_3,
+	    ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
+	        instruction::omnibus_to_fpga::data::payload_type(executor_omnibus_mask | 0x56)));
 }
 
 TEST(SPIShiftRegister, Ostream)

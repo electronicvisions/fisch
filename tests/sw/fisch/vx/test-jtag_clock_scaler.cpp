@@ -42,6 +42,21 @@ TEST(JTAGClockScaler, Ostream)
 	EXPECT_EQ(stream.str(), "JTAGClockScaler(12)");
 }
 
+TEST(JTAGClockScaler, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	JTAGClockScaler obj;
+	obj.set(JTAGClockScaler::Value(12));
+
+	auto messages = obj.encode_write(typename JTAGClockScaler::coordinate_type());
+
+	EXPECT_EQ(messages.size(), 1);
+	auto message = boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::scaler>>(messages.at(0));
+	EXPECT_EQ(message.decode().value(), obj.get());
+}
+
 TEST(JTAGClockScaler, CerealizeCoverage)
 {
 	using namespace fisch::vx;

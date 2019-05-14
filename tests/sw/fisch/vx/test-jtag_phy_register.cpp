@@ -29,6 +29,28 @@ TEST(JTAGPhyRegister, General)
 	EXPECT_NE(JTAGPhyRegister(), config);
 }
 
+TEST(JTAGPhyRegister, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	JTAGPhyRegister obj;
+	obj.set(JTAGPhyRegister::Value(12));
+
+	typename JTAGPhyRegister::coordinate_type coord(3);
+	auto messages = obj.encode_write(coord);
+
+	EXPECT_EQ(messages.size(), 2);
+	auto message_ins =
+	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
+	EXPECT_EQ(message_ins.decode().value(), 92);
+	auto message_data =
+	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	EXPECT_EQ(message_data.decode().get_payload(), 12);
+	EXPECT_EQ(message_data.decode().get_keep_response(), false);
+	EXPECT_EQ(message_data.decode().get_num_bits(), 22);
+}
+
 TEST(JTAGPhyRegister, Ostream)
 {
 	using namespace fisch::vx;

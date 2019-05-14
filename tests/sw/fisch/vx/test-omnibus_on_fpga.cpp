@@ -2,28 +2,137 @@
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
+#include "fisch/vx/omnibus_constants.h"
+
+template <typename T>
+void test_omnibus_general()
+{
+	EXPECT_NO_THROW(T());
+
+	T default_config;
+	EXPECT_EQ(default_config.get(), typename T::value_type());
+
+	typename T::value_type value(0x12345678);
+	T value_config(value);
+	EXPECT_EQ(value_config.get(), value);
+
+	typename T::value_type other_value(0x87654321);
+	value_config.set(other_value);
+	EXPECT_EQ(value_config.get(), other_value);
+
+	T other_config = value_config;
+
+	EXPECT_EQ(other_config, value_config);
+	EXPECT_NE(default_config, value_config);
+}
 
 TEST(OmnibusChip, General)
 {
 	using namespace fisch::vx;
+	test_omnibus_general<OmnibusChip>();
+}
 
-	EXPECT_NO_THROW(OmnibusChip());
+TEST(OmnibusFPGA, General)
+{
+	using namespace fisch::vx;
+	test_omnibus_general<OmnibusFPGA>();
+}
 
-	OmnibusChip default_config;
-	EXPECT_EQ(default_config.get(), OmnibusChip::value_type());
+template <typename T, uint32_t AddressMask>
+void test_omnibus_encode_read()
+{
+	using namespace hxcomm::vx;
 
-	OmnibusChip::value_type value(0x12345678);
-	OmnibusChip value_config(value);
-	EXPECT_EQ(value_config.get(), value);
+	T obj;
 
-	OmnibusChip::value_type other_value(0x87654321);
-	value_config.set(other_value);
-	EXPECT_EQ(value_config.get(), other_value);
+	typename T::coordinate_type coord(3);
+	auto messages = obj.encode_read(coord);
 
-	OmnibusChip other_config = value_config;
+	EXPECT_EQ(messages.size(), 1);
+	auto message_addr =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	EXPECT_EQ(
+	    message_addr,
+	    ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
+	        instruction::omnibus_to_fpga::address::payload_type(AddressMask | coord, true)));
+}
 
-	EXPECT_EQ(other_config, value_config);
-	EXPECT_NE(default_config, value_config);
+TEST(OmnibusChip, EncodeRead)
+{
+	using namespace fisch::vx;
+	test_omnibus_encode_read<OmnibusChip, 0>();
+}
+
+TEST(OmnibusFPGA, EncodeRead)
+{
+	using namespace fisch::vx;
+	test_omnibus_encode_read<OmnibusFPGA, static_cast<uint32_t>(executor_omnibus_mask)>();
+}
+
+template <typename T, uint32_t AddressMask>
+void test_omnibus_encode_write()
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	T obj;
+	obj.set(OmnibusData(12));
+
+	typename T::coordinate_type coord(3);
+	auto messages = obj.encode_write(coord);
+
+	EXPECT_EQ(messages.size(), 2);
+	auto message_addr =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	EXPECT_EQ(
+	    message_addr,
+	    ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
+	        instruction::omnibus_to_fpga::address::payload_type(AddressMask | coord, false)));
+	auto message_data =
+	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(1));
+	EXPECT_EQ(
+	    message_data, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
+	                      instruction::omnibus_to_fpga::data::payload_type(obj.get().value())));
+}
+
+TEST(OmnibusChip, EncodeWrite)
+{
+	using namespace fisch::vx;
+	test_omnibus_encode_write<OmnibusChip, 0>();
+}
+
+TEST(OmnibusFPGA, EncodeWrite)
+{
+	using namespace fisch::vx;
+	test_omnibus_encode_write<OmnibusFPGA, static_cast<uint32_t>(executor_omnibus_mask)>();
+}
+
+template <typename T>
+void test_omnibus_decode()
+{
+	using namespace hxcomm::vx;
+
+	T obj;
+
+	ut_message_from_fpga<instruction::omnibus_from_fpga::data> message(
+	    instruction::omnibus_from_fpga::data::payload_type(0x123));
+
+	std::array<ut_message_from_fpga_variant, 1> messages{message};
+
+	obj.decode(messages);
+	EXPECT_EQ(obj.get(), 0x123);
+}
+
+TEST(OmnibusChip, Decode)
+{
+	using namespace fisch::vx;
+	test_omnibus_decode<OmnibusChip>();
+}
+
+TEST(OmnibusFPGA, Decode)
+{
+	using namespace fisch::vx;
+	test_omnibus_decode<OmnibusFPGA>();
 }
 
 TEST(OmnibusChip, Ostream)
@@ -38,12 +147,23 @@ TEST(OmnibusChip, Ostream)
 	EXPECT_EQ(stream.str(), "OmnibusChip(0d13 0xd 0b00000000000000000000000000001101)");
 }
 
-TEST(OmnibusChip, CerealizeCoverage)
+TEST(OmnibusFPGA, Ostream)
 {
 	using namespace fisch::vx;
 
-	OmnibusChip obj1, obj2;
-	obj1.set(OmnibusChip::value_type(0x12345678));
+	OmnibusFPGA obj(OmnibusData(13));
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "OmnibusFPGA(0d13 0xd 0b00000000000000000000000000001101)");
+}
+
+template <typename T>
+void test_cerealize_coverage()
+{
+	T obj1, obj2;
+	obj1.set(typename T::value_type(0x12345678));
 
 	std::ostringstream ostream;
 	{
@@ -57,4 +177,16 @@ TEST(OmnibusChip, CerealizeCoverage)
 		ia(obj2);
 	}
 	ASSERT_EQ(obj1, obj2);
+}
+
+TEST(OmnibusChip, CerealizeCoverage)
+{
+	using namespace fisch::vx;
+	test_cerealize_coverage<OmnibusChip>();
+}
+
+TEST(OmnibusFPGA, CerealizeCoverage)
+{
+	using namespace fisch::vx;
+	test_cerealize_coverage<OmnibusFPGA>();
 }

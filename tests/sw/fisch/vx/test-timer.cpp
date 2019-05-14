@@ -25,6 +25,20 @@ TEST(Timer, General)
 	EXPECT_EQ(other_config, config);
 }
 
+TEST(Timer, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	Timer obj;
+
+	auto messages = obj.encode_write(typename Timer::coordinate_type());
+
+	EXPECT_EQ(messages.size(), 1);
+	auto message = boost::get<ut_message_to_fpga<instruction::timing::setup>>(messages.at(0));
+	EXPECT_EQ(message, ut_message_to_fpga<instruction::timing::setup>());
+}
+
 TEST(Timer, Ostream)
 {
 	using namespace fisch::vx;

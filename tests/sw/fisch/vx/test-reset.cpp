@@ -32,6 +32,21 @@ TEST(ResetChip, General)
 	    boost::get<ut_message_to_fpga<instruction::system::reset>>(encoded.front()).decode(), true);
 }
 
+TEST(ResetChip, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	bool value = true;
+	ResetChip obj(value);
+
+	auto messages = obj.encode_write(typename ResetChip::coordinate_type());
+
+	EXPECT_EQ(messages.size(), 1);
+	auto message = boost::get<ut_message_to_fpga<instruction::system::reset>>(messages.at(0));
+	EXPECT_EQ(message.decode(), value);
+}
+
 TEST(ResetChip, Ostream)
 {
 	using namespace fisch::vx;

@@ -15,6 +15,20 @@ TEST(ResetJTAGTap, General)
 	EXPECT_EQ(other_config, config);
 }
 
+TEST(ResetJTAGTap, EncodeWrite)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	ResetJTAGTap obj;
+
+	auto messages = obj.encode_write(typename ResetJTAGTap::coordinate_type());
+
+	EXPECT_EQ(messages.size(), 1);
+	auto message = boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::init>>(messages.at(0));
+	EXPECT_EQ(message, ut_message_to_fpga<instruction::to_fpga_jtag::init>());
+}
+
 TEST(ResetJTAGTap, Ostream)
 {
 	using namespace fisch::vx;

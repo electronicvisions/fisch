@@ -26,6 +26,26 @@ TEST(JTAGIdCode, General)
 	EXPECT_NE(JTAGIdCode(), config);
 }
 
+TEST(JTAGIdCode, EncodeRead)
+{
+	using namespace fisch::vx;
+	using namespace hxcomm::vx;
+
+	JTAGIdCode obj;
+
+	auto messages = obj.encode_read(typename JTAGIdCode::coordinate_type());
+
+	EXPECT_EQ(messages.size(), 2);
+	auto message_ins =
+	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
+	EXPECT_EQ(message_ins.decode(), instruction::to_fpga_jtag::ins::IDCODE);
+	auto message_data =
+	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	EXPECT_EQ(message_data.decode().get_payload(), 0);
+	EXPECT_EQ(message_data.decode().get_keep_response(), true);
+	EXPECT_EQ(message_data.decode().get_num_bits(), sizeof(uint32_t) * CHAR_BIT);
+}
+
 TEST(JTAGIdCode, Ostream)
 {
 	using namespace fisch::vx;
