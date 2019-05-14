@@ -240,26 +240,28 @@ std::array<
     SPIDACControlRegister::encode_write_ut_message_count>
 SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 {
-	using address = hxcomm::vx::instruction::omnibus_to_fpga::address;
-	using data = hxcomm::vx::instruction::omnibus_to_fpga::data;
-
 	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
 
-	auto addr = hxcomm::vx::ut_message_to_fpga<address>(
-	    address::payload_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()), false));
+	auto addr =
+	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
 
 	constexpr uint32_t control_mask = 1 << 7;
 
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
-	ret[0] = addr;
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(control_mask | (coord.toSPIDACControlRegisterOnDAC().toEnum() << 5)));
+	auto encoded1 =
+	    OmnibusFPGA(OmnibusFPGA::value_type(
+	                    (control_mask | (coord.toSPIDACControlRegisterOnDAC().toEnum() << 5))))
+	        .encode_write(addr);
+	ret[0] = encoded1[0];
+	ret[1] = encoded1[1];
 
-	ret[2] = addr;
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(spi_over_omnibus_stop_bit | m_data.value()));
+	auto encoded2 =
+	    OmnibusFPGA(OmnibusFPGA::value_type((spi_over_omnibus_stop_bit | m_data.value())))
+	        .encode_write(addr);
+	ret[2] = encoded2[0];
+	ret[3] = encoded2[1];
 
 	return ret;
 }
