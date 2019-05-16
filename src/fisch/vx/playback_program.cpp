@@ -197,6 +197,12 @@ template <class ContainerT>
 void PlaybackProgramBuilder::write(
     typename ContainerT::coordinate_type const& coord, ContainerT const& config)
 {
+	if constexpr (ContainerT::encode_write_ut_message_count == 0) {
+		std::stringstream ss;
+		ss << config << " can't be written.";
+		throw std::logic_error(ss.str());
+	}
+
 	auto messages = config.encode_write(coord);
 	m_program->m_instructions.insert(
 	    m_program->m_instructions.end(), messages.begin(), messages.end());
@@ -212,9 +218,7 @@ void PlaybackProgramBuilder::write(
 	}
 
 	for (size_t i = 0; i < coords.size(); ++i) {
-		auto messages = configs[i].encode_write(coords[i]);
-		m_program->m_instructions.insert(
-		    m_program->m_instructions.end(), messages.begin(), messages.end());
+		write(coords[i], configs[i]);
 	}
 }
 
@@ -222,6 +226,13 @@ template <class ContainerT>
 PlaybackProgram::ContainerTicket<ContainerT> PlaybackProgramBuilder::read(
     typename ContainerT::coordinate_type const& coord)
 {
+	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
+		std::stringstream ss;
+
+		ss << "Coordinate " << coord << " can't be read.";
+		throw std::logic_error(ss.str());
+	}
+
 	auto messages = ContainerT::encode_read(coord);
 
 	m_program->m_instructions.insert(
@@ -244,6 +255,19 @@ template <class ContainerT>
 PlaybackProgram::ContainerVectorTicket<ContainerT> PlaybackProgramBuilder::read(
     std::vector<typename ContainerT::coordinate_type> const& coords)
 {
+	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
+		std::stringstream ss;
+		ss << "Coordinates [";
+		for (auto it = coords.cbegin(); it != coords.cend(); ++it) {
+			ss << *it;
+			if (it != (coords.cend() - 1)) {
+				ss << ", ";
+			}
+		}
+		ss << "] can't be read.";
+		throw std::logic_error(ss.str());
+	}
+
 	for (auto coord : coords) {
 		auto messages = ContainerT::encode_read(coord);
 
