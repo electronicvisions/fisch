@@ -75,7 +75,7 @@ public:
 
 	private:
 		ContainerVectorTicket(
-		    size_t container_count, size_t jtag_pos, std::shared_ptr<PlaybackProgram const> pbp);
+		    size_t container_count, size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
 
 		friend class PlaybackProgramBuilder;
 
