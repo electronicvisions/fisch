@@ -133,6 +133,13 @@ bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
 	return (queue_size >= (pos + (container_count * ContainerT::decode_ut_message_count)));
 }
 
+PlaybackProgram::PlaybackProgram() :
+    m_instructions(),
+    m_receive_queue_jtag(),
+    m_receive_queue_omnibus(),
+    m_decoder(m_receive_queue_jtag, m_receive_queue_omnibus)
+{}
+
 std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 {
 	auto const& messages = program.get_to_fpga_messages();
@@ -153,24 +160,7 @@ std::vector<PlaybackProgram::to_fpga_message_type> const& PlaybackProgram::get_t
 
 void PlaybackProgram::push_from_fpga_message(from_fpga_message_type const& message)
 {
-	if (auto jtag_message_ptr =
-	        boost::get<typename decltype(m_receive_queue_jtag)::value_type>(&message)) {
-		m_receive_queue_jtag.push_back(*jtag_message_ptr);
-	} else if (
-	    auto omnibus_message_ptr =
-	        boost::get<typename decltype(m_receive_queue_omnibus)::value_type>(&message)) {
-		m_receive_queue_omnibus.push_back(*omnibus_message_ptr);
-	} else if (boost::get<
-	               hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::from_fpga_system::Halt>>(
-	               &message)) {
-		// ignore halt response
-	} else {
-		std::stringstream ss;
-		ss << "Response message processing of ";
-		boost::apply_visitor([&ss](auto m) { ss << m; }, message);
-		ss << " unimplemented.";
-		throw std::runtime_error(ss.str());
-	}
+	m_decoder(message);
 }
 
 void PlaybackProgram::clear_from_fpga_messages()

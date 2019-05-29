@@ -4,6 +4,8 @@
 #include "fisch/vx/genpybind.h"
 #include "hxcomm/vx/utmessage.h"
 
+#include "fisch/vx/playback_decoder.h"
+
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
@@ -88,6 +90,9 @@ public:
 #include "fisch/vx/container.def"
 #endif // __GENPYBIND__
 
+	/** Default constructor */
+	PlaybackProgram();
+
 	/**
 	 * Print instruction UT messages to ostream.
 	 * @return Altered ostream
@@ -125,6 +130,8 @@ private:
 	    m_receive_queue_jtag;
 	std::vector<hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>>
 	    m_receive_queue_omnibus;
+
+	PlaybackDecoder m_decoder;
 };
 
 
