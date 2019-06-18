@@ -1,6 +1,4 @@
 #pragma once
-#define CEREAL_SERIALIZE_FUNCTION_NAME cerealize
-
 #include <cereal/cereal.hpp>
 
 #include <cereal/archives/binary.hpp>
@@ -11,11 +9,11 @@
 #include "hate/visibility.h"
 
 #define EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(CLASS_NAME)                                          \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::BinaryOutputArchive&);             \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::BinaryInputArchive&);              \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::PortableBinaryOutputArchive&);     \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::PortableBinaryInputArchive&);      \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::JSONOutputArchive&);               \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::JSONInputArchive&);                \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::XMLOutputArchive&);                \
-	template SYMBOL_VISIBLE void CLASS_NAME ::cerealize(cereal::XMLInputArchive&);
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::BinaryOutputArchive&);             \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::BinaryInputArchive&);              \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::PortableBinaryOutputArchive&);     \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::PortableBinaryInputArchive&);      \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::JSONOutputArchive&);               \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::JSONInputArchive&);                \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::XMLOutputArchive&);                \
+	template SYMBOL_VISIBLE void CLASS_NAME ::serialize(cereal::XMLInputArchive&);

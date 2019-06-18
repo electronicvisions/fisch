@@ -67,7 +67,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 
@@ -142,7 +142,7 @@ protected:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 typedef SpikePackToChip<1> SpikePack1ToChip GENPYBIND(opaque);
@@ -203,7 +203,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 
@@ -267,7 +267,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 
@@ -302,7 +302,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 
@@ -338,7 +338,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 } // namespace fisch::vx

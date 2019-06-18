@@ -2,6 +2,9 @@
 
 #include "fisch/vx/jtag.h"
 
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
+
 TEST(JTAGIdCode, General)
 {
 	using namespace fisch::vx;

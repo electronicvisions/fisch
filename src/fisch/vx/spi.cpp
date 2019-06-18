@@ -1,5 +1,6 @@
 #include <array>
 
+#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 #include "fisch/cerealization.h"
@@ -85,7 +86,7 @@ void SPIShiftRegister::decode(
 {}
 
 template <class Archive>
-void SPIShiftRegister::cerealize(Archive& ar)
+void SPIShiftRegister::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -177,7 +178,7 @@ void SPIDACDataRegister::decode(
 {}
 
 template <class Archive>
-void SPIDACDataRegister::cerealize(Archive& ar)
+void SPIDACDataRegister::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -258,7 +259,7 @@ void SPIDACControlRegister::decode(
 {}
 
 template <class Archive>
-void SPIDACControlRegister::cerealize(Archive& ar)
+void SPIDACControlRegister::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_data));
 }

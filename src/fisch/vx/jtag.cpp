@@ -1,5 +1,6 @@
 #include <array>
 
+#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 #include "fisch/cerealization.h"
@@ -44,7 +45,7 @@ void ResetJTAGTap::decode(
 {}
 
 template <class Archive>
-void ResetJTAGTap::cerealize(Archive& /*ar*/)
+void ResetJTAGTap::serialize(Archive& /*ar*/)
 {}
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetJTAGTap)
@@ -98,7 +99,7 @@ void JTAGClockScaler::decode(
 {}
 
 template <class Archive>
-void JTAGClockScaler::cerealize(Archive& ar)
+void JTAGClockScaler::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -199,7 +200,7 @@ void OmnibusChipOverJTAG::decode(
 }
 
 template <class Archive>
-void OmnibusChipOverJTAG::cerealize(Archive& ar)
+void OmnibusChipOverJTAG::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -266,7 +267,7 @@ void JTAGIdCode::decode(
 }
 
 template <class Archive>
-void JTAGIdCode::cerealize(Archive& ar)
+void JTAGIdCode::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -339,7 +340,7 @@ void JTAGPLLRegister::decode(
 {}
 
 template <class Archive>
-void JTAGPLLRegister::cerealize(Archive& ar)
+void JTAGPLLRegister::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -406,7 +407,7 @@ void JTAGPhyRegister::decode(
 {}
 
 template <class Archive>
-void JTAGPhyRegister::cerealize(Archive& ar)
+void JTAGPhyRegister::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 }

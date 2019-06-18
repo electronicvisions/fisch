@@ -1,6 +1,9 @@
 #include "fisch/vx/event.h"
 #include "fisch/cerealization.h"
 
+#include "cereal/types/array.hpp"
+#include "halco/common/cerealization_geometry.h"
+
 namespace fisch::vx {
 
 SpikeLabel::SpikeLabel() : m_neuron_label(), m_spl1_address() {}
@@ -48,7 +51,7 @@ bool SpikeLabel::operator!=(SpikeLabel const& other) const
 }
 
 template <class Archive>
-void SpikeLabel::cerealize(Archive& ar)
+void SpikeLabel::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_neuron_label));
 	ar(CEREAL_NVP(m_spl1_address));
@@ -121,7 +124,7 @@ void SpikePackToChip<NumPack>::decode(
 
 template <size_t NumPack>
 template <typename Archive>
-void SpikePackToChip<NumPack>::cerealize(Archive& ar)
+void SpikePackToChip<NumPack>::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_labels));
 }
@@ -180,7 +183,7 @@ bool SpikeFromChip::operator!=(SpikeFromChip const& other) const
 }
 
 template <class Archive>
-void SpikeFromChip::cerealize(Archive& ar)
+void SpikeFromChip::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_label));
 	ar(CEREAL_NVP(m_chip_time));
@@ -234,7 +237,7 @@ bool MADCSampleFromChip::operator!=(MADCSampleFromChip const& other) const
 }
 
 template <class Archive>
-void MADCSampleFromChip::cerealize(Archive& ar)
+void MADCSampleFromChip::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 	ar(CEREAL_NVP(m_chip_time));
@@ -281,7 +284,7 @@ bool SpikeFromChipEvent::operator!=(SpikeFromChipEvent const& other) const
 }
 
 template <class Archive>
-void SpikeFromChipEvent::cerealize(Archive& ar)
+void SpikeFromChipEvent::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_spike));
 	ar(CEREAL_NVP(m_fpga_time));
@@ -328,7 +331,7 @@ bool MADCSampleFromChipEvent::operator!=(MADCSampleFromChipEvent const& other) c
 }
 
 template <class Archive>
-void MADCSampleFromChipEvent::cerealize(Archive& ar)
+void MADCSampleFromChipEvent::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_sample));
 	ar(CEREAL_NVP(m_fpga_time));

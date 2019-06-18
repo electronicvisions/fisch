@@ -1,9 +1,11 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "fisch/cerealization.h"
 #include "fisch/vx/reset.h"
 
 #include "test-macros.h"
+
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 using namespace fisch::vx;
 

@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 
-#include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
+
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 template <typename T>
 void test_omnibus_general()

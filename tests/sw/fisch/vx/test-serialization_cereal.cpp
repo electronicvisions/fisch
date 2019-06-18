@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "fisch/cerealization.h"
 #include "fisch/vx/event.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
@@ -8,6 +7,9 @@
 #include "fisch/vx/spi.h"
 #include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
+
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 using namespace fisch::vx;
 

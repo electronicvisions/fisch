@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "fisch/cerealization.h"
 #include "fisch/vx/timer.h"
+
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(Timer, General)
 {

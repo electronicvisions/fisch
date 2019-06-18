@@ -1,5 +1,8 @@
 #include "fisch/vx/timer.h"
 
+#include "fisch/cerealization.h"
+#include "halco/common/cerealization_geometry.h"
+
 namespace fisch::vx {
 
 Timer::Timer(Value const value) : m_value(value) {}
@@ -53,7 +56,7 @@ void Timer::decode(
 {}
 
 template <class Archive>
-void Timer::cerealize(Archive& ar)
+void Timer::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_value));
 }

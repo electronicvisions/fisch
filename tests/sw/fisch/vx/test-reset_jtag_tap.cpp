@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "fisch/cerealization.h"
 #include "fisch/vx/jtag.h"
+
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(ResetJTAGTap, General)
 {

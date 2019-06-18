@@ -63,7 +63,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 
@@ -117,7 +117,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void cerealize(Archive& ar);
+	void serialize(Archive& ar);
 };
 
 } // namespace fisch::vx

@@ -1,5 +1,6 @@
 #include <array>
 
+#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 #include "fisch/cerealization.h"
@@ -72,7 +73,7 @@ namespace fisch::vx {
 	}                                                                                              \
                                                                                                    \
 	template <class Archive>                                                                       \
-	void Name::cerealize(Archive& ar)                                                              \
+	void Name::serialize(Archive& ar)                                                              \
 	{                                                                                              \
 		ar(CEREAL_NVP(m_data));                                                                    \
 	}                                                                                              \

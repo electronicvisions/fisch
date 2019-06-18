@@ -51,7 +51,7 @@ void SystimeSync::decode(
 {}
 
 template <class Archive>
-void SystimeSync::cerealize(Archive& ar)
+void SystimeSync::serialize(Archive& ar)
 {
 	ar(CEREAL_NVP(m_do_sync));
 }
