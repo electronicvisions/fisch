@@ -37,20 +37,20 @@ bool Timer::operator!=(Timer const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, Timer::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_read_ut_message_count>
 Timer::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, Timer::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_write_ut_message_count>
 Timer::encode_write(coordinate_type const& /* coord */) const
 {
-	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::setup>()};
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>()};
 }
 
 void Timer::decode(
-    std::array<hxcomm::vx::ut_message_from_fpga_variant, Timer::decode_ut_message_count> const&
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, Timer::decode_ut_message_count> const&
     /*messages*/)
 {}
 

@@ -39,35 +39,35 @@ TEST(SPIShiftRegister, EncodeWrite)
 	auto messages = obj.encode_write(coord);
 
 	EXPECT_EQ(messages.size(), 6);
-	auto addr = ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
-	    instruction::omnibus_to_fpga::address::payload_type(
+	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	    instruction::omnibus_to_fpga::Address::Payload(
 	        1ul | spi_over_omnibus_mask | executor_omnibus_mask, false));
 
 	auto message_addr_1 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(message_addr_1, addr);
 	auto message_data_1 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
-	    message_data_1, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
-	                        instruction::omnibus_to_fpga::data::payload_type(0x12)));
+	    message_data_1, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
+	                        instruction::omnibus_to_fpga::Data::Payload(0x12)));
 	auto message_addr_2 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(2));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
 	EXPECT_EQ(message_addr_2, addr);
 	auto message_data_2 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(3));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(3));
 	EXPECT_EQ(
-	    message_data_2, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
-	                        instruction::omnibus_to_fpga::data::payload_type(0x34)));
+	    message_data_2, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
+	                        instruction::omnibus_to_fpga::Data::Payload(0x34)));
 	auto message_addr_3 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(4));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(4));
 	EXPECT_EQ(message_addr_3, addr);
 	auto message_data_3 =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(5));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(5));
 	EXPECT_EQ(
 	    message_data_3,
-	    ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
-	        instruction::omnibus_to_fpga::data::payload_type(executor_omnibus_mask | 0x56)));
+	    UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
+	        instruction::omnibus_to_fpga::Data::Payload(executor_omnibus_mask | 0x56)));
 }
 
 TEST(SPIShiftRegister, Ostream)

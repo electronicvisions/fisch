@@ -31,8 +31,7 @@ ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
 	if (!valid()) {
 		throw std::runtime_error("Data not available.");
 	}
-	std::array<hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
-	    messages;
+	std::array<hxcomm::vx::UTMessageFromFPGAVariant, ContainerT::decode_ut_message_count> messages;
 	decltype(pbp->m_receive_queue_jtag.cbegin()) it;
 	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		// FIXME: unnecessary copy, Issue 3132
@@ -87,8 +86,7 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 
 	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
 		for (size_t c = 0; c < container_count; ++c) {
-			std::array<
-			    hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
+			std::array<hxcomm::vx::UTMessageFromFPGAVariant, ContainerT::decode_ut_message_count>
 			    messages;
 			// FIXME: unnecessary copy, Issue 3132
 			std::copy(
@@ -103,8 +101,7 @@ std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get(
 		}
 	} else if (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
 		for (size_t c = 0; c < container_count; ++c) {
-			std::array<
-			    hxcomm::vx::ut_message_from_fpga_variant, ContainerT::decode_ut_message_count>
+			std::array<hxcomm::vx::UTMessageFromFPGAVariant, ContainerT::decode_ut_message_count>
 			    messages;
 			// FIXME: unnecessary copy, Issue 3132
 			std::copy(
@@ -163,8 +160,9 @@ void PlaybackProgram::push_from_fpga_message(from_fpga_message_type const& messa
 	    auto omnibus_message_ptr =
 	        boost::get<typename decltype(m_receive_queue_omnibus)::value_type>(&message)) {
 		m_receive_queue_omnibus.push_back(*omnibus_message_ptr);
-	} else if (boost::get<hxcomm::vx::ut_message_from_fpga<
-	               hxcomm::vx::instruction::from_fpga_system::halt>>(&message)) {
+	} else if (boost::get<
+	               hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::from_fpga_system::Halt>>(
+	               &message)) {
 		// ignore halt response
 	} else {
 		std::stringstream ss;
@@ -193,7 +191,7 @@ void PlaybackProgramBuilder::wait_until(
     Timer::coordinate_type const& /* coord */, Timer::Value time)
 {
 	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::timing::wait_until>(time.value()));
+	    hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::WaitUntil>(time.value()));
 }
 
 template <class ContainerT>
@@ -300,7 +298,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 void PlaybackProgramBuilder::halt()
 {
 	m_program->m_instructions.push_back(
-	    hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::halt>());
+	    hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>());
 }
 
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()

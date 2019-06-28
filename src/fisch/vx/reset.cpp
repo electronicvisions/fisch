@@ -31,21 +31,21 @@ bool ResetChip::operator!=(ResetChip const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetChip::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetChip::encode_read_ut_message_count>
 ResetChip::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetChip::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetChip::encode_write_ut_message_count>
 ResetChip::encode_write(coordinate_type const& /* coord */) const
 {
-	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::system::reset>(
-	    hxcomm::vx::instruction::system::reset::payload_type(m_value))};
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Reset>(
+	    hxcomm::vx::instruction::system::Reset::Payload(m_value))};
 }
 
 void ResetChip::decode(
-    std::array<hxcomm::vx::ut_message_from_fpga_variant, ResetChip::decode_ut_message_count> const&
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, ResetChip::decode_ut_message_count> const&
     /*messages*/)
 {}
 

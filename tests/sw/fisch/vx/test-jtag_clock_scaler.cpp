@@ -53,7 +53,7 @@ TEST(JTAGClockScaler, EncodeWrite)
 	auto messages = obj.encode_write(typename JTAGClockScaler::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::scaler>>(messages.at(0));
+	auto message = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Scaler>>(messages.at(0));
 	EXPECT_EQ(message.decode().value(), obj.get());
 }
 

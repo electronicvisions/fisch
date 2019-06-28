@@ -38,26 +38,26 @@ TEST(OmnibusChipOverJTAG, EncodeRead)
 
 	EXPECT_EQ(messages.size(), 6);
 	auto message_ins_1 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
-	EXPECT_EQ(message_ins_1.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_ADDRESS);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
+	EXPECT_EQ(message_ins_1.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_ADDRESS);
 	auto message_data_1 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data_1.decode().get_payload(), (1ull << 32) | coord.toEnum().value());
 	EXPECT_EQ(message_data_1.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data_1.decode().get_num_bits(), 33);
 	auto message_ins_2 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(2));
-	EXPECT_EQ(message_ins_2.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_REQUEST);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(2));
+	EXPECT_EQ(message_ins_2.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_REQUEST);
 	auto message_data_2 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(3));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(3));
 	EXPECT_EQ(message_data_2.decode().get_payload(), 0);
 	EXPECT_EQ(message_data_2.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data_2.decode().get_num_bits(), 3);
 	auto message_ins_3 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(4));
-	EXPECT_EQ(message_ins_3.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_DATA);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(4));
+	EXPECT_EQ(message_ins_3.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_DATA);
 	auto message_data_3 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(5));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(5));
 	EXPECT_EQ(message_data_3.decode().get_payload(), 0);
 	EXPECT_EQ(message_data_3.decode().get_keep_response(), true);
 	EXPECT_EQ(message_data_3.decode().get_num_bits(), sizeof(uint32_t) * CHAR_BIT);
@@ -76,26 +76,26 @@ TEST(OmnibusChipOverJTAG, EncodeWrite)
 
 	EXPECT_EQ(messages.size(), 6);
 	auto message_ins_1 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
-	EXPECT_EQ(message_ins_1.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_ADDRESS);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
+	EXPECT_EQ(message_ins_1.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_ADDRESS);
 	auto message_data_1 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data_1.decode().get_payload(), coord.toEnum().value());
 	EXPECT_EQ(message_data_1.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data_1.decode().get_num_bits(), 33);
 	auto message_ins_2 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(2));
-	EXPECT_EQ(message_ins_2.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_DATA);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(2));
+	EXPECT_EQ(message_ins_2.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_DATA);
 	auto message_data_2 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(3));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(3));
 	EXPECT_EQ(message_data_2.decode().get_payload(), obj.get().value());
 	EXPECT_EQ(message_data_2.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data_2.decode().get_num_bits(), sizeof(uint32_t) * CHAR_BIT);
 	auto message_ins_3 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(4));
-	EXPECT_EQ(message_ins_3.decode().value(), instruction::to_fpga_jtag::ins::OMNIBUS_REQUEST);
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(4));
+	EXPECT_EQ(message_ins_3.decode().value(), instruction::to_fpga_jtag::Ins::OMNIBUS_REQUEST);
 	auto message_data_3 =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(5));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(5));
 	EXPECT_EQ(message_data_3.decode().get_payload(), 0);
 	EXPECT_EQ(message_data_3.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data_3.decode().get_num_bits(), 3);
@@ -108,10 +108,10 @@ TEST(OmnibusChipOverJTAG, Decode)
 
 	OmnibusChipOverJTAG obj;
 
-	ut_message_from_fpga<instruction::jtag_from_hicann::data> message(
-	    instruction::jtag_from_hicann::data::payload_type(0x123));
+	UTMessageFromFPGA<instruction::jtag_from_hicann::Data> message(
+	    instruction::jtag_from_hicann::Data::Payload(0x123));
 
-	std::array<ut_message_from_fpga_variant, 1> messages{message};
+	std::array<UTMessageFromFPGAVariant, 1> messages{message};
 
 	obj.decode(messages);
 	EXPECT_EQ(obj.get(), 0x123);

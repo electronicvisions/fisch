@@ -29,7 +29,7 @@ TEST(ResetChip, General)
 	auto encoded = config2.encode_write(ResetChip::coordinate_type());
 	using namespace hxcomm::vx;
 	EXPECT_EQ(
-	    boost::get<ut_message_to_fpga<instruction::system::reset>>(encoded.front()).decode(), true);
+	    boost::get<UTMessageToFPGA<instruction::system::Reset>>(encoded.front()).decode(), true);
 }
 
 TEST(ResetChip, EncodeWrite)
@@ -43,7 +43,7 @@ TEST(ResetChip, EncodeWrite)
 	auto messages = obj.encode_write(typename ResetChip::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<ut_message_to_fpga<instruction::system::reset>>(messages.at(0));
+	auto message = boost::get<UTMessageToFPGA<instruction::system::Reset>>(messages.at(0));
 	EXPECT_EQ(message.decode(), value);
 }
 

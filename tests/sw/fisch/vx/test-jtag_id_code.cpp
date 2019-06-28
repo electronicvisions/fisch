@@ -14,8 +14,8 @@ TEST(JTAGIdCode, General)
 	EXPECT_EQ(config.get(), JTAGIdCode::Value());
 
 	JTAGIdCode::Value id(0x12345678);
-	hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> message(
-	    hxcomm::vx::instruction::jtag_from_hicann::data::payload_type(id.value()));
+	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data> message(
+	    hxcomm::vx::instruction::jtag_from_hicann::Data::Payload(id.value()));
 
 	config.decode({message});
 	EXPECT_EQ(config.get(), id);
@@ -36,11 +36,10 @@ TEST(JTAGIdCode, EncodeRead)
 	auto messages = obj.encode_read(typename JTAGIdCode::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 2);
-	auto message_ins =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
-	EXPECT_EQ(message_ins.decode(), instruction::to_fpga_jtag::ins::IDCODE);
+	auto message_ins = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
+	EXPECT_EQ(message_ins.decode(), instruction::to_fpga_jtag::Ins::IDCODE);
 	auto message_data =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data.decode().get_payload(), 0);
 	EXPECT_EQ(message_data.decode().get_keep_response(), true);
 	EXPECT_EQ(message_data.decode().get_num_bits(), sizeof(uint32_t) * CHAR_BIT);
@@ -53,8 +52,8 @@ TEST(JTAGIdCode, Ostream)
 	JTAGIdCode obj;
 
 	JTAGIdCode::Value id(0x12345678);
-	hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> message(
-	    hxcomm::vx::instruction::jtag_from_hicann::data::payload_type(id.value()));
+	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data> message(
+	    hxcomm::vx::instruction::jtag_from_hicann::Data::Payload(id.value()));
 
 	obj.decode({message});
 
@@ -70,8 +69,8 @@ TEST(JTAGIdCode, CerealizeCoverage)
 
 	JTAGIdCode obj1, obj2;
 	JTAGIdCode::Value id(0x12345678);
-	hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> message(
-	    hxcomm::vx::instruction::jtag_from_hicann::data::payload_type(id.value()));
+	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data> message(
+	    hxcomm::vx::instruction::jtag_from_hicann::Data::Payload(id.value()));
 	obj1.decode({message});
 
 	std::ostringstream ostream;

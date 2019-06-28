@@ -41,11 +41,10 @@ TEST(JTAGPhyRegister, EncodeWrite)
 	auto messages = obj.encode_write(coord);
 
 	EXPECT_EQ(messages.size(), 2);
-	auto message_ins =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::ins>>(messages.at(0));
+	auto message_ins = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
 	EXPECT_EQ(message_ins.decode().value(), 92);
 	auto message_data =
-	    boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data.decode().get_payload(), 12);
 	EXPECT_EQ(message_data.decode().get_keep_response(), false);
 	EXPECT_EQ(message_data.decode().get_num_bits(), 22);

@@ -60,12 +60,13 @@ public:
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
-	encode_read(coordinate_type const& coord) GENPYBIND(hidden);
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> encode_write(
+	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
+	    coordinate_type const& coord) GENPYBIND(hidden);
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
-	                messages) GENPYBIND(hidden);
+	void decode(
+	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
+	    GENPYBIND(hidden);
 
 private:
 	Value m_value;

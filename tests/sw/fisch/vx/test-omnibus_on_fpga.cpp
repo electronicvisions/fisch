@@ -50,11 +50,11 @@ void test_omnibus_encode_read()
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message_addr =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(
 	    message_addr,
-	    ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
-	        instruction::omnibus_to_fpga::address::payload_type(AddressMask | coord, true)));
+	    UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	        instruction::omnibus_to_fpga::Address::Payload(AddressMask | coord, true)));
 }
 
 TEST(OmnibusChip, EncodeRead)
@@ -83,16 +83,16 @@ void test_omnibus_encode_write()
 
 	EXPECT_EQ(messages.size(), 2);
 	auto message_addr =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::address>>(messages.at(0));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(
 	    message_addr,
-	    ut_message_to_fpga<instruction::omnibus_to_fpga::address>(
-	        instruction::omnibus_to_fpga::address::payload_type(AddressMask | coord, false)));
+	    UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	        instruction::omnibus_to_fpga::Address::Payload(AddressMask | coord, false)));
 	auto message_data =
-	    boost::get<ut_message_to_fpga<instruction::omnibus_to_fpga::data>>(messages.at(1));
+	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
-	    message_data, ut_message_to_fpga<instruction::omnibus_to_fpga::data>(
-	                      instruction::omnibus_to_fpga::data::payload_type(obj.get().value())));
+	    message_data, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
+	                      instruction::omnibus_to_fpga::Data::Payload(obj.get().value())));
 }
 
 TEST(OmnibusChip, EncodeWrite)
@@ -114,10 +114,10 @@ void test_omnibus_decode()
 
 	T obj;
 
-	ut_message_from_fpga<instruction::omnibus_from_fpga::data> message(
-	    instruction::omnibus_from_fpga::data::payload_type(0x123));
+	UTMessageFromFPGA<instruction::omnibus_from_fpga::Data> message(
+	    instruction::omnibus_from_fpga::Data::Payload(0x123));
 
-	std::array<ut_message_from_fpga_variant, 1> messages{message};
+	std::array<UTMessageFromFPGAVariant, 1> messages{message};
 
 	obj.decode(messages);
 	EXPECT_EQ(obj.get(), 0x123);

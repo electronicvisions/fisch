@@ -95,8 +95,8 @@ public:
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program);
 
-	typedef hxcomm::vx::ut_message_to_fpga_variant to_fpga_message_type;
-	typedef hxcomm::vx::ut_message_from_fpga_variant from_fpga_message_type;
+	typedef hxcomm::vx::UTMessageToFPGAVariant to_fpga_message_type;
+	typedef hxcomm::vx::UTMessageFromFPGAVariant from_fpga_message_type;
 
 	/**
 	 * Get to FPGA instruction sequence.
@@ -121,9 +121,9 @@ private:
 	friend class PlaybackProgramBuilder;
 
 	std::vector<to_fpga_message_type> m_instructions;
-	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::jtag_from_hicann::data> >
+	std::vector<hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>>
 	    m_receive_queue_jtag;
-	std::vector<hxcomm::vx::ut_message_from_fpga<hxcomm::vx::instruction::omnibus_from_fpga::data> >
+	std::vector<hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>>
 	    m_receive_queue_omnibus;
 };
 

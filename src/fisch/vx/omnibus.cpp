@@ -36,41 +36,40 @@ namespace fisch::vx {
                                                                                                    \
 	bool Name::operator!=(Name const& other) const { return !(*this == other); }                   \
                                                                                                    \
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, Name::encode_read_ut_message_count>         \
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, Name::encode_read_ut_message_count>             \
 	Name::encode_read(coordinate_type const& coord)                                                \
 	{                                                                                              \
-		using address = hxcomm::vx::instruction::omnibus_to_fpga::address;                         \
+		using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;                         \
                                                                                                    \
-		std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count> ret;      \
+		std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;          \
                                                                                                    \
-		ret[0] = hxcomm::vx::ut_message_to_fpga<address>(                                          \
-		    address::payload_type(coord.value() | AddressMask, true));                             \
+		ret[0] = hxcomm::vx::UTMessageToFPGA<address>(                                             \
+		    address::Payload(coord.value() | AddressMask, true));                                  \
 		return ret;                                                                                \
 	}                                                                                              \
                                                                                                    \
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, Name::encode_write_ut_message_count>        \
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, Name::encode_write_ut_message_count>            \
 	Name::encode_write(coordinate_type const& coord) const                                         \
 	{                                                                                              \
-		using address = hxcomm::vx::instruction::omnibus_to_fpga::address;                         \
-		using data = hxcomm::vx::instruction::omnibus_to_fpga::data;                               \
+		using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;                         \
+		using data = hxcomm::vx::instruction::omnibus_to_fpga::Data;                               \
                                                                                                    \
-		std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;     \
+		std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;         \
                                                                                                    \
-		ret[0] = hxcomm::vx::ut_message_to_fpga<address>(                                          \
-		    address::payload_type(coord.value() | AddressMask, false));                            \
+		ret[0] = hxcomm::vx::UTMessageToFPGA<address>(                                             \
+		    address::Payload(coord.value() | AddressMask, false));                                 \
                                                                                                    \
-		ret[1] = hxcomm::vx::ut_message_to_fpga<data>(data::payload_type(m_data.value()));         \
+		ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.value()));                 \
                                                                                                    \
 		return ret;                                                                                \
 	}                                                                                              \
                                                                                                    \
 	void Name::decode(                                                                             \
-	    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&       \
-	        messages)                                                                              \
+	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages) \
 	{                                                                                              \
-		using data = hxcomm::vx::instruction::omnibus_from_fpga::data;                             \
+		using data = hxcomm::vx::instruction::omnibus_from_fpga::Data;                             \
                                                                                                    \
-		auto data_message = boost::get<hxcomm::vx::ut_message_from_fpga<data> >(messages[0]);      \
+		auto data_message = boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]);         \
 		m_data = value_type(static_cast<uint32_t>(data_message.get_payload()));                    \
 	}                                                                                              \
                                                                                                    \

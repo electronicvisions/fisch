@@ -46,16 +46,16 @@ bool SPIShiftRegister::operator!=(SPIShiftRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, SPIShiftRegister::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIShiftRegister::encode_read_ut_message_count>
 SPIShiftRegister::encode_read(coordinate_type const& /*coord*/)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, SPIShiftRegister::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIShiftRegister::encode_write_ut_message_count>
 SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 {
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
 	auto addr = OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | 1);
 
@@ -82,9 +82,8 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 	return ret;
 }
 
-void SPIShiftRegister::decode(std::array<
-                              hxcomm::vx::ut_message_from_fpga_variant,
-                              decode_ut_message_count> const& /*messages*/)
+void SPIShiftRegister::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
 {}
 
 template <class Archive>
@@ -131,17 +130,16 @@ bool SPIDACDataRegister::operator!=(SPIDACDataRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, SPIDACDataRegister::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACDataRegister::encode_read_ut_message_count>
 SPIDACDataRegister::encode_read(coordinate_type const& /*coord*/)
 {
 	return {};
 }
 
-std::
-    array<hxcomm::vx::ut_message_to_fpga_variant, SPIDACDataRegister::encode_write_ut_message_count>
-    SPIDACDataRegister::encode_write(coordinate_type const& coord) const
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACDataRegister::encode_write_ut_message_count>
+SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 {
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
 	auto addr =
 	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
@@ -178,9 +176,8 @@ std::
 	return ret;
 }
 
-void SPIDACDataRegister::decode(std::array<
-                                hxcomm::vx::ut_message_from_fpga_variant,
-                                decode_ut_message_count> const& /*messages*/)
+void SPIDACDataRegister::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
 {}
 
 template <class Archive>
@@ -227,20 +224,16 @@ bool SPIDACControlRegister::operator!=(SPIDACControlRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<
-    hxcomm::vx::ut_message_to_fpga_variant,
-    SPIDACControlRegister::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACControlRegister::encode_read_ut_message_count>
 SPIDACControlRegister::encode_read(coordinate_type const& /*coord*/)
 {
 	return {};
 }
 
-std::array<
-    hxcomm::vx::ut_message_to_fpga_variant,
-    SPIDACControlRegister::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACControlRegister::encode_write_ut_message_count>
 SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 {
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
 	auto addr =
 	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
@@ -266,9 +259,8 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void SPIDACControlRegister::decode(std::array<
-                                   hxcomm::vx::ut_message_from_fpga_variant,
-                                   decode_ut_message_count> const& /*messages*/)
+void SPIDACControlRegister::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
 {}
 
 template <class Archive>

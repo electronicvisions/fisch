@@ -25,8 +25,8 @@ TEST(ResetJTAGTap, EncodeWrite)
 	auto messages = obj.encode_write(typename ResetJTAGTap::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<ut_message_to_fpga<instruction::to_fpga_jtag::init>>(messages.at(0));
-	EXPECT_EQ(message, ut_message_to_fpga<instruction::to_fpga_jtag::init>());
+	auto message = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Init>>(messages.at(0));
+	EXPECT_EQ(message, UTMessageToFPGA<instruction::to_fpga_jtag::Init>());
 }
 
 TEST(ResetJTAGTap, Ostream)

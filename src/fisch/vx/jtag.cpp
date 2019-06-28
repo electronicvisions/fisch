@@ -27,21 +27,20 @@ bool ResetJTAGTap::operator!=(ResetJTAGTap const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetJTAGTap::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetJTAGTap::encode_read_ut_message_count>
 ResetJTAGTap::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, ResetJTAGTap::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetJTAGTap::encode_write_ut_message_count>
 ResetJTAGTap::encode_write(coordinate_type const& /* coord */) const
 {
-	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::init>()};
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Init>()};
 }
 
-void ResetJTAGTap::decode(std::array<
-                          hxcomm::vx::ut_message_from_fpga_variant,
-                          decode_ut_message_count> const& /* messages */)
+void ResetJTAGTap::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
 {}
 
 template <class Archive>
@@ -82,22 +81,21 @@ bool JTAGClockScaler::operator!=(JTAGClockScaler const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGClockScaler::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGClockScaler::encode_read_ut_message_count>
 JTAGClockScaler::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGClockScaler::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGClockScaler::encode_write_ut_message_count>
 JTAGClockScaler::encode_write(coordinate_type const& /* coord */) const
 {
-	return {hxcomm::vx::ut_message_to_fpga<hxcomm::vx::instruction::to_fpga_jtag::scaler>(
-	    hxcomm::vx::instruction::to_fpga_jtag::scaler::payload_type(m_value.value()))};
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Scaler>(
+	    hxcomm::vx::instruction::to_fpga_jtag::Scaler::Payload(m_value.value()))};
 }
 
-void JTAGClockScaler::decode(std::array<
-                             hxcomm::vx::ut_message_from_fpga_variant,
-                             decode_ut_message_count> const& /* messages */)
+void JTAGClockScaler::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
 {}
 
 template <class Archive>
@@ -144,67 +142,61 @@ bool OmnibusChipOverJTAG::operator!=(OmnibusChipOverJTAG const& other) const
 	return !(*this == other);
 }
 
-std::
-    array<hxcomm::vx::ut_message_to_fpga_variant, OmnibusChipOverJTAG::encode_read_ut_message_count>
-    OmnibusChipOverJTAG::encode_read(coordinate_type const& coord)
+std::array<hxcomm::vx::UTMessageToFPGAVariant, OmnibusChipOverJTAG::encode_read_ut_message_count>
+OmnibusChipOverJTAG::encode_read(coordinate_type const& coord)
 {
-	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
-	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count> ret;
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
 
-	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_ADDRESS);
+	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS);
 
 	hate::bitset<sizeof(value_type) * CHAR_BIT + 1> addr(coord.value());
 	addr.set(addr.size - 1, true);
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(addr.size), addr));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(addr.size), addr));
 
-	ret[2] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_REQUEST);
+	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST);
 
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(3), 0));
+	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0));
 
-	ret[4] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_DATA);
+	ret[4] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA);
 
-	ret[5] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(true, data::payload_type::NumBits(32), 0));
+	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0));
 	return ret;
 }
 
-std::array<
-    hxcomm::vx::ut_message_to_fpga_variant,
-    OmnibusChipOverJTAG::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, OmnibusChipOverJTAG::encode_write_ut_message_count>
 OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 {
-	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
-	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
-	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_ADDRESS);
+	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS);
 
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(33), coord.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(33), coord.value()));
 
-	ret[2] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_DATA);
+	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA);
 
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(32), m_data.value()));
+	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(32), m_data.value()));
 
-	ret[4] = hxcomm::vx::ut_message_to_fpga<ins>(ins::OMNIBUS_REQUEST);
+	ret[4] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST);
 
-	ret[5] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(3), 0));
+	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0));
 	return ret;
 }
 
 void OmnibusChipOverJTAG::decode(
-    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const& messages)
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
 {
-	using data = hxcomm::vx::instruction::jtag_from_hicann::data;
+	using data = hxcomm::vx::instruction::jtag_from_hicann::Data;
 
-	auto data_message = boost::get<hxcomm::vx::ut_message_from_fpga<data> >(messages[0]);
+	auto data_message = boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]);
 	m_data = value_type(static_cast<uint32_t>(data_message.get_payload()));
 }
 
@@ -241,33 +233,32 @@ bool JTAGIdCode::operator!=(JTAGIdCode const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGIdCode::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGIdCode::encode_read_ut_message_count>
 JTAGIdCode::encode_read(coordinate_type const& /* coord */)
 {
-	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
-	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count> ret;
-	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::IDCODE);
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
+	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::IDCODE);
 
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(true, data::payload_type::NumBits(32), 0));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0));
 	return ret;
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGIdCode::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGIdCode::encode_write_ut_message_count>
 JTAGIdCode::encode_write(coordinate_type const& /* coord */) const
 {
 	return {};
 }
 
 void JTAGIdCode::decode(
-    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const& messages)
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
 {
-	using data = hxcomm::vx::instruction::jtag_from_hicann::data;
+	using data = hxcomm::vx::instruction::jtag_from_hicann::Data;
 
 	m_value = Value(static_cast<uint32_t>(
-	    boost::get<hxcomm::vx::ut_message_from_fpga<data> >(messages[0]).decode()));
+	    boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]).decode()));
 }
 
 template <class Archive>
@@ -309,33 +300,33 @@ bool JTAGPLLRegister::operator!=(JTAGPLLRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPLLRegister::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPLLRegister::encode_read_ut_message_count>
 JTAGPLLRegister::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPLLRegister::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPLLRegister::encode_write_ut_message_count>
 JTAGPLLRegister::encode_write(coordinate_type const& coord) const
 {
-	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
-	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
-	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(ins::PLL_TARGET_REG);
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
+	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::PLL_TARGET_REG);
 
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(3), coord.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(3), coord.value()));
 
-	ret[2] = hxcomm::vx::ut_message_to_fpga<ins>(ins::SHIFT_PLL);
+	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::SHIFT_PLL);
 
-	ret[3] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(32), m_value.value()));
+	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(32), m_value.value()));
 	return ret;
 }
 
 void JTAGPLLRegister::decode(
-    std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const&
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const&
     /*messages*/)
 {}
 
@@ -382,31 +373,29 @@ bool JTAGPhyRegister::operator!=(JTAGPhyRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPhyRegister::encode_read_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPhyRegister::encode_read_ut_message_count>
 JTAGPhyRegister::encode_read(coordinate_type const& /* coord */)
 {
 	return {};
 }
 
-std::array<hxcomm::vx::ut_message_to_fpga_variant, JTAGPhyRegister::encode_write_ut_message_count>
+std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPhyRegister::encode_write_ut_message_count>
 JTAGPhyRegister::encode_write(coordinate_type const& coord) const
 {
-	using ins = hxcomm::vx::instruction::to_fpga_jtag::ins;
-	using data = hxcomm::vx::instruction::to_fpga_jtag::data;
+	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
+	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count> ret;
-	ret[0] = hxcomm::vx::ut_message_to_fpga<ins>(
-	    ins::payload_type((1 << 6) | (coord.toEnum() << 3) | 4));
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
+	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::Payload((1 << 6) | (coord.toEnum() << 3) | 4));
 
-	ret[1] = hxcomm::vx::ut_message_to_fpga<data>(
-	    data::payload_type(false, data::payload_type::NumBits(22), m_value.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(22), m_value.value()));
 
 	return ret;
 }
 
-void JTAGPhyRegister::decode(std::array<
-                             hxcomm::vx::ut_message_from_fpga_variant,
-                             decode_ut_message_count> const& /* messages */)
+void JTAGPhyRegister::decode(
+    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
 {}
 
 template <class Archive>
