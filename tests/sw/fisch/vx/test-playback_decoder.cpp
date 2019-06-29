@@ -27,7 +27,7 @@ TEST(PlaybackDecoder, JTAG)
 	PlaybackDecoder decoder(
 	    response_queue, spike_queue, madc_sample_queue, spike_pack_counts, madc_sample_pack_counts);
 
-	decoder(UTMessageFromFPGA<instruction::from_fpga_system::Halt>());
+	decoder(UTMessageFromFPGA<instruction::from_fpga_system::Loopback>());
 	boost::hana::for_each(response_queue, [](auto const& q) { EXPECT_EQ(q.size(), 0); });
 
 	auto jtag_message =

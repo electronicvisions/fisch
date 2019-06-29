@@ -92,6 +92,8 @@ public:
 	    ut_message_from_fpga_jtag_type;
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
 	    ut_message_from_fpga_omnibus_type;
+	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::from_fpga_system::Loopback>
+	    ut_message_from_fpga_loopback_type;
 
 	typedef typename ToResponseQueueTuple<detail::decode_message_types>::type response_queue_type;
 	typedef std::vector<SpikeFromChipEvent> spike_queue_type;
@@ -134,9 +136,7 @@ private:
 	void process(ut_message_from_fpga_jtag_type const& message);
 	void process(ut_message_from_fpga_omnibus_type const& message);
 
-	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::from_fpga_system::Halt>
-	    ut_message_from_fpga_halt_type;
-	void process(ut_message_from_fpga_halt_type const& message);
+	void process(ut_message_from_fpga_loopback_type const& message);
 
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::timing_from_fpga::Systime>
 	    ut_message_from_fpga_systime_type;

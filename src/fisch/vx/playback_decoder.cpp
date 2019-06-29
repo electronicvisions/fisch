@@ -50,8 +50,13 @@ void PlaybackDecoder::process(ut_message_from_fpga_omnibus_type const& message)
 	    .push_back(message, m_time_current);
 }
 
-void PlaybackDecoder::process(ut_message_from_fpga_halt_type const&)
-{ /* do nothing */
+void PlaybackDecoder::process(ut_message_from_fpga_loopback_type const& message)
+{
+	if (message.decode() == ut_message_from_fpga_loopback_type::instruction_type::halt) {
+		/* do nothing */
+	} else {
+		/* do nothing until container using is present */
+	}
 }
 
 void PlaybackDecoder::process(ut_message_from_fpga_systime_type const& message)
