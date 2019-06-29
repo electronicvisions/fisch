@@ -3,6 +3,11 @@
 namespace fisch::vx {
 
 template <class Connection>
+template<class... Args>
+PlaybackProgramExecutor<Connection>::PlaybackProgramExecutor(Args... args) : m_connection(args...)
+{}
+
+template <class Connection>
 void PlaybackProgramExecutor<Connection>::run(std::shared_ptr<PlaybackProgram> const& program)
 {
 	m_connection.add(program->get_to_fpga_messages());
@@ -35,6 +40,23 @@ std::vector<PlaybackProgram::from_fpga_message_type> PlaybackProgramExecutor<Con
 		responses.push_back(response);
 	}
 	return responses;
+}
+
+template class PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
+template class PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
+
+PlaybackProgramARQExecutor::PlaybackProgramARQExecutor(ip_t const ip) : base_t(ip) {}
+
+PlaybackProgramSimExecutor::PlaybackProgramSimExecutor(ip_t const ip, port_t const port) : base_t(ip, port) {}
+
+void PlaybackProgramSimExecutor::set_enable_terminate_on_destruction(bool const value)
+{
+	m_connection.set_enable_terminate_on_destruction(value);
+}
+
+bool PlaybackProgramSimExecutor::get_enable_terminate_on_destruction() const
+{
+	return m_connection.get_enable_terminate_on_destruction();
 }
 
 } // namespace fisch::vx

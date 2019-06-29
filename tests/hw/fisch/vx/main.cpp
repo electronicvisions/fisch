@@ -6,10 +6,10 @@
 #include "executor.h"
 
 #ifdef FISCH_TEST_ARQ_EXECUTOR
-typename hxcomm::vx::ARQConnection::ip_t fpga_ip;
+typename fisch::vx::PlaybackProgramARQExecutor::ip_t fpga_ip;
 #else
-typename hxcomm::vx::SimConnection::ip_t simulation_ip;
-typename hxcomm::vx::SimConnection::port_t simulation_port;
+typename fisch::vx::PlaybackProgramSimExecutor::ip_t simulation_ip;
+typename fisch::vx::PlaybackProgramSimExecutor::port_t simulation_port;
 #endif
 
 PlaybackProgramTestExecutor generate_playback_program_test_executor()
@@ -31,7 +31,8 @@ int main(int argc, char* argv[])
 	// clang-format off
 	desc.add_options()("fpga_ip",
 	    // Currently (2019-05-14) the only setup, still ugly -> issue #3161
-	    bpo::value<typename hxcomm::vx::ARQConnection::ip_t>(&fpga_ip)->default_value("192.168.4.4"));
+	    bpo::value<typename fisch::vx::PlaybackProgramARQExecutor::ip_t>(&fpga_ip)
+	        ->default_value("192.168.4.4"));
 	// clang-format on
 
 	bpo::variables_map vm;
@@ -43,9 +44,11 @@ int main(int argc, char* argv[])
 	bpo::options_description desc("Options");
 	// clang-format off
 	desc.add_options()("simulation_ip",
-	    bpo::value<typename hxcomm::vx::SimConnection::ip_t>(&simulation_ip)->default_value("127.0.0.1"));
+	    bpo::value<typename fisch::vx::PlaybackProgramSimExecutor::ip_t>(&simulation_ip)
+	        ->default_value("127.0.0.1"));
 	desc.add_options()("simulation_port",
-	    bpo::value<typename hxcomm::vx::SimConnection::port_t>(&simulation_port)->required());
+	    bpo::value<typename fisch::vx::PlaybackProgramSimExecutor::port_t>(&simulation_port)
+	        ->required());
 	// clang-format on
 
 	bpo::variables_map vm;

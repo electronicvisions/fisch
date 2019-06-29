@@ -8,7 +8,7 @@
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
- * Executor for playback program.
+ * Executor base class for playback program.
  * @tparam Connection Connection type
  */
 template <class Connection>
@@ -20,8 +20,7 @@ public:
 	 * @tparam Args Arguments used for creation of connection
 	 */
 	template <class... Args>
-	PlaybackProgramExecutor(Args... args) : m_connection(args...)
-	{}
+	PlaybackProgramExecutor(Args... args);
 
 	/**
 	 * Transfer and execute the given playback program and fetch results.
@@ -37,23 +36,49 @@ public:
 	std::vector<PlaybackProgram::from_fpga_message_type> run(
 	    std::vector<PlaybackProgram::to_fpga_message_type> const& messages) GENPYBIND(hidden);
 
-private:
+protected:
 	Connection m_connection;
 };
 
-template class fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
-template fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection>::PlaybackProgramExecutor(
-    hxcomm::vx::SimConnection::ip_t, hxcomm::vx::SimConnection::port_t);
 
-template class fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
-template fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>::PlaybackProgramExecutor(
-    hxcomm::vx::ARQConnection::ip_t);
+/**
+ * Executor executing with an ARQConnection.
+ */
+class GENPYBIND(inline_base("*")) PlaybackProgramARQExecutor : public PlaybackProgramExecutor<hxcomm::vx::ARQConnection>
+{
+public:
+	typedef PlaybackProgramExecutor<hxcomm::vx::ARQConnection> base_t;
+	typedef hxcomm::vx::ARQConnection::ip_t ip_t;
 
-#ifdef __GENPYBIND__
-typedef fisch::vx::PlaybackProgramExecutor<hxcomm::vx::SimConnection> PlaybackProgramSimExecutor
-    GENPYBIND(opaque);
-typedef fisch::vx::PlaybackProgramExecutor<hxcomm::vx::ARQConnection> PlaybackProgramARQExecutor
-    GENPYBIND(opaque);
-#endif // __GENPYBIND__
+	PlaybackProgramARQExecutor(ip_t ip);
+};
+
+
+/**
+ * Executor executing with a SimConnection.
+ */
+class GENPYBIND(inline_base("*")) PlaybackProgramSimExecutor : public PlaybackProgramExecutor<hxcomm::vx::SimConnection>
+{
+public:
+	typedef PlaybackProgramExecutor<hxcomm::vx::SimConnection> base_t;
+	typedef hxcomm::vx::SimConnection::ip_t ip_t;
+	typedef hxcomm::vx::SimConnection::port_t port_t;
+
+	PlaybackProgramSimExecutor(ip_t ip, port_t port);
+
+	/**
+	 * Set enable value to terminate simulator on destruction of executor.
+	 * @param value Boolean value
+	 */
+	GENPYBIND(setter_for(enable_terminate_on_destruction))
+	void set_enable_terminate_on_destruction(bool value);
+
+	/**
+	 * Get enable value to terminate simulator on destruction of executor.
+	 * @return Boolean value
+	 */
+	GENPYBIND(getter_for(enable_terminate_on_destruction))
+	bool get_enable_terminate_on_destruction() const;
+};
 
 } // namespace fisch::vx
