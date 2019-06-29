@@ -25,7 +25,6 @@ TEST(JTAGIdCode, Readout)
 	auto ticket = builder.read(halco::hicann_dls::vx::JTAGIdCodeOnDLS());
 
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(1000));
-	builder.halt();
 	auto program = builder.done();
 
 	auto executor = generate_playback_program_test_executor();

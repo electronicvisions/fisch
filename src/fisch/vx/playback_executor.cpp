@@ -8,13 +8,9 @@ void PlaybackProgramExecutor<Connection>::run(std::shared_ptr<PlaybackProgram> c
 	if (program->get_to_fpga_messages().empty()) {
 		throw std::logic_error("Trying to run empty PlaybackProgram.");
 	}
-	if (!boost::get<hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>>(
-	        &(program->get_to_fpga_messages().back()))) {
-		throw std::logic_error("Halt instruction missing at end of PlaybackProgram, run() would "
-		                       "not terminate correctly.");
-	}
 
 	m_connection.add(program->get_to_fpga_messages());
+	m_connection.add(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>());
 	m_connection.commit();
 
 	m_connection.run_until_halt();
@@ -34,13 +30,9 @@ std::vector<PlaybackProgram::from_fpga_message_type> PlaybackProgramExecutor<Con
 	if (messages.empty()) {
 		throw std::logic_error("Trying to run empty UT message sequence.");
 	}
-	if (!boost::get<hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>>(
-	        &(messages.back()))) {
-		throw std::logic_error("Halt instruction missing at end of UT message sequence, run() "
-		                       "would not terminate correctly.");
-	}
 
 	m_connection.add(messages);
+	m_connection.add(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>());
 	m_connection.commit();
 
 	m_connection.run_until_halt();

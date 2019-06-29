@@ -41,7 +41,6 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 	EXPECT_FALSE(ticket.valid());
 
 	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10000));
-	builder.halt();
 	auto program = builder.done();
 
 	auto executor = generate_playback_program_test_executor();

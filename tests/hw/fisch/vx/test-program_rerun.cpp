@@ -30,7 +30,6 @@ std::shared_ptr<PlaybackProgram> get_write_program(
 
 	builder.write(address, config);
 
-	builder.halt();
 	return builder.done();
 }
 
@@ -43,7 +42,6 @@ get_read_program(OmnibusChipOverJTAGAddress address)
 
 	builder.write<Timer>(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
-	builder.halt();
 	return std::make_tuple(builder.done(), ticket);
 }
 

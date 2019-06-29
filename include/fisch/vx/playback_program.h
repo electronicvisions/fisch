@@ -228,11 +228,6 @@ public:
 	read(std::vector<CoordinateT> const& coords);
 
 	/**
-	 * Add halt instruction to indicate end of playback program execution.
-	 */
-	void halt();
-
-	/**
 	 * Finish playback program creation and return built program. Resets the state of the builder.
 	 * @return Built playback program
 	 */

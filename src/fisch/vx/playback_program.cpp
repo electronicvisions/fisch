@@ -295,12 +295,6 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 	return PlaybackProgram::ContainerVectorTicket<ContainerT>(coords.size(), pos, m_program);
 }
 
-void PlaybackProgramBuilder::halt()
-{
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>());
-}
-
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
 	std::shared_ptr<PlaybackProgram> ret(m_program);
