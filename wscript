@@ -1,10 +1,13 @@
 import os
+from os.path import join
 from waflib.extras.test_base import summary
+from waflib.extras.symwaf2ic import get_toplevel_path
 
 
 def depends(dep):
     dep('halco')
     dep('hxcomm')
+    dep('code-format')
     dep.recurse('pyfisch')
 
 
@@ -12,6 +15,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.load('gtest')
     opt.load('test_base')
+    opt.load("doxygen")
     opt.recurse('pyfisch')
 
 
@@ -19,6 +23,7 @@ def configure(cfg):
     cfg.load('compiler_cxx')
     cfg.load('gtest')
     cfg.load('test_base')
+    cfg.load("doxygen")
     cfg.recurse('pyfisch')
 
 
@@ -73,9 +78,19 @@ def build(bld):
 
     bld.recurse('pyfisch')
 
+    bld(
+        features = 'doxygen',
+        name = 'fisch_documentation',
+        doxyfile = bld.root.make_node(join(get_toplevel_path(), "code-format" ,"doxyfile")),
+        install_path = 'doc/fisch',
+        pars = {
+            "PROJECT_NAME": "\"FPGA Instruction Set Compiler for HICANN\"",
+            "INPUT": join(get_toplevel_path(), "fisch", "include"),
+            "PREDEFINED": "GENPYBIND()= GENPYBIND_TAG_FISCH_VX=",
+            "INCLUDE_PATH": join(get_toplevel_path(), "fisch", "include"),
+            "OUTPUT_DIRECTORY": join(get_toplevel_path(), "build", "fisch", "doc")
+        },
+    )
+
     # Create test summary (to stdout and XML file)
     bld.add_post_fun(summary)
-
-
-def doc(dox):
-    pass

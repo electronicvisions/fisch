@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * Set clock-scaler value.
-	 * @param Clock-scaler value to set
+	 * @param value Clock-scaler value to set
 	 */
 	void set(Value const& value);
 
@@ -310,7 +310,7 @@ public:
 
 	/**
 	 * Set register value.
-	 * @param Register value to set
+	 * @param value Register value to set
 	 */
 	void set(Value const& value);
 
