@@ -72,7 +72,7 @@ TEST(SPIDACDataRegister, EncodeWrite)
 	    UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
 	        instruction::omnibus_to_fpga::Data::Payload(
 	            (1 << 7) | (SPIDACControlRegisterOnBoard(
-	                            SPIDACControlRegisterOnDAC::LDAC, coord.toDACOnBoard())
+	                            SPIDACControlRegisterOnDAC::ldac, coord.toDACOnBoard())
 	                            .toSPIDACControlRegisterOnDAC()
 	                        << 5))));
 	auto message_addr_4 =

@@ -165,7 +165,7 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	SPIDACControlRegister update_control(SPIDACControlRegister::Value(0x2));
 	auto update_control_messages =
 	    update_control.encode_write(halco::hicann_dls::vx::SPIDACControlRegisterOnBoard(
-	        halco::hicann_dls::vx::SPIDACControlRegisterOnDAC::LDAC, coord.toDACOnBoard()));
+	        halco::hicann_dls::vx::SPIDACControlRegisterOnDAC::ldac, coord.toDACOnBoard()));
 	static_assert(
 	    update_control_messages.size() == 4,
 	    "SPIDACControlRegister does not need 4 messages to be written.");
