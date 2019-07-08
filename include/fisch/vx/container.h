@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/vx/event.h"
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/null_payload_readable.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/spi.h"

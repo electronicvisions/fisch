@@ -55,7 +55,8 @@ void PlaybackDecoder::process(ut_message_from_fpga_loopback_type const& message)
 	if (message.decode() == ut_message_from_fpga_loopback_type::instruction_type::halt) {
 		/* do nothing */
 	} else {
-		/* do nothing until container using is present */
+		std::get<TimedResponseQueue<ut_message_from_fpga_loopback_type>>(m_response_queue)
+		    .push_back(message, m_time_current);
 	}
 }
 

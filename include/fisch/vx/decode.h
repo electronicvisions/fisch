@@ -17,4 +17,7 @@ typedef UTMessageFromFPGARange<hxcomm::vx::instruction::jtag_from_hicann::Data>
 typedef UTMessageFromFPGARange<hxcomm::vx::instruction::omnibus_from_fpga::Data>
     UTMessageFromFPGARangeOmnibus;
 
+typedef UTMessageFromFPGARange<hxcomm::vx::instruction::from_fpga_system::Loopback>
+    UTMessageFromFPGARangeLoopback;
+
 } // namespace fisch::vx
