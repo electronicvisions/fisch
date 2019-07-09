@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/vx/barrier.h"
 #include "fisch/vx/event.h"
+#include "fisch/vx/i2c.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/null_payload_readable.h"
 #include "fisch/vx/omnibus.h"

@@ -12,17 +12,6 @@
 
 namespace fisch::vx {
 
-namespace {
-
-typedef hate::
-    type_list<JTAGClockScaler, JTAGIdCode, JTAGPLLRegister, OmnibusChipOverJTAG, ResetJTAGTap>
-        jtag_queue_container_list;
-
-typedef hate::type_list<Omnibus, SPIShiftRegister, SPIDACDataRegister, SPIDACControlRegister>
-    omnibus_queue_container_list;
-
-} // namespace
-
 PlaybackProgramBuilder::PlaybackProgramBuilder() : m_program(std::make_shared<PlaybackProgram>()) {}
 
 template <class ContainerT>
