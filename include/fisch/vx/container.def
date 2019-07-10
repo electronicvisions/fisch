@@ -25,7 +25,8 @@ PLAYBACK_CONTAINER(SPIDACDataRegister, fisch::vx::SPIDACDataRegister)
 PLAYBACK_CONTAINER(SPIDACControlRegister, fisch::vx::SPIDACControlRegister)
 PLAYBACK_CONTAINER(SPIShiftRegister, fisch::vx::SPIShiftRegister)
 PLAYBACK_CONTAINER(NullPayloadReadable, fisch::vx::NullPayloadReadable)
-LAST_PLAYBACK_CONTAINER(I2CIdRegister, fisch::vx::I2CIdRegister)
+PLAYBACK_CONTAINER(I2CIdRegister, fisch::vx::I2CIdRegister)
+LAST_PLAYBACK_CONTAINER(I2CINA219RoRegister, fisch::vx::I2CINA219RoRegister)
 
 #undef PLAYBACK_CONTAINER
 #undef LAST_PLAYBACK_CONTAINER
