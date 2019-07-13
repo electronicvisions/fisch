@@ -1,6 +1,7 @@
 #include "fisch/vx/playback_program.h"
 
 #include "fisch/vx/container.h"
+#include "fisch/vx/traits.h"
 
 #include "hate/type_list.h"
 
@@ -260,7 +261,7 @@ template <class ContainerT>
 void PlaybackProgramBuilder::write(
     typename ContainerT::coordinate_type const& coord, ContainerT const& config)
 {
-	if constexpr (ContainerT::encode_write_ut_message_count == 0) {
+	if constexpr (!IsWritable<ContainerT>::value) {
 		std::stringstream ss;
 		ss << config << " can't be written.";
 		throw std::logic_error(ss.str());
@@ -292,7 +293,7 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 {
 	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
 
-	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
+	if constexpr (!IsReadable<ContainerT>::value) {
 		std::stringstream ss;
 
 		ss << "Coordinate " << coord << " can't be read.";
@@ -324,7 +325,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 {
 	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
 
-	if constexpr (ContainerT::encode_read_ut_message_count == 0) {
+	if constexpr (!IsReadable<ContainerT>::value) {
 		std::stringstream ss;
 		ss << "Coordinates [";
 		for (auto it = coords.cbegin(); it != coords.cend(); ++it) {
