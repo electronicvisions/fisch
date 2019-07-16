@@ -80,3 +80,10 @@ struct GENPYBIND(inline_base("*")) ChipTime
 };
 
 } // namespace fisch::vx
+
+namespace std {
+
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::FPGATime)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::ChipTime)
+
+} // namespace std

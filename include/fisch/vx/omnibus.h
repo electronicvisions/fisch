@@ -22,14 +22,11 @@ public:
 	typedef halco::hicann_dls::vx::OmnibusChipAddress coordinate_type;
 	typedef OmnibusData value_type;
 
-	/** Default constructor. */
-	OmnibusChip();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value OmnibusChip word value to construct instance with
 	 */
-	OmnibusChip(value_type value);
+	OmnibusChip(value_type value = value_type());
 
 	/**
 	 * Get value.
@@ -79,14 +76,11 @@ public:
 	typedef halco::hicann_dls::vx::OmnibusFPGAAddress coordinate_type;
 	typedef OmnibusData value_type;
 
-	/** Default constructor. */
-	OmnibusFPGA();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value OmnibusFPGA word value to construct instance with
 	 */
-	OmnibusFPGA(value_type value);
+	OmnibusFPGA(value_type value = value_type());
 
 	/**
 	 * Get value.

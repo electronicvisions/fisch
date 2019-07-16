@@ -2,8 +2,6 @@
 
 namespace fisch::vx {
 
-Timer::Timer() : m_value() {}
-
 Timer::Timer(Value const value) : m_value(value) {}
 
 Timer::Value Timer::get() const
@@ -11,7 +9,7 @@ Timer::Value Timer::get() const
 	return m_value;
 }
 
-void Timer::set(Value const& value)
+void Timer::set(Value const value)
 {
 	if (value.value() != 0) {
 		throw std::runtime_error("Setting Timer to value different from 0 not supported for now.");

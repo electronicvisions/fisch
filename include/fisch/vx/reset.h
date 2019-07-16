@@ -21,20 +21,17 @@ class GENPYBIND(visible) ResetChip
 public:
 	typedef halco::hicann_dls::vx::ResetChipOnDLS coordinate_type;
 
-	/** Default constructor. */
-	ResetChip();
-
 	/**
 	 * Construct reset with boolean value.
 	 * @param value Boolean value to set
 	 */
-	ResetChip(bool value);
+	ResetChip(bool value = false);
 
 	/**
 	 * Set reset value
 	 * @param value Boolean value to set reset to
 	 */
-	void set(bool const value);
+	void set(bool value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset) SYMBOL_VISIBLE;

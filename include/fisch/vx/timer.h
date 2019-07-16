@@ -29,14 +29,11 @@ public:
 		Value(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 	};
 
-	/** Default constructor. */
-	Timer();
-
 	/**
 	 * Construct timer with value.
 	 * @param value Value to construct timer with
 	 */
-	Timer(Value value);
+	Timer(Value value = Value());
 
 	/**
 	 * Get timer value.
@@ -48,7 +45,7 @@ public:
 	 * Set timer value. Currently only reset to 0 is supported.
 	 * @param value Value to set timer to
 	 */
-	void set(Value const& value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, Timer const& timer) SYMBOL_VISIBLE;
@@ -79,5 +76,7 @@ private:
 } // namespace fisch::vx
 
 namespace std {
+
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Timer::Value)
+
 } // namespace std

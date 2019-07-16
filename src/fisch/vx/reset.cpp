@@ -4,8 +4,6 @@
 
 namespace fisch::vx {
 
-ResetChip::ResetChip() : m_value(false) {}
-
 ResetChip::ResetChip(bool const value) : m_value(value) {}
 
 void ResetChip::set(bool const value)

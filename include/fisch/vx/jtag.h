@@ -64,14 +64,11 @@ public:
 		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
-	/** Default constructor. */
-	JTAGClockScaler();
-
 	/**
 	 * Construct scaler with value.
 	 * @param value Value to construct scaler with
 	 */
-	JTAGClockScaler(Value value);
+	JTAGClockScaler(Value value = Value());
 
 	/**
 	 * Get clock-scaler value.
@@ -83,7 +80,7 @@ public:
 	 * Set clock-scaler value.
 	 * @param value Clock-scaler value to set
 	 */
-	void set(Value const& value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler);
@@ -121,14 +118,11 @@ public:
 	typedef halco::hicann_dls::vx::OmnibusChipOverJTAGAddress coordinate_type;
 	typedef OmnibusData value_type;
 
-	/** Default constructor. */
-	OmnibusChipOverJTAG();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Omnibus word value to construct instance with
 	 */
-	OmnibusChipOverJTAG(value_type const& value);
+	OmnibusChipOverJTAG(value_type value = value_type());
 
 	/**
 	 * Get value.
@@ -140,7 +134,7 @@ public:
 	 * Set value.
 	 * @param value Omnibus word value to set
 	 */
-	void set(value_type const& value);
+	void set(value_type value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word);
@@ -237,14 +231,11 @@ public:
 		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 	};
 
-	/** Default constructor. */
-	JTAGPLLRegister();
-
 	/**
 	 * Construct register by its value.
 	 * @param value Value to set on cosntruction
 	 */
-	JTAGPLLRegister(Value value);
+	JTAGPLLRegister(Value value = Value());
 
 	/**
 	 * Set register value.
@@ -293,14 +284,11 @@ public:
 		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
-	/** Default constructor. */
-	JTAGPhyRegister();
-
 	/**
 	 * Construct register with value.
 	 * @param value Value to construct register with
 	 */
-	JTAGPhyRegister(Value value);
+	JTAGPhyRegister(Value value = Value());
 
 	/**
 	 * Get register value.
@@ -312,7 +300,7 @@ public:
 	 * Set register value.
 	 * @param value Register value to set
 	 */
-	void set(Value const& value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg);
@@ -343,8 +331,10 @@ private:
 } // namespace fisch::vx
 
 namespace std {
+
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGIdCode::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPLLRegister::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGClockScaler::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPhyRegister::Value)
+
 } // namespace std

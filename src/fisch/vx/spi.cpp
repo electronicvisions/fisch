@@ -11,8 +11,6 @@
 
 namespace fisch::vx {
 
-SPIShiftRegister::SPIShiftRegister() : m_data() {}
-
 SPIShiftRegister::SPIShiftRegister(Value const value) : m_data(value) {}
 
 SPIShiftRegister::Value SPIShiftRegister::get() const
@@ -94,8 +92,6 @@ void SPIShiftRegister::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIShiftRegister)
 
-
-SPIDACDataRegister::SPIDACDataRegister() : m_data() {}
 
 SPIDACDataRegister::SPIDACDataRegister(Value const value) : m_data(value) {}
 
@@ -188,8 +184,6 @@ void SPIDACDataRegister::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACDataRegister)
 
-
-SPIDACControlRegister::SPIDACControlRegister() : m_data() {}
 
 SPIDACControlRegister::SPIDACControlRegister(Value const value) : m_data(value) {}
 

@@ -49,7 +49,6 @@ void ResetJTAGTap::cerealize(Archive& /*ar*/)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetJTAGTap)
 
-JTAGClockScaler::JTAGClockScaler() : m_value() {}
 
 JTAGClockScaler::JTAGClockScaler(Value const value) : m_value(value) {}
 
@@ -58,7 +57,7 @@ JTAGClockScaler::Value JTAGClockScaler::get() const
 	return m_value;
 }
 
-void JTAGClockScaler::set(Value const& value)
+void JTAGClockScaler::set(Value const value)
 {
 	m_value = value;
 }
@@ -106,16 +105,15 @@ void JTAGClockScaler::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
 
-OmnibusChipOverJTAG::OmnibusChipOverJTAG() : m_data() {}
 
-OmnibusChipOverJTAG::OmnibusChipOverJTAG(value_type const& value) : m_data(value) {}
+OmnibusChipOverJTAG::OmnibusChipOverJTAG(value_type const value) : m_data(value) {}
 
 OmnibusChipOverJTAG::value_type OmnibusChipOverJTAG::get() const
 {
 	return m_data;
 }
 
-void OmnibusChipOverJTAG::set(value_type const& value)
+void OmnibusChipOverJTAG::set(value_type const value)
 {
 	m_data = value;
 }
@@ -208,6 +206,7 @@ void OmnibusChipOverJTAG::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusChipOverJTAG)
 
+
 JTAGIdCode::JTAGIdCode() : m_value() {}
 
 JTAGIdCode::Value JTAGIdCode::get() const
@@ -269,7 +268,6 @@ void JTAGIdCode::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGIdCode)
 
-JTAGPLLRegister::JTAGPLLRegister() : m_value() {}
 
 JTAGPLLRegister::JTAGPLLRegister(Value const value) : m_value(value) {}
 
@@ -338,7 +336,6 @@ void JTAGPLLRegister::cerealize(Archive& ar)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPLLRegister)
 
-JTAGPhyRegister::JTAGPhyRegister() : m_value() {}
 
 JTAGPhyRegister::JTAGPhyRegister(Value const value) : m_value(value) {}
 
@@ -347,7 +344,7 @@ JTAGPhyRegister::Value JTAGPhyRegister::get() const
 	return m_value;
 }
 
-void JTAGPhyRegister::set(Value const& value)
+void JTAGPhyRegister::set(Value const value)
 {
 	m_value = value;
 }

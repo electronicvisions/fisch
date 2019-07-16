@@ -27,14 +27,11 @@ public:
 		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
-	/** Default constructor. */
-	SPIShiftRegister();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIShiftRegister(Value value);
+	SPIShiftRegister(Value value = Value());
 
 	/**
 	 * Get value.
@@ -89,14 +86,11 @@ public:
 		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
-	/** Default constructor. */
-	SPIDACDataRegister();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIDACDataRegister(Value value);
+	SPIDACDataRegister(Value value = Value());
 
 	/**
 	 * Get value.
@@ -151,14 +145,11 @@ public:
 		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
 	};
 
-	/** Default constructor. */
-	SPIDACControlRegister();
-
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIDACControlRegister(Value value);
+	SPIDACControlRegister(Value value = Value());
 
 	/**
 	 * Get value.
@@ -199,3 +190,11 @@ private:
 };
 
 } // namespace fisch::vx
+
+namespace std {
+
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIShiftRegister::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIDACControlRegister::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIDACDataRegister::Value)
+
+} // namespace std
