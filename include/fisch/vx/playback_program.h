@@ -9,6 +9,10 @@
 #include "fisch/vx/playback_decoder.h"
 #include "fisch/vx/systime.h"
 
+namespace cereal {
+class access;
+} // namespace cereal
+
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
@@ -216,6 +220,10 @@ private:
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 
 	PlaybackDecoder m_decoder;
+
+	friend class cereal::access;
+	template <typename Archive>
+	void serialize(Archive& ar);
 };
 
 

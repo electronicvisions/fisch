@@ -58,6 +58,14 @@ public:
 		}
 
 		TimedResponseQueue() {}
+		TimedResponseQueue(
+		    std::vector<message_type> const& messages, std::vector<FPGATime> const& times) :
+		    m_messages(messages),
+		    m_times(times)
+		{
+			auto checker = SizeConstraintChecker(*this);
+			static_cast<void>(checker);
+		}
 
 		bool operator==(TimedResponseQueue const& other) const
 		{

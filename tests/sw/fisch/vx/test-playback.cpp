@@ -9,6 +9,11 @@
 using namespace fisch::vx;
 using namespace halco::hicann_dls::vx;
 
+#include "fisch/cerealization.h"
+#include "hxcomm/vx/utmessage.h"
+
+#include <cereal/types/memory.hpp>
+
 template <typename ContainerT>
 void test_playback_program_builder_read_api()
 {
@@ -399,4 +404,35 @@ TEST(PlaybackProgramBuilder, WaitUntil)
 	EXPECT_EQ(
 	    expected_to_fpga_message,
 	    boost::get<decltype(expected_to_fpga_message)>(program_to_fpga_messages.at(0)));
+}
+
+TEST(PlaybackProgram, CerealizeCoverage)
+{
+	using namespace fisch::vx;
+
+	PlaybackProgramBuilder builder;
+	builder.read(OmnibusChip::coordinate_type());         // add omnibus instructions
+	builder.read(OmnibusChipOverJTAG::coordinate_type()); // add jtag instructions
+
+	auto obj1 = builder.done();
+	obj1->push_from_fpga_message(
+	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>());
+	obj1->push_from_fpga_message(
+	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>());
+
+	std::shared_ptr<PlaybackProgram> obj2; // empty program pointer
+	std::ostringstream ostream;
+	{
+		cereal::JSONOutputArchive oa(ostream);
+		oa(obj1);
+	}
+
+	std::istringstream istream(ostream.str());
+	{
+		cereal::JSONInputArchive ia(istream);
+		ia(obj2);
+	}
+	EXPECT_TRUE(obj1);
+	EXPECT_TRUE(obj2);
+	ASSERT_EQ(*obj1, *obj2);
 }

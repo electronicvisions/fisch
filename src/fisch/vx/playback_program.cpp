@@ -2,8 +2,42 @@
 
 #include "fisch/vx/container.h"
 #include "fisch/vx/traits.h"
+
+#include <cereal/types/boost_variant.hpp>
+#include <cereal/types/vector.hpp>
+
+#include "fisch/cerealization.h"
+#include "fisch/vx/container.h"
+#include "halco/common/cerealization_geometry.h"
+#include "halco/common/cerealization_typed_array.h"
 #include "hate/type_list.h"
 #include "hxcomm/vx/utmessage.h"
+#include "hxcomm/common/cerealization_utmessage.h"
+
+namespace cereal {
+
+template <typename Archive, typename MessageT>
+void CEREAL_SAVE_FUNCTION_NAME(
+    Archive& ar, fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT> const& queue)
+{
+	auto const& messages = queue.get_messages();
+	auto const& times = queue.get_times();
+	ar(CEREAL_NVP(messages));
+	ar(CEREAL_NVP(times));
+}
+
+template <typename Archive, typename MessageT>
+void CEREAL_LOAD_FUNCTION_NAME(
+    Archive& ar, fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT>& queue)
+{
+	std::vector<MessageT> messages;
+	std::vector<fisch::vx::FPGATime> times;
+	ar(CEREAL_NVP(messages));
+	ar(CEREAL_NVP(times));
+	queue = fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT>(messages, times);
+}
+
+} // namespace cereal
 
 namespace fisch::vx {
 
@@ -302,6 +336,19 @@ bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
 	return !(*this == other);
 }
 
+template <typename Archive>
+void PlaybackProgram::serialize(Archive& ar)
+{
+	ar(m_instructions);
+	ar(m_receive_queue_jtag);
+	ar(m_receive_queue_omnibus);
+	ar(m_spike_response_queue);
+	ar(m_madc_sample_response_queue);
+	ar(m_spike_pack_counts);
+	ar(m_madc_sample_pack_counts);
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
 
 PlaybackProgramBuilder::PlaybackProgramBuilder() :
     m_program(std::make_shared<PlaybackProgram>()),
