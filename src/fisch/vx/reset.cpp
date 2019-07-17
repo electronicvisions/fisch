@@ -6,6 +6,11 @@ namespace fisch::vx {
 
 ResetChip::ResetChip(bool const value) : m_value(value) {}
 
+bool ResetChip::get() const
+{
+	return m_value;
+}
+
 void ResetChip::set(bool const value)
 {
 	m_value = value;

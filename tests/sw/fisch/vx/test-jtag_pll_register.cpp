@@ -10,28 +10,19 @@ TEST(JTAGPLLRegister, General)
 	EXPECT_NO_THROW(JTAGPLLRegister());
 
 	JTAGPLLRegister config;
+	EXPECT_EQ(config.get(), JTAGPLLRegister::Value());
 
-	JTAGPLLRegister config2;
-	config2.set(JTAGPLLRegister::Value());
-	EXPECT_EQ(config, config2);
+	JTAGPLLRegister::Value const value(12);
+	config.set(value);
+	EXPECT_EQ(config.get(), value);
 
-	JTAGPLLRegister::Value data(0x12345678);
-	JTAGPLLRegister config3;
-	config3.set(data);
-	EXPECT_NE(config, config3);
+	JTAGPLLRegister config2(value);
+	EXPECT_EQ(config2.get(), value);
 
-	JTAGPLLRegister config4(data);
-	EXPECT_NE(config, config4);
-	EXPECT_EQ(config3, config4);
+	JTAGPLLRegister other_config = config;
 
-	auto encoded = config3.encode_write(JTAGPLLRegister::coordinate_type());
-	EXPECT_EQ(encoded.size(), JTAGPLLRegister::encode_write_ut_message_count);
-
-	using namespace hxcomm::vx;
-	auto payload = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(encoded.back())
-	                   .decode()
-	                   .get_payload();
-	EXPECT_EQ(payload, data.value());
+	EXPECT_EQ(other_config, config);
+	EXPECT_NE(JTAGPLLRegister(), config);
 }
 
 TEST(JTAGPLLRegister, EncodeWrite)

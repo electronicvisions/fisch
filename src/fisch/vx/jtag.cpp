@@ -207,11 +207,16 @@ void OmnibusChipOverJTAG::cerealize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusChipOverJTAG)
 
 
-JTAGIdCode::JTAGIdCode() : m_value() {}
+JTAGIdCode::JTAGIdCode(Value value) : m_value(value) {}
 
 JTAGIdCode::Value JTAGIdCode::get() const
 {
 	return m_value;
+}
+
+void JTAGIdCode::set(Value const value)
+{
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id)
@@ -270,6 +275,11 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGIdCode)
 
 
 JTAGPLLRegister::JTAGPLLRegister(Value const value) : m_value(value) {}
+
+JTAGPLLRegister::Value JTAGPLLRegister::get() const
+{
+	return m_value;
+}
 
 void JTAGPLLRegister::set(Value const value)
 {

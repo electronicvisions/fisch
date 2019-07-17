@@ -11,25 +11,19 @@ TEST(ResetChip, General)
 	EXPECT_NO_THROW(ResetChip(true));
 
 	ResetChip config;
+	EXPECT_EQ(config.get(), false);
+
+	bool const value = !config.get();
+	config.set(value);
+	EXPECT_EQ(config.get(), value);
+
+	ResetChip config2(value);
+	EXPECT_EQ(config2.get(), value);
+
 	ResetChip other_config = config;
 
 	EXPECT_EQ(other_config, config);
-
-	bool const value = true;
-	ResetChip config2;
-	config2.set(value);
-
-	EXPECT_NE(config, config2);
-
-	ResetChip config3(value);
-
-	EXPECT_NE(config, config3);
-	EXPECT_EQ(config2, config3);
-
-	auto encoded = config2.encode_write(ResetChip::coordinate_type());
-	using namespace hxcomm::vx;
-	EXPECT_EQ(
-	    boost::get<UTMessageToFPGA<instruction::system::Reset>>(encoded.front()).decode(), true);
+	EXPECT_NE(ResetChip(), config);
 }
 
 TEST(ResetChip, EncodeWrite)

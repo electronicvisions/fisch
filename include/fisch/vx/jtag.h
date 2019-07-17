@@ -178,14 +178,23 @@ public:
 		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 	};
 
-	/** Default constructor. */
-	JTAGIdCode();
+	/**
+	 * Construct IDCODE with value.
+	 * @param value Value to use
+	 */
+	JTAGIdCode(Value value = Value());
 
 	/**
 	 * Get JTAG IDCODE.
 	 * @return Value
 	 */
 	Value get() const;
+
+	/**
+	 * Set JTAG IDCODE.
+	 * @param value Value
+	 */
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id);
@@ -236,6 +245,12 @@ public:
 	 * @param value Value to set on cosntruction
 	 */
 	JTAGPLLRegister(Value value = Value());
+
+	/**
+	 * Get register value.
+	 * @return Value to get
+	 */
+	Value get() const;
 
 	/**
 	 * Set register value.

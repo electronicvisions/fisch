@@ -28,7 +28,13 @@ public:
 	ResetChip(bool value = false);
 
 	/**
-	 * Set reset value
+	 * Get reset value.
+	 * @return Boolean reset value
+	 */
+	bool get() const;
+
+	/**
+	 * Set reset value.
 	 * @param value Boolean value to set reset to
 	 */
 	void set(bool value);

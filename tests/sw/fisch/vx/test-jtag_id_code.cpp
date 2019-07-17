@@ -13,12 +13,12 @@ TEST(JTAGIdCode, General)
 	JTAGIdCode config;
 	EXPECT_EQ(config.get(), JTAGIdCode::Value());
 
-	JTAGIdCode::Value id(0x12345678);
-	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data> message(
-	    hxcomm::vx::instruction::jtag_from_hicann::Data::Payload(id.value()));
+	JTAGIdCode::Value const value(12);
+	config.set(value);
+	EXPECT_EQ(config.get(), value);
 
-	config.decode({message});
-	EXPECT_EQ(config.get(), id);
+	JTAGIdCode config2(value);
+	EXPECT_EQ(config2.get(), value);
 
 	JTAGIdCode other_config = config;
 
