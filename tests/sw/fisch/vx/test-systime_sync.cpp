@@ -3,66 +3,12 @@
 #include "fisch/cerealization.h"
 #include "fisch/vx/systime.h"
 
-TEST(SystimeSync, General)
-{
-	using namespace fisch::vx;
+#include "test-macros.h"
 
-	EXPECT_NO_THROW(SystimeSync());
-	EXPECT_NO_THROW(SystimeSync(true));
+using namespace fisch::vx;
 
-	SystimeSync config;
-	SystimeSync other_config = config;
+FISCH_TEST_BOOLEAN_REGISTER_GENERAL(SystimeSync)
 
-	EXPECT_EQ(other_config, config);
+FISCH_TEST_BOOLEAN_REGISTER_OSTREAM(SystimeSync, SystimeSync)
 
-	bool const value = true;
-	SystimeSync config2;
-	config2.set(value);
-
-	EXPECT_NE(config, config2);
-
-	SystimeSync config3(value);
-
-	EXPECT_NE(config, config3);
-	EXPECT_EQ(config2, config3);
-
-	auto encoded = config2.encode_write(SystimeSync::coordinate_type());
-	using namespace hxcomm::vx;
-	EXPECT_EQ(
-	    boost::get<UTMessageToFPGA<instruction::timing::SystimeInit>>(encoded.front()).decode(),
-	    true);
-}
-
-TEST(SystimeSync, Ostream)
-{
-	using namespace fisch::vx;
-
-	SystimeSync obj;
-	obj.set(true);
-
-	std::stringstream stream;
-	stream << obj;
-
-	EXPECT_EQ(stream.str(), "SystimeSync(true)");
-}
-
-TEST(SystimeSync, CerealizeCoverage)
-{
-	using namespace fisch::vx;
-
-	SystimeSync obj1, obj2;
-	obj1.set(true);
-
-	std::ostringstream ostream;
-	{
-		cereal::JSONOutputArchive oa(ostream);
-		oa(obj1);
-	}
-
-	std::istringstream istream(ostream.str());
-	{
-		cereal::JSONInputArchive ia(istream);
-		ia(obj2);
-	}
-	ASSERT_EQ(obj1, obj2);
-}
+FISCH_TEST_BOOLEAN_REGISTER_CEREAL(SystimeSync)
