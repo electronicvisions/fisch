@@ -5,9 +5,7 @@
 
 #include "executor.h"
 
-#ifdef FISCH_TEST_ARQ_EXECUTOR
-typename fisch::vx::PlaybackProgramARQExecutor::ip_t fpga_ip;
-#else
+#ifndef FISCH_TEST_ARQ_EXECUTOR
 typename fisch::vx::PlaybackProgramSimExecutor::ip_t simulation_ip;
 typename fisch::vx::PlaybackProgramSimExecutor::port_t simulation_port;
 #endif
@@ -15,7 +13,7 @@ typename fisch::vx::PlaybackProgramSimExecutor::port_t simulation_port;
 PlaybackProgramTestExecutor generate_playback_program_test_executor()
 {
 #ifdef FISCH_TEST_ARQ_EXECUTOR
-	return PlaybackProgramTestExecutor(fpga_ip);
+	return PlaybackProgramTestExecutor();
 #else
 	return PlaybackProgramTestExecutor(simulation_ip, simulation_port);
 #endif
@@ -25,21 +23,7 @@ int main(int argc, char* argv[])
 {
 	testing::InitGoogleTest(&argc, argv);
 
-#ifdef FISCH_TEST_ARQ_EXECUTOR
-	namespace bpo = boost::program_options;
-	bpo::options_description desc("Options");
-	// clang-format off
-	desc.add_options()("fpga_ip",
-	    // Currently (2019-05-14) the only setup, still ugly -> issue #3161
-	    bpo::value<typename fisch::vx::PlaybackProgramARQExecutor::ip_t>(&fpga_ip)
-	        ->default_value("192.168.4.4"));
-	// clang-format on
-
-	bpo::variables_map vm;
-	bpo::store(
-	    bpo::basic_command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
-	bpo::notify(vm);
-#else
+#ifndef FISCH_TEST_ARQ_EXECUTOR
 	namespace bpo = boost::program_options;
 	bpo::options_description desc("Options");
 	// clang-format off

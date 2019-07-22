@@ -50,6 +50,16 @@ public:
 	typedef PlaybackProgramExecutor<hxcomm::vx::ARQConnection> base_t;
 	typedef hxcomm::vx::ARQConnection::ip_t ip_t;
 
+	/**
+	 * Construct ARQ executor with IP address extracted from env.
+	 * @throws std::runtime_error On no or more than one IP address available in environment
+	 */
+	PlaybackProgramARQExecutor();
+
+	/**
+	 * Construct ARQ executor to FPGA with given IP address.
+	 * @param ip IP address to use
+	 */
 	PlaybackProgramARQExecutor(ip_t ip);
 };
 

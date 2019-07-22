@@ -45,6 +45,8 @@ std::vector<PlaybackProgram::from_fpga_message_type> PlaybackProgramExecutor<Con
 template class PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
 template class PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
 
+PlaybackProgramARQExecutor::PlaybackProgramARQExecutor() : base_t() {}
+
 PlaybackProgramARQExecutor::PlaybackProgramARQExecutor(ip_t const ip) : base_t(ip) {}
 
 PlaybackProgramSimExecutor::PlaybackProgramSimExecutor(ip_t const ip, port_t const port) : base_t(ip, port) {}
