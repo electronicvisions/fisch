@@ -1,12 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "fisch/vx/event.h"
-#include "fisch/vx/jtag.h"
-#include "fisch/vx/omnibus.h"
-#include "fisch/vx/reset.h"
-#include "fisch/vx/spi.h"
-#include "fisch/vx/systime.h"
-#include "fisch/vx/timer.h"
+#include "fisch/vx/container.h"
 
 #include <cereal/archives/json.hpp>
 #include <cereal/cereal.hpp>
@@ -17,27 +11,18 @@ template <class T>
 class CommonSerializationTests : public ::testing::Test
 {};
 
+using namespace fisch::vx;
+
+#define PLAYBACK_CONTAINER(Name, Type) Type,
+#define LAST_PLAYBACK_CONTAINER(Name, Type) Type
 typedef ::testing::Types<
-    OmnibusChipOverJTAG,
-    OmnibusChip,
-    OmnibusFPGA,
-    JTAGIdCode,
-    JTAGPLLRegister,
-    JTAGPhyRegister,
-    ResetChip,
-    ResetJTAGTap,
-    JTAGClockScaler,
-    SPIShiftRegister,
-    Timer,
-    SystimeSync,
-    SpikePack1ToChip,
-    SpikePack2ToChip,
-    SpikePack3ToChip,
     SpikeLabel,
     SpikeFromChip,
     MADCSampleFromChip,
     SpikeFromChipEvent,
-    MADCSampleFromChipEvent>
+    MADCSampleFromChipEvent,
+#include "fisch/vx/container.def"
+    >
     SerializableTypes;
 
 TYPED_TEST_CASE(CommonSerializationTests, SerializableTypes);
