@@ -2,34 +2,14 @@
 
 #include "fisch/vx/jtag.h"
 
-#include <cereal/archives/json.hpp>
-#include <cereal/cereal.hpp>
+#include "test-macros.h"
 
-TEST(JTAGPLLRegister, General)
-{
-	using namespace fisch::vx;
+using namespace fisch::vx;
 
-	EXPECT_NO_THROW(JTAGPLLRegister());
-
-	JTAGPLLRegister config;
-	EXPECT_EQ(config.get(), JTAGPLLRegister::Value());
-
-	JTAGPLLRegister::Value const value(12);
-	config.set(value);
-	EXPECT_EQ(config.get(), value);
-
-	JTAGPLLRegister config2(value);
-	EXPECT_EQ(config2.get(), value);
-
-	JTAGPLLRegister other_config = config;
-
-	EXPECT_EQ(other_config, config);
-	EXPECT_NE(JTAGPLLRegister(), config);
-}
+FISCH_TEST_NUMBER_REGISTER_GENERAL(JTAGPLLRegister, 0, 12)
 
 TEST(JTAGPLLRegister, EncodeWrite)
 {
-	using namespace fisch::vx;
 	using namespace hxcomm::vx;
 
 	JTAGPLLRegister obj;
@@ -59,8 +39,6 @@ TEST(JTAGPLLRegister, EncodeWrite)
 
 TEST(JTAGPLLRegister, Ostream)
 {
-	using namespace fisch::vx;
-
 	JTAGPLLRegister obj;
 	obj.set(JTAGPLLRegister::Value(12));
 
@@ -70,23 +48,4 @@ TEST(JTAGPLLRegister, Ostream)
 	EXPECT_EQ(stream.str(), "JTAGPLLRegister(0d12 0xc 0b00000000000000000000000000001100)");
 }
 
-TEST(JTAGPLLRegister, CerealizeCoverage)
-{
-	using namespace fisch::vx;
-
-	JTAGPLLRegister obj1, obj2;
-	obj1.set(JTAGPLLRegister::Value(0x12345678));
-
-	std::ostringstream ostream;
-	{
-		cereal::JSONOutputArchive oa(ostream);
-		oa(obj1);
-	}
-
-	std::istringstream istream(ostream.str());
-	{
-		cereal::JSONInputArchive ia(istream);
-		ia(obj2);
-	}
-	ASSERT_EQ(obj1, obj2);
-}
+FISCH_TEST_NUMBER_REGISTER_CEREAL(JTAGPLLRegister, 0x12345678)
