@@ -196,7 +196,117 @@ void I2CINA219RoRegister::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
 
+
+I2CINA219RwRegister::I2CINA219RwRegister(Value const value) : m_data(value) {}
+
+I2CINA219RwRegister::Value I2CINA219RwRegister::get() const
+{
+	return m_data;
+}
+
+void I2CINA219RwRegister::set(Value const value)
+{
+	m_data = value;
+}
+
+std::ostream& operator<<(std::ostream& os, I2CINA219RwRegister const& word)
+{
+	std::stringstream ss_d;
+	ss_d << "0d" << std::dec << word.m_data.value();
+	std::stringstream ss_x;
+	ss_x << "0x" << std::hex << word.m_data.value();
+	hate::bitset<sizeof(uint16_t) * CHAR_BIT> bits(word.m_data.value());
+	os << "I2CINA219RwRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
+	return os;
+}
+
+bool I2CINA219RwRegister::operator==(I2CINA219RwRegister const& other) const
+{
+	return (m_data == other.m_data);
+}
+
+bool I2CINA219RwRegister::operator!=(I2CINA219RwRegister const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::UTMessageToFPGAVariant, I2CINA219RwRegister::encode_read_ut_message_count>
+I2CINA219RwRegister::encode_read(coordinate_type const& coord)
+{
+	constexpr static std::array<uint32_t, 2> ina_regs{0, 5};
+
+	uint32_t ina_reg = ina_regs.at(coord.toI2CINA219RwRegisterOnINA219());
+
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
+
+	auto base_addr = Omnibus::coordinate_type(i2c_ina219_base_address + coord.toINA219OnBoard());
+
+	// the I2C INA219 access first writes the register address.
+	// Then two bytes are read continuously with automatic read pointer incrementation.
+	auto encoded1 = Omnibus(Omnibus::Value(ina_reg)).encode_write(base_addr);
+	ret[0] = encoded1[0];
+	ret[1] = encoded1[1];
+	auto encoded2 = Omnibus::encode_read(Omnibus::coordinate_type(base_addr));
+	ret[2] = encoded2[0];
+	auto encoded3 =
+	    Omnibus::encode_read(Omnibus::coordinate_type(base_addr | i2c_over_omnibus_stop));
+	ret[3] = encoded3[0];
+
+	return ret;
+}
+
+std::array<hxcomm::vx::UTMessageToFPGAVariant, I2CINA219RwRegister::encode_write_ut_message_count>
+I2CINA219RwRegister::encode_write(coordinate_type const& coord) const
+{
+	constexpr static std::array<uint32_t, 2> ina_regs{0, 5};
+
+	uint32_t ina_reg = ina_regs.at(coord.toI2CINA219RwRegisterOnINA219());
+
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
+
+	auto base_addr = Omnibus::coordinate_type(i2c_ina219_base_address + coord.toINA219OnBoard());
+
+	// the I2C INA219 access first writes the register address.
+	// Then two bytes are written continuously with automatic read pointer incrementation.
+	auto encoded1 =
+	    Omnibus(Omnibus::Value(ina_reg)).encode_write(Omnibus::coordinate_type(base_addr));
+	ret[0] = encoded1[0];
+	ret[1] = encoded1[1];
+	auto encoded2 = Omnibus(Omnibus::Value(m_data >> CHAR_BIT))
+	                    .encode_write(Omnibus::coordinate_type(base_addr));
+	ret[2] = encoded2[0];
+	ret[3] = encoded2[1];
+	auto encoded3 = Omnibus(Omnibus::Value(m_data & 0xff))
+	                    .encode_write(Omnibus::coordinate_type(base_addr | i2c_over_omnibus_stop));
+	ret[4] = encoded3[0];
+	ret[5] = encoded3[1];
+
+	return ret;
+}
+
+void I2CINA219RwRegister::decode(UTMessageFromFPGARangeOmnibus const& messages)
+{
+	uint32_t value = 0;
+	for (size_t i = 0; i < messages.size(); ++i) {
+		Omnibus word;
+		word.decode({messages.begin() + i, messages.begin() + i});
+		check_i2c_ack(word);
+		value |= (word.get() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
+	}
+
+	m_data = Value(value);
+}
+
+template <class Archive>
+void I2CINA219RwRegister::serialize(Archive& ar, std::uint32_t const)
+{
+	ar(CEREAL_NVP(m_data));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
+
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::I2CIdRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RoRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RwRegister, 0)
