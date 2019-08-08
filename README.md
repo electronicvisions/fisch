@@ -12,7 +12,7 @@ module load localdir
 
 # first build
 waf setup --project fisch
-srun -p compile singularity exec --app visionary-dls /containers/stable/latest waf configure install --test-execnone
+srun -p compile -c8 -- singularity exec --app visionary-dls /containers/stable/latest waf configure install --test-execnone
 
 # run (software) tests
 singularity exec --app visionary-dls /containers/stable/latest waf install --test-execall
@@ -22,7 +22,7 @@ singularity exec --app visionary-dls /containers/stable/latest waf install --tes
 
 Typically you would use the shared object in another project.
 See `tests/hw/fisch/vx/test-readout_jtag_id.cpp` for an example.
-
+Doxygen-generated code documentation is deployed [here](https://jenkins.bioai.eu/job/bld_nightly-fisch/Documentation_20_28fisch_29/) nightly by Jenkins.
 
 ## Contributing
 
@@ -49,13 +49,13 @@ public:
     constexpr static size_t encode_write_ut_message_count W;
     constexpr static size_t decode_ut_message_count D;
 
-    std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_read_ut_message_count>
+    std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count>
     encode_read(coordinate_type const& coord);
 
-    std::array<hxcomm::vx::ut_message_to_fpga_variant, encode_write_ut_message_count>
+    std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count>
     encode_write(coordinate_type const& coord);
 
-    void decode(std::array<hxcomm::vx::ut_message_from_fpga_variant, decode_ut_message_count> const& messages);
+    void decode(std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages);
 };
 ```
 
