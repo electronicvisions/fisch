@@ -1,30 +1,31 @@
 #include <gtest/gtest.h>
 
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/timer.h"
 
 #include "executor.h"
 
+using namespace fisch::vx;
+using namespace halco::hicann_dls::vx;
+
 TEST(JTAGIdCode, Readout)
 {
-	fisch::vx::PlaybackProgramBuilder builder;
+	PlaybackProgramBuilder builder;
 
-	builder.write<fisch::vx::ResetChip>(
-	    halco::hicann_dls::vx::ResetChipOnDLS(), fisch::vx::ResetChip(true));
-	builder.write<fisch::vx::Timer>(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer());
-	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(10));
-	builder.write<fisch::vx::ResetChip>(
-	    halco::hicann_dls::vx::ResetChipOnDLS(), fisch::vx::ResetChip(false));
-	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(100));
+	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(TimerOnDLS(), Timer());
+	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(ResetChipOnDLS(), ResetChip(false));
+	builder.wait_until(TimerOnDLS(), Timer::Value(100));
 
-	builder.write<fisch::vx::JTAGClockScaler>(
-	    halco::hicann_dls::vx::JTAGClockScalerOnDLS(), fisch::vx::JTAGClockScaler(fisch::vx::JTAGClockScaler::Value(3)));
-	builder.write<fisch::vx::ResetJTAGTap>(
-	    halco::hicann_dls::vx::ResetJTAGTapOnDLS(), fisch::vx::ResetJTAGTap());
+	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
+	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
-	auto ticket = builder.read(halco::hicann_dls::vx::JTAGIdCodeOnDLS());
+	auto ticket = builder.read(JTAGIdCodeOnDLS());
 
-	builder.wait_until(halco::hicann_dls::vx::TimerOnDLS(), fisch::vx::Timer::Value(1000));
+	builder.wait_until(TimerOnDLS(), Timer::Value(1000));
 	auto program = builder.done();
 
 	auto executor = generate_playback_program_test_executor();

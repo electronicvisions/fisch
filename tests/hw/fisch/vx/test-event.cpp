@@ -3,6 +3,7 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
+#include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
@@ -18,15 +19,14 @@ TEST(SpikePack1ToChip, Loopback)
 {
 	PlaybackProgramBuilder builder;
 
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(true));
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10));
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(false));
+	builder.write(ResetChipOnDLS(), ResetChip(false));
 	builder.wait_until(TimerOnDLS(), Timer::Value(100));
 
-	builder.write<JTAGClockScaler>(
-	    JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
-	builder.write<ResetJTAGTap>(ResetJTAGTapOnDLS(), ResetJTAGTap());
+	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
+	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// configure PLL, without, events are corrupted by MADC events or broken L2
 	// configure ADPLLs
@@ -45,7 +45,7 @@ TEST(SpikePack1ToChip, Loopback)
 	}
 
 	// wait until PLL reconfiguration and Omnibus is up
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(100 * fpga_clock_cycles_per_us));
 
 	// configure FPGA-side PHYs
@@ -76,7 +76,7 @@ TEST(SpikePack1ToChip, Loopback)
 	}
 
 	// wait until highspeed is up
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(80 * fpga_clock_cycles_per_us));
 
 	builder.write(SystimeSyncOnFPGA(), SystimeSync(true));
@@ -105,12 +105,12 @@ TEST(SpikePack1ToChip, Loopback)
 		SpikePack1ToChip spike(
 		    {SpikeLabel(NeuronLabel(i % NeuronLabel::size), SPL1Address(i % SPL1Address::size))});
 		builder.write(SpikePack1ToChipOnDLS(), spike);
-		builder.write<Timer>(TimerOnDLS(), Timer());
+		builder.write(TimerOnDLS(), Timer());
 		builder.wait_until(TimerOnDLS(), Timer::Value(10));
 		to_fpga_spike_labels.push_back(spike.get_labels().at(0));
 	}
 
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(1000));
 	auto program = builder.done();
 

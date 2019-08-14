@@ -2,6 +2,7 @@
 
 #include "fisch/vx/constants.h"
 #include "fisch/vx/jtag.h"
+#include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/timer.h"
 
@@ -15,15 +16,14 @@ std::shared_ptr<PlaybackProgram> get_write_program(
 {
 	PlaybackProgramBuilder builder;
 
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(true));
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10));
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(false));
+	builder.write(ResetChipOnDLS(), ResetChip(false));
 	builder.wait_until(TimerOnDLS(), Timer::Value(100));
 
-	builder.write<JTAGClockScaler>(
-	    JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
-	builder.write<ResetJTAGTap>(ResetJTAGTapOnDLS(), ResetJTAGTap());
+	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
+	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
 	builder.wait_until(TimerOnDLS(), Timer::Value(22 * fpga_clock_cycles_per_us));
@@ -40,7 +40,7 @@ get_read_program(OmnibusChipOverJTAGAddress address)
 
 	auto ticket = builder.read(address);
 
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
 	return std::make_tuple(builder.done(), ticket);
 }

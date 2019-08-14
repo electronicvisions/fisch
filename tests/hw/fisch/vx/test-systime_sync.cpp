@@ -3,6 +3,7 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
+#include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
@@ -18,15 +19,14 @@ TEST(SystimeSync, TimeAnnotation)
 {
 	PlaybackProgramBuilder builder;
 
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(true));
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10));
-	builder.write<ResetChip>(ResetChipOnDLS(), ResetChip(false));
+	builder.write(ResetChipOnDLS(), ResetChip(false));
 	builder.wait_until(TimerOnDLS(), Timer::Value(100));
 
-	builder.write<JTAGClockScaler>(
-	    JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
-	builder.write<ResetJTAGTap>(ResetJTAGTapOnDLS(), ResetJTAGTap());
+	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
+	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// configure FPGA-side PHYs
 	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
@@ -77,7 +77,7 @@ TEST(SystimeSync, TimeAnnotation)
 	auto ticket = builder.read(addr);
 	EXPECT_FALSE(ticket.valid());
 
-	builder.write<Timer>(TimerOnDLS(), Timer());
+	builder.write(TimerOnDLS(), Timer());
 	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
 	auto program = builder.done();
 
