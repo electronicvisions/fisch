@@ -133,6 +133,30 @@ SPIDACDataRegister::encode_read(coordinate_type const& /*coord*/)
 	return {};
 }
 
+namespace {
+
+struct SPIDACDataRegisterBitfield
+{
+	union
+	{
+		std::array<uint8_t, 2> raw;
+		// clang-format off
+		struct __attribute__((packed)) {
+			uint16_t data    : 12;
+			uint16_t channel :  3;
+			uint16_t read    :  1;
+		} m;
+		// clang-format on
+		static_assert(sizeof(raw) == sizeof(m), "sizes of union types should match");
+	} u;
+
+	SPIDACDataRegisterBitfield() { u.raw = {0u, 0u}; }
+
+	SPIDACDataRegisterBitfield(std::array<uint8_t, 2> data) { u.raw = data; }
+};
+
+} // namespace
+
 std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACDataRegister::encode_write_ut_message_count>
 SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 {
@@ -144,16 +168,16 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
-	auto encoded1 =
-	    OmnibusFPGA(
-	        OmnibusFPGA::value_type(
-	            ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | (m_data.value() >> CHAR_BIT))))
-	        .encode_write(addr);
+	SPIDACDataRegisterBitfield bitfield;
+	bitfield.u.m.read = false;
+	bitfield.u.m.channel = coord.toSPIDACDataRegisterOnDAC().toEnum();
+	bitfield.u.m.data = m_data.value();
+
+	auto encoded1 = OmnibusFPGA(OmnibusFPGA::value_type(bitfield.u.raw[1])).encode_write(addr);
 	ret[0] = encoded1[0];
 	ret[1] = encoded1[1];
 	auto encoded2 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(
-	                    spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
+	    OmnibusFPGA(OmnibusFPGA::value_type(spi_over_omnibus_stop_bit | bitfield.u.raw[0]))
 	        .encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];

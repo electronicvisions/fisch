@@ -36,7 +36,7 @@ TEST(SPIDACDataRegister, EncodeWrite)
 	using namespace halco::hicann_dls::vx;
 
 	SPIDACDataRegister obj;
-	obj.set(SPIDACDataRegister::Value(12));
+	obj.set(SPIDACDataRegister::Value(0xfc1));
 
 	typename SPIDACDataRegister::coordinate_type coord(halco::common::Enum(3));
 	auto messages = obj.encode_write(coord);
@@ -54,7 +54,7 @@ TEST(SPIDACDataRegister, EncodeWrite)
 	    message_data_1,
 	    UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
 	        instruction::omnibus_to_fpga::Data::Payload(
-	            (coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | (obj.get() >> CHAR_BIT))));
+	            ((coord.toSPIDACDataRegisterOnDAC().toEnum() << 12) | obj.get()) >> CHAR_BIT)));
 	auto message_addr_2 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
 	EXPECT_EQ(message_addr_2, addr);
