@@ -138,8 +138,8 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 {
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
-	auto addr =
-	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
+	auto addr = OmnibusFPGA::coordinate_type(
+	    spi_over_omnibus_mask | (2 + (2 * coord.toDACOnBoard().toEnum())));
 
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
@@ -230,8 +230,8 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 {
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
-	auto addr =
-	    OmnibusFPGA::coordinate_type(spi_over_omnibus_mask | (2 + coord.toDACOnBoard().toEnum()));
+	auto addr = OmnibusFPGA::coordinate_type(
+	    spi_over_omnibus_mask | (2 + (2 * coord.toDACOnBoard().toEnum())));
 
 	constexpr uint32_t control_mask = 1 << 7;
 
