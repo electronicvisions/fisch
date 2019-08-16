@@ -15,6 +15,10 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 class PlaybackDecoder
 {
 public:
+	/**
+	 * Pair of UT message and FPGATime time annotation.
+	 * @tparam MesageT UT message type
+	 */
 	template <typename MessageT>
 	struct TimedResponse
 	{

@@ -21,6 +21,7 @@ class GENPYBIND(visible) SPIShiftRegister
 public:
 	typedef halco::hicann_dls::vx::SPIShiftRegisterOnBoard coordinate_type;
 
+	/** Shift register value. */
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0xffffff, 0>
 	{
@@ -80,6 +81,7 @@ class GENPYBIND(visible) SPIDACDataRegister
 public:
 	typedef halco::hicann_dls::vx::SPIDACDataRegisterOnBoard coordinate_type;
 
+	/** DAC data value. */
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0xfff, 0>
 	{
@@ -139,6 +141,7 @@ class GENPYBIND(visible) SPIDACControlRegister
 public:
 	typedef halco::hicann_dls::vx::SPIDACControlRegisterOnBoard coordinate_type;
 
+	/** DAC control value. */
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0x1fff, 0>
 	{

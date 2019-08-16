@@ -11,6 +11,9 @@ class access;
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
+/**
+ * Spike label holding NeuronLabel and SPL1Address information.
+ */
 class GENPYBIND(visible) SpikeLabel
 {
 public:
@@ -71,6 +74,10 @@ private:
 };
 
 
+/**
+ * Base of fixed-size spike pack to chip.
+ * @tparam NumPack Number of spike labels to hold
+ */
 template <size_t NumPack>
 class SpikePackToChip
 {
@@ -173,6 +180,9 @@ public:
 };
 
 
+/**
+ * Spike from chip comprised of a SpikeLabel and a ChipTime.
+ */
 class GENPYBIND(visible) SpikeFromChip
 {
 public:
@@ -230,6 +240,9 @@ private:
 };
 
 
+/**
+ * MADC sample from chip comprised of a Value and a ChipTime.
+ */
 class GENPYBIND(visible) MADCSampleFromChip
 {
 public:
@@ -294,24 +307,51 @@ private:
 };
 
 
+/**
+ * Spike from chip event comprised of a SpikeFromChip and FPGATime time annotation.
+ * Serves as value type for spikes accessible on a PlaybackProgram.
+ */
 class GENPYBIND(visible) SpikeFromChipEvent
 {
 public:
+	/**
+	 * Construct spike from chip event from a spike from chip and a FPGA time.
+	 * @param spike SpikeFromChip spike data
+	 * @param fpga_time FPGATime time annotation
+	 */
 	SpikeFromChipEvent(
 	    SpikeFromChip const& spike = SpikeFromChip(), FPGATime const& fpga_time = FPGATime()) :
 	    m_spike(spike),
 	    m_fpga_time(fpga_time)
 	{}
 
+	/**
+	 * Get spike data.
+	 * @return SpikeFromChip spike data
+	 */
 	GENPYBIND(getter_for(spike))
 	SpikeFromChip get_spike() const;
-	GENPYBIND(setter_for(spike))
-	void set_spike(SpikeFromChip const& spike);
 
+	/**
+	 * Set spike data.
+	 * @param value SpikeFromChip spike data
+	 */
+	GENPYBIND(setter_for(spike))
+	void set_spike(SpikeFromChip const& value);
+
+	/**
+	 * Get FPGA time annotation.
+	 * @return FPGATime time annotation
+	 */
 	GENPYBIND(getter_for(fpga_time))
 	FPGATime get_fpga_time() const;
+
+	/**
+	 * Set FPGA time annotation.
+	 * @param value FPGATime time annotation
+	 */
 	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& fpga_time);
+	void set_fpga_time(FPGATime const& value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, SpikeFromChipEvent const& event);
@@ -329,9 +369,18 @@ private:
 };
 
 
+/**
+ * MADC sample from chip event comprised of MADCSampleFromChip data and FPGATime time annotation.
+ * Serves as value type for MADC samples accessible on a PlaybackProgram.
+ */
 class GENPYBIND(visible) MADCSampleFromChipEvent
 {
 public:
+	/**
+	 * Construct MADC sample from chip event from a MADC sample from chip and a FPGA time.
+	 * @param sample MADCSampleFromChip sample data
+	 * @param fpga_time FPGATime time annotation
+	 */
 	MADCSampleFromChipEvent(
 	    MADCSampleFromChip const& sample = MADCSampleFromChip(),
 	    FPGATime const& fpga_time = FPGATime()) :
@@ -339,15 +388,33 @@ public:
 	    m_fpga_time(fpga_time)
 	{}
 
+	/**
+	 * Get sample data.
+	 * @return MADCSampleFromChip sample data
+	 */
 	GENPYBIND(getter_for(sample))
 	MADCSampleFromChip get_sample() const;
-	GENPYBIND(setter_for(sample))
-	void set_sample(MADCSampleFromChip const& spike);
 
+	/**
+	 * Get sample data.
+	 * @param value MADCSampleFromChip sample data
+	 */
+	GENPYBIND(setter_for(sample))
+	void set_sample(MADCSampleFromChip const& value);
+
+	/**
+	 * Get FPGA time annotation.
+	 * @return FPGATime time annotation
+	 */
 	GENPYBIND(getter_for(fpga_time))
 	FPGATime get_fpga_time() const;
+
+	/**
+	 * Set FPGA time annotation.
+	 * @param value FPGATime time annotation
+	 */
 	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& fpga_time);
+	void set_fpga_time(FPGATime const& value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChipEvent const& event);

@@ -231,16 +231,29 @@ struct coordinate_type_to_container_type
 	    container_list>::type type;
 };
 
-// The struct has to resolve a container type for vector<coordinate>, because it is always
-// evaluated, even if the fully specified read function signature does not match.
+/**
+ * Specialization for vector<coordinate>.
+ * The struct has to resolve a container type for vector<coordinate>, because it is always
+ * evaluated, even if the fully specified read function signature does not match.
+ */
 template <typename CoordinateT>
 struct coordinate_type_to_container_type<std::vector<CoordinateT>>
 {
-	typedef void type; // void because it is never used
+	typedef void type; /// void because it is never used
 };
 
 } // namespace detail
 
+
+/**
+ * Sequential playback program builder.
+ * It allows building a (timed) sequence of logical instructions to be executed on the FPGA.
+ * Instructions can be of type write, read and wait_until and are added to the current end of the
+ * instruction sequence.
+ * A write is defined as an instruction without deterministic response, whereas a read is defined as
+ * instruction with deterministic response expectation which is encapsulated in a ticket accessor
+ * to the to-be-acquired response data.
+ */
 class GENPYBIND(visible) PlaybackProgramBuilder
 {
 public:
