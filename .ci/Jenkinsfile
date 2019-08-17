@@ -5,5 +5,4 @@ wafDefaultPipeline(projects: ["fisch"],
                    testSlurmResource: [partition: "cube", wafer: 62, "fpga-without-aout": 3],
                    testOptions: "-j1 --test-execall",
                    testTimeout: 240,
-                   notificationChannel: "#dls-software",
-                   warningsIgnorePattern: "*/lib-rcf/*")
+                   notificationChannel: "#dls-software")
