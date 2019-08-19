@@ -73,6 +73,9 @@ TEST(PlaybackProgramBuilder, General)
 	PlaybackProgramBuilder builder;
 
 	builder.write(TimerOnDLS(), Timer());
+	std::stringstream ss_builder;
+	ss_builder << builder;
+
 	std::shared_ptr<PlaybackProgram> small_program = builder.done();
 
 	EXPECT_EQ(small_program->get_to_fpga_messages().size(), 1);
@@ -83,6 +86,7 @@ TEST(PlaybackProgramBuilder, General)
 	EXPECT_GT(ss.str().size(), 0);
 	std::stringstream ss_expected;
 	ss_expected << hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>();
+	EXPECT_NE(ss_builder.str().find(ss_expected.str()), std::string::npos);
 	EXPECT_NE(ss.str().find(ss_expected.str()), std::string::npos);
 
 	// new program started on last done() call

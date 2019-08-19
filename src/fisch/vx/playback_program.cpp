@@ -367,6 +367,12 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 	return ret;
 }
 
+std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder)
+{
+	os << *(builder.m_program);
+	return os;
+}
+
 // explicit instantiation
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	template class PlaybackProgram::ContainerTicket<Name>;                                         \

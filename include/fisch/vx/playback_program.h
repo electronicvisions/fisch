@@ -302,6 +302,13 @@ public:
 	 */
 	std::shared_ptr<PlaybackProgram> done();
 
+	/**
+	 * Print instruction UT messages added so far to ostream.
+	 * @return Altered ostream
+	 */
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder);
+
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
 	size_t m_jtag_receive_queue_size;
