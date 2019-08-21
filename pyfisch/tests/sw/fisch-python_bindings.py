@@ -14,7 +14,7 @@ def get_all_classes(m):
     ret = dict()
     for name, obj in inspect.getmembers(m):
         if (inspect.isclass(obj) and
-                str(obj.__class__) == "<class 'pybind11_type'>"):
+                str(obj.__class__) == "<class 'pybind11_builtins.pybind11_type'>"):
             ret[name] = obj
             get_all_classes(obj)
     return ret
