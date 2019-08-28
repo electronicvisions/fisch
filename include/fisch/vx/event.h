@@ -145,9 +145,32 @@ protected:
 	void serialize(Archive& ar);
 };
 
-typedef SpikePackToChip<1> SpikePack1ToChip GENPYBIND(opaque);
-typedef SpikePackToChip<2> SpikePack2ToChip GENPYBIND(opaque);
-typedef SpikePackToChip<3> SpikePack3ToChip GENPYBIND(opaque);
+/**
+ * Spike pack to chip holding one spike label.
+ */
+class SpikePack1ToChip : public SpikePackToChip<1>
+{
+public:
+	using SpikePackToChip<1>::SpikePackToChip;
+};
+
+/**
+ * Spike pack to chip holding two spike labels.
+ */
+class SpikePack2ToChip : public SpikePackToChip<2>
+{
+public:
+	using SpikePackToChip<2>::SpikePackToChip;
+};
+
+/**
+ * Spike pack to chip holding three spike labels.
+ */
+class SpikePack3ToChip : public SpikePackToChip<3>
+{
+public:
+	using SpikePackToChip<3>::SpikePackToChip;
+};
 
 
 class GENPYBIND(visible) SpikeFromChip
