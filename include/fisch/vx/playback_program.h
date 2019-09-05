@@ -50,8 +50,8 @@ public:
 
 		friend class PlaybackProgramBuilder;
 
-		size_t pos;
-		std::shared_ptr<PlaybackProgram const> pbp;
+		size_t m_pos;
+		std::shared_ptr<PlaybackProgram const> m_pbp;
 	};
 
 #ifdef __GENPYBIND__
@@ -95,9 +95,9 @@ public:
 
 		friend class PlaybackProgramBuilder;
 
-		size_t container_count;
-		size_t pos;
-		std::shared_ptr<PlaybackProgram const> pbp;
+		size_t m_container_count;
+		size_t m_pos;
+		std::shared_ptr<PlaybackProgram const> m_pbp;
 	};
 
 #ifdef __GENPYBIND__
