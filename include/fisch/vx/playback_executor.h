@@ -44,7 +44,8 @@ protected:
 /**
  * Executor executing with an ARQConnection.
  */
-class GENPYBIND(inline_base("*")) PlaybackProgramARQExecutor : public PlaybackProgramExecutor<hxcomm::vx::ARQConnection>
+class GENPYBIND(inline_base("*")) PlaybackProgramARQExecutor
+    : public PlaybackProgramExecutor<hxcomm::vx::ARQConnection>
 {
 public:
 	typedef PlaybackProgramExecutor<hxcomm::vx::ARQConnection> base_t;
@@ -67,7 +68,8 @@ public:
 /**
  * Executor executing with a SimConnection.
  */
-class GENPYBIND(inline_base("*")) PlaybackProgramSimExecutor : public PlaybackProgramExecutor<hxcomm::vx::SimConnection>
+class GENPYBIND(inline_base("*")) PlaybackProgramSimExecutor
+    : public PlaybackProgramExecutor<hxcomm::vx::SimConnection>
 {
 public:
 	typedef PlaybackProgramExecutor<hxcomm::vx::SimConnection> base_t;

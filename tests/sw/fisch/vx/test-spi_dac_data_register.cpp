@@ -23,7 +23,8 @@ TEST(SPIDACDataRegister, EncodeWrite)
 	EXPECT_EQ(messages.size(), 8);
 	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	    instruction::omnibus_to_fpga::Address::Payload(
-	        executor_omnibus_mask | spi_over_omnibus_mask | ((2 * coord.toDACOnBoard()) + 2), false));
+	        executor_omnibus_mask | spi_over_omnibus_mask | ((2 * coord.toDACOnBoard()) + 2),
+	        false));
 	auto message_addr_1 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(message_addr_1, addr);

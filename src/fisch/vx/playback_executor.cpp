@@ -3,7 +3,7 @@
 namespace fisch::vx {
 
 template <class Connection>
-template<class... Args>
+template <class... Args>
 PlaybackProgramExecutor<Connection>::PlaybackProgramExecutor(Args... args) : m_connection(args...)
 {}
 
@@ -49,7 +49,9 @@ PlaybackProgramARQExecutor::PlaybackProgramARQExecutor() : base_t() {}
 
 PlaybackProgramARQExecutor::PlaybackProgramARQExecutor(ip_t const ip) : base_t(ip) {}
 
-PlaybackProgramSimExecutor::PlaybackProgramSimExecutor(ip_t const ip, port_t const port) : base_t(ip, port) {}
+PlaybackProgramSimExecutor::PlaybackProgramSimExecutor(ip_t const ip, port_t const port) :
+    base_t(ip, port)
+{}
 
 void PlaybackProgramSimExecutor::set_enable_terminate_on_destruction(bool const value)
 {

@@ -162,8 +162,7 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 	EXPECT_THROW(ticket.get(), std::runtime_error);
 
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
+	    from_fpga_message(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
 	auto program = builder.done();
 
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
@@ -213,16 +212,14 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 
 	// too little messages
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_1(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
+	    from_fpga_message_1(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
 	program->push_from_fpga_message(from_fpga_message_1);
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
 
 	// enough messages
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_2(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
+	    from_fpga_message_2(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
 	program->push_from_fpga_message(from_fpga_message_2);
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
@@ -254,8 +251,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 
 	// only first ticket valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_1(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
+	    from_fpga_message_1(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
 	program->push_from_fpga_message(from_fpga_message_1);
 	EXPECT_TRUE(tickets.at(0).valid());
 	EXPECT_FALSE(tickets.at(1).valid());
@@ -268,8 +264,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 
 	// both tickets valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_2(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
+	    from_fpga_message_2(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
 	program->push_from_fpga_message(from_fpga_message_2);
 	for (auto ticket : tickets) {
 		EXPECT_TRUE(ticket.valid());
@@ -304,8 +299,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 
 	// not enough messages
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_1(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
+	    from_fpga_message_1(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
 	program->push_from_fpga_message(from_fpga_message_1);
 	for (auto ticket : tickets) {
 		EXPECT_FALSE(ticket.valid());
@@ -314,8 +308,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 
 	// first ticket valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_2(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
+	    from_fpga_message_2(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
 	program->push_from_fpga_message(from_fpga_message_2);
 	EXPECT_TRUE(tickets.at(0).valid());
 	EXPECT_NO_THROW(tickets.at(0).get());
@@ -329,8 +322,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 
 	// second ticket still not valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_3(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x43218765));
+	    from_fpga_message_3(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x43218765));
 	program->push_from_fpga_message(from_fpga_message_3);
 	EXPECT_TRUE(tickets.at(0).valid());
 	EXPECT_NO_THROW(tickets.at(0).get());
@@ -344,8 +336,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 
 	// both tickets valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message_4(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x56781234));
+	    from_fpga_message_4(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x56781234));
 	program->push_from_fpga_message(from_fpga_message_4);
 	for (auto ticket : tickets) {
 		EXPECT_TRUE(ticket.valid());
@@ -378,8 +369,7 @@ TEST(PlaybackProgramBuilder, ClearFromFPGAMessages)
 
 	// ticket valid
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
-	    from_fpga_message(
-	        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
+	    from_fpga_message(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x12345678));
 	program->push_from_fpga_message(from_fpga_message);
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
