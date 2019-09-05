@@ -69,6 +69,12 @@ public:
 	 */
 	void operator()(ut_message_from_fpga_variant_type const& message);
 
+	/**
+	 * Clear state leading to FPGA time annotation reset and clearing of all queues and event pack
+	 * counters.
+	 */
+	void clear();
+
 private:
 	void process(ut_message_from_fpga_jtag_type const& message);
 	void process(ut_message_from_fpga_omnibus_type const& message);

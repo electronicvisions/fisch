@@ -234,12 +234,7 @@ void PlaybackProgram::push_from_fpga_message(from_fpga_message_type const& messa
 
 void PlaybackProgram::clear_from_fpga_messages()
 {
-	m_receive_queue_jtag.clear();
-	m_receive_queue_omnibus.clear();
-	m_spike_response_queue.clear();
-	m_madc_sample_response_queue.clear();
-	m_spike_pack_counts.fill(0);
-	m_madc_sample_pack_counts.fill(0);
+	m_decoder.clear();
 }
 
 

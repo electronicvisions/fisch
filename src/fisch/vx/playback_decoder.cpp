@@ -26,6 +26,17 @@ void PlaybackDecoder::operator()(ut_message_from_fpga_variant_type const& messag
 	boost::apply_visitor([this](auto m) { process(m); }, message);
 }
 
+void PlaybackDecoder::clear()
+{
+	m_jtag_queue.clear();
+	m_omnibus_queue.clear();
+	m_spike_queue.clear();
+	m_madc_sample_queue.clear();
+	m_spike_pack_counts.fill(0);
+	m_madc_sample_pack_counts.fill(0);
+	m_time_current = FPGATime(0);
+}
+
 void PlaybackDecoder::process(ut_message_from_fpga_jtag_type const& message)
 {
 	m_jtag_queue.push_back(typename jtag_queue_type::value_type(message, m_time_current));
