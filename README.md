@@ -58,6 +58,10 @@ public:
     void decode(std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages);
 };
 ```
+A container is writable exactly if the `encode_write_ut_message_count` is larger than zero, which means for writing the container data, messages are produced.
+A container is readable exactly if the `encode_read_ut_message_count` and `decode_ut_message_count` are larger than zero, which means that for reading container data, messages are produced leading to a non-zero amount of responses which are decoded.
+It is assumed that if the message counts are non-zero, the associated functions also exist.
+If a container is read- or write-only, the variables and member functions of the non-implemented operation can be omitted.
 
 Registers with a ranged-number representation use `RantWrapper` from `halco`, see `JTAGClockScaler` in `include/fisch/vx/jtag.h` for an exemplary use.
 In addition to the above interface, each register container is to support serialization and an `std::ostream` operator for printing its content, see `JTAGPLLRegister` for an exemplary implementation.

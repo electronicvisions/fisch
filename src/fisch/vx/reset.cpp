@@ -35,23 +35,12 @@ bool ResetChip::operator!=(ResetChip const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetChip::encode_read_ut_message_count>
-ResetChip::encode_read(coordinate_type const& /* coord */)
-{
-	return {};
-}
-
 std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetChip::encode_write_ut_message_count>
 ResetChip::encode_write(coordinate_type const& /* coord */) const
 {
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Reset>(
 	    hxcomm::vx::instruction::system::Reset::Payload(m_value))};
 }
-
-void ResetChip::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, ResetChip::decode_ut_message_count> const&
-    /*messages*/)
-{}
 
 template <class Archive>
 void ResetChip::serialize(Archive& ar)

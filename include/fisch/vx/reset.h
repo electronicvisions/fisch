@@ -45,17 +45,10 @@ public:
 	bool operator==(ResetChip const& other) const;
 	bool operator!=(ResetChip const& other) const;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(
-	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
-	    GENPYBIND(hidden);
 
 private:
 	bool m_value;

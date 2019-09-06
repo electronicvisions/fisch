@@ -31,15 +31,10 @@ public:
 	bool operator==(ResetJTAGTap const& other) const;
 	bool operator!=(ResetJTAGTap const& other) const;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
 	friend class cereal::access;
@@ -89,15 +84,10 @@ public:
 	bool operator==(JTAGClockScaler const& other) const;
 	bool operator!=(JTAGClockScaler const& other) const;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;
@@ -202,13 +192,10 @@ public:
 	bool operator!=(JTAGIdCode const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 2;
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
 	    coordinate_type const& coord) GENPYBIND(hidden);
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
 	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
@@ -263,15 +250,10 @@ public:
 	bool operator==(JTAGPLLRegister const& other) const;
 	bool operator!=(JTAGPLLRegister const& other) const;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
-	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;
@@ -322,15 +304,10 @@ public:
 	bool operator==(JTAGPhyRegister const& other) const;
 	bool operator!=(JTAGPhyRegister const& other) const;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
-	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 0;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_value;

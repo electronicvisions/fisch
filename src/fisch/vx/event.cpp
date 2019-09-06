@@ -96,15 +96,6 @@ bool SpikePackToChip<NumPack>::operator!=(SpikePackToChip<NumPack> const& other)
 template <size_t NumPack>
 std::array<
     hxcomm::vx::UTMessageToFPGAVariant,
-    SpikePackToChip<NumPack>::encode_read_ut_message_count>
-SpikePackToChip<NumPack>::encode_read(coordinate_type const& /*coord*/)
-{
-	return {};
-}
-
-template <size_t NumPack>
-std::array<
-    hxcomm::vx::UTMessageToFPGAVariant,
     SpikePackToChip<NumPack>::encode_write_ut_message_count>
 SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 {
@@ -117,11 +108,6 @@ SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>>(
 	    typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload(spikes))};
 }
-
-template <size_t NumPack>
-void SpikePackToChip<NumPack>::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
-{}
 
 template <size_t NumPack>
 template <typename Archive>

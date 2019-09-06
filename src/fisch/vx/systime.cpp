@@ -34,23 +34,12 @@ bool SystimeSync::operator!=(SystimeSync const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, SystimeSync::encode_read_ut_message_count>
-SystimeSync::encode_read(coordinate_type const& /* coord */)
-{
-	return {};
-}
-
 std::array<hxcomm::vx::UTMessageToFPGAVariant, SystimeSync::encode_write_ut_message_count>
 SystimeSync::encode_write(coordinate_type const& /* coord */) const
 {
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::SystimeInit>(
 	    hxcomm::vx::instruction::timing::SystimeInit::Payload(m_do_sync))};
 }
-
-void SystimeSync::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, SystimeSync::decode_ut_message_count> const&
-    /*messages*/)
-{}
 
 template <class Archive>
 void SystimeSync::serialize(Archive& ar)

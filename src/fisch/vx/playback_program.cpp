@@ -45,52 +45,64 @@ PlaybackProgram::ContainerTicket<ContainerT>::~ContainerTicket()
 template <class ContainerT>
 ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
 {
-	if (!valid()) {
-		throw std::runtime_error("Data not available.");
-	}
-	ContainerT config;
-	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-		auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() + m_pos;
-		config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-		auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos;
-		config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
+	if constexpr (IsReadable<ContainerT>::value) {
+		if (!valid()) {
+			throw std::runtime_error("Data not available.");
+		}
+		ContainerT config;
+		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+			auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() + m_pos;
+			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
+		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+			auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos;
+			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
+		return config;
 	} else {
-		throw std::logic_error("Container response queue not implemented.");
+		throw std::logic_error("Container not readable.");
 	}
-	return config;
 }
 
 template <class ContainerT>
 bool PlaybackProgram::ContainerTicket<ContainerT>::valid() const
 {
-	size_t queue_size = 0;
-	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-		queue_size = m_pbp->m_receive_queue_omnibus.size();
-	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-		queue_size = m_pbp->m_receive_queue_jtag.size();
+	if constexpr (IsReadable<ContainerT>::value) {
+		size_t queue_size = 0;
+		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+			queue_size = m_pbp->m_receive_queue_omnibus.size();
+		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+			queue_size = m_pbp->m_receive_queue_jtag.size();
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
+		return (queue_size >= (m_pos + ContainerT::decode_ut_message_count));
 	} else {
-		throw std::logic_error("Container response queue not implemented.");
+		throw std::logic_error("Container not readable.");
 	}
-	return (queue_size >= (m_pos + ContainerT::decode_ut_message_count));
 }
 
 template <class ContainerT>
 FPGATime PlaybackProgram::ContainerTicket<ContainerT>::fpga_time() const
 {
-	if (!valid()) {
-		throw std::runtime_error("Data not available.");
-	}
-	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-		return *(
-		    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
-		    ContainerT::decode_ut_message_count - 1);
-	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-		return *(
-		    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
-		    ContainerT::decode_ut_message_count - 1);
+	if constexpr (IsReadable<ContainerT>::value) {
+		if (!valid()) {
+			throw std::runtime_error("Data not available.");
+		}
+		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+			return *(
+			    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
+			    ContainerT::decode_ut_message_count - 1);
+		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+			return *(
+			    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
+			    ContainerT::decode_ut_message_count - 1);
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
 	} else {
-		throw std::logic_error("Container response queue not implemented.");
+		throw std::logic_error("Container not readable.");
 	}
 }
 
@@ -123,60 +135,73 @@ PlaybackProgram::ContainerVectorTicket<ContainerT>::~ContainerVectorTicket()
 template <class ContainerT>
 std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get() const
 {
-	if (!valid()) {
-		throw std::runtime_error("Data not available.");
-	}
-
-	std::vector<ContainerT> containers;
-
-	for (size_t c = 0; c < m_container_count; ++c) {
-		ContainerT config;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() + m_pos +
-			                      c * ContainerT::decode_ut_message_count;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos +
-			                      c * ContainerT::decode_ut_message_count;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
+	if constexpr (IsReadable<ContainerT>::value) {
+		if (!valid()) {
+			throw std::runtime_error("Data not available.");
 		}
-		containers.push_back(config);
+
+		std::vector<ContainerT> containers;
+
+		for (size_t c = 0; c < m_container_count; ++c) {
+			ContainerT config;
+			if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+				auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() +
+				                      m_pos + c * ContainerT::decode_ut_message_count;
+				config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
+			} else if constexpr (hate::is_in_type_list<
+			                         ContainerT, jtag_queue_container_list>::value) {
+				auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos +
+				                      c * ContainerT::decode_ut_message_count;
+				config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
+			} else {
+				throw std::logic_error("Container response queue not implemented.");
+			}
+			containers.push_back(config);
+		}
+		return containers;
+	} else {
+		throw std::logic_error("Container not readable.");
 	}
-	return containers;
 }
 
 template <class ContainerT>
 bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
 {
-	size_t queue_size;
-	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-		queue_size = m_pbp->m_receive_queue_omnibus.size();
-	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-		queue_size = m_pbp->m_receive_queue_jtag.size();
+	if constexpr (IsReadable<ContainerT>::value) {
+		size_t queue_size;
+		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+			queue_size = m_pbp->m_receive_queue_omnibus.size();
+		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+			queue_size = m_pbp->m_receive_queue_jtag.size();
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
+		return (queue_size >= (m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
 	} else {
-		throw std::logic_error("Container response queue not implemented.");
+		throw std::logic_error("Container not readable.");
 	}
-	return (queue_size >= (m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
 }
 
 template <class ContainerT>
 FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
 {
-	if (!valid()) {
-		throw std::runtime_error("Data not available.");
-	}
-	if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-		return *(
-		    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
-		    m_container_count * ContainerT::decode_ut_message_count - 1);
-	} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-		return *(
-		    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
-		    m_container_count * ContainerT::decode_ut_message_count - 1);
+	if constexpr (IsReadable<ContainerT>::value) {
+		if (!valid()) {
+			throw std::runtime_error("Data not available.");
+		}
+		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
+			return *(
+			    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
+			    m_container_count * ContainerT::decode_ut_message_count - 1);
+		} else if (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
+			return *(
+			    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
+			    m_container_count * ContainerT::decode_ut_message_count - 1);
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
 	} else {
-		throw std::logic_error("Container response queue not implemented.");
+		throw std::logic_error("Container not readable.");
 	}
 }
 
@@ -300,11 +325,11 @@ void PlaybackProgramBuilder::write(
 		std::stringstream ss;
 		ss << config << " can't be written.";
 		throw std::logic_error(ss.str());
+	} else {
+		auto messages = config.encode_write(coord);
+		m_program->m_instructions.insert(
+		    m_program->m_instructions.end(), messages.begin(), messages.end());
 	}
-
-	auto messages = config.encode_write(coord);
-	m_program->m_instructions.insert(
-	    m_program->m_instructions.end(), messages.begin(), messages.end());
 }
 
 template <class ContainerT>

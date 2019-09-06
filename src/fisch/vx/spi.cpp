@@ -44,12 +44,6 @@ bool SPIShiftRegister::operator!=(SPIShiftRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIShiftRegister::encode_read_ut_message_count>
-SPIShiftRegister::encode_read(coordinate_type const& /*coord*/)
-{
-	return {};
-}
-
 std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIShiftRegister::encode_write_ut_message_count>
 SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 {
@@ -79,8 +73,6 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 
 	return ret;
 }
-
-void SPIShiftRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
 
 template <class Archive>
 void SPIShiftRegister::serialize(Archive& ar)
@@ -122,12 +114,6 @@ bool SPIDACDataRegister::operator==(SPIDACDataRegister const& other) const
 bool SPIDACDataRegister::operator!=(SPIDACDataRegister const& other) const
 {
 	return !(*this == other);
-}
-
-std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACDataRegister::encode_read_ut_message_count>
-SPIDACDataRegister::encode_read(coordinate_type const& /*coord*/)
-{
-	return {};
 }
 
 namespace {
@@ -194,8 +180,6 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void SPIDACDataRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
-
 template <class Archive>
 void SPIDACDataRegister::serialize(Archive& ar)
 {
@@ -238,12 +222,6 @@ bool SPIDACControlRegister::operator!=(SPIDACControlRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACControlRegister::encode_read_ut_message_count>
-SPIDACControlRegister::encode_read(coordinate_type const& /*coord*/)
-{
-	return {};
-}
-
 std::array<hxcomm::vx::UTMessageToFPGAVariant, SPIDACControlRegister::encode_write_ut_message_count>
 SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 {
@@ -272,8 +250,6 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 
 	return ret;
 }
-
-void SPIDACControlRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
 
 template <class Archive>
 void SPIDACControlRegister::serialize(Archive& ar)
