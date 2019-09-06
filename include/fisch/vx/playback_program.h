@@ -180,16 +180,11 @@ private:
 	friend class PlaybackProgramBuilder;
 
 	std::vector<to_fpga_message_type> m_instructions;
-	std::vector<PlaybackDecoder::TimedResponse<
-	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>>>
-	    m_receive_queue_jtag;
-	std::vector<PlaybackDecoder::TimedResponse<
-	    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>>>
-	    m_receive_queue_omnibus;
 
-	std::vector<SpikeFromChipEvent> m_spike_response_queue;
-	std::vector<MADCSampleFromChipEvent> m_madc_sample_response_queue;
-
+	PlaybackDecoder::jtag_queue_type m_receive_queue_jtag;
+	PlaybackDecoder::omnibus_queue_type m_receive_queue_omnibus;
+	PlaybackDecoder::spike_queue_type m_spike_response_queue;
+	PlaybackDecoder::madc_sample_queue_type m_madc_sample_response_queue;
 	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 

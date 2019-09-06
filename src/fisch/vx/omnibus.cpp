@@ -63,13 +63,9 @@ namespace fisch::vx {
 		return ret;                                                                                \
 	}                                                                                              \
                                                                                                    \
-	void Name::decode(                                                                             \
-	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages) \
+	void Name::decode(UTMessageFromFPGARangeOmnibus const& messages)                               \
 	{                                                                                              \
-		using data = hxcomm::vx::instruction::omnibus_from_fpga::Data;                             \
-                                                                                                   \
-		auto data_message = boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]);         \
-		m_data = value_type(static_cast<uint32_t>(data_message.get_payload()));                    \
+		m_data = value_type(static_cast<uint32_t>(messages[0].decode()));                          \
 	}                                                                                              \
                                                                                                    \
 	template <class Archive>                                                                       \

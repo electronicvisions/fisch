@@ -40,12 +40,12 @@ void PlaybackDecoder::clear()
 
 void PlaybackDecoder::process(ut_message_from_fpga_jtag_type const& message)
 {
-	m_jtag_queue.push_back(typename jtag_queue_type::value_type(message, m_time_current));
+	m_jtag_queue.push_back(message, m_time_current);
 }
 
 void PlaybackDecoder::process(ut_message_from_fpga_omnibus_type const& message)
 {
-	m_omnibus_queue.push_back(typename omnibus_queue_type::value_type(message, m_time_current));
+	m_omnibus_queue.push_back(message, m_time_current);
 }
 
 void PlaybackDecoder::process(ut_message_from_fpga_halt_type const&)

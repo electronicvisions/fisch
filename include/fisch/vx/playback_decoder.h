@@ -20,14 +20,44 @@ public:
 	 * @tparam MesageT UT message type
 	 */
 	template <typename MessageT>
-	struct TimedResponse
+	struct TimedResponseQueue
 	{
+	private:
+		struct SizeConstraintChecker
+		{
+			SizeConstraintChecker(TimedResponseQueue const& queue) : queue(queue) {}
+			~SizeConstraintChecker() { assert(queue.m_messages.size() == queue.m_times.size()); }
+
+			TimedResponseQueue const& queue;
+		};
+
+		std::vector<MessageT> m_messages;
+		std::vector<FPGATime> m_times;
+
+	public:
 		typedef MessageT message_type;
 
-		MessageT message;
-		FPGATime time;
+		std::vector<MessageT> const& get_messages() const { return m_messages; }
+		std::vector<FPGATime> const& get_times() const { return m_times; }
 
-		TimedResponse(MessageT message, FPGATime time) : message(message), time(time) {}
+		void push_back(MessageT const& message, FPGATime const& time)
+		{
+			auto checker = SizeConstraintChecker(*this);
+			static_cast<void>(checker);
+
+			m_messages.push_back(message);
+			m_times.push_back(time);
+		}
+
+		size_t size() const { return m_messages.size(); }
+
+		void clear()
+		{
+			m_messages.clear();
+			m_times.clear();
+		}
+
+		TimedResponseQueue() {}
 	};
 
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>
@@ -35,8 +65,8 @@ public:
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
 	    ut_message_from_fpga_omnibus_type;
 
-	typedef std::vector<TimedResponse<ut_message_from_fpga_jtag_type>> jtag_queue_type;
-	typedef std::vector<TimedResponse<ut_message_from_fpga_omnibus_type>> omnibus_queue_type;
+	typedef TimedResponseQueue<ut_message_from_fpga_jtag_type> jtag_queue_type;
+	typedef TimedResponseQueue<ut_message_from_fpga_omnibus_type> omnibus_queue_type;
 	typedef std::vector<SpikeFromChipEvent> spike_queue_type;
 	typedef std::vector<MADCSampleFromChipEvent> madc_sample_queue_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>

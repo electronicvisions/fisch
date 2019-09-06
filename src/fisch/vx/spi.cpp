@@ -80,9 +80,7 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 	return ret;
 }
 
-void SPIShiftRegister::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
-{}
+void SPIShiftRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
 
 template <class Archive>
 void SPIShiftRegister::serialize(Archive& ar)
@@ -196,9 +194,7 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void SPIDACDataRegister::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
-{}
+void SPIDACDataRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
 
 template <class Archive>
 void SPIDACDataRegister::serialize(Archive& ar)
@@ -277,9 +273,7 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void SPIDACControlRegister::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /*messages*/)
-{}
+void SPIDACControlRegister::decode(UTMessageFromFPGARangeOmnibus const& /*messages*/) {}
 
 template <class Archive>
 void SPIDACControlRegister::serialize(Archive& ar)

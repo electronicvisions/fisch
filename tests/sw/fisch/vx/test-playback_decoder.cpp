@@ -35,7 +35,7 @@ TEST(PlaybackDecoder, JTAG)
 	    UTMessageFromFPGA<jtag_instruction_type>(jtag_instruction_type::Payload(0x1234));
 	decoder(jtag_message);
 	EXPECT_EQ(jtag_queue.size(), 1);
-	EXPECT_EQ(jtag_queue.at(0).message, jtag_message);
+	EXPECT_EQ(jtag_queue.get_messages().at(0), jtag_message);
 	EXPECT_EQ(omnibus_queue.size(), 0);
 	jtag_queue.clear();
 
@@ -43,6 +43,6 @@ TEST(PlaybackDecoder, JTAG)
 	    UTMessageFromFPGA<omnibus_instruction_type>(omnibus_instruction_type::Payload(0x1234));
 	decoder(omnibus_message);
 	EXPECT_EQ(omnibus_queue.size(), 1);
-	EXPECT_EQ(omnibus_queue.at(0).message, omnibus_message);
+	EXPECT_EQ(omnibus_queue.get_messages().at(0), omnibus_message);
 	EXPECT_EQ(jtag_queue.size(), 0);
 }

@@ -35,7 +35,7 @@ TEST(JTAGIdCode, Ostream)
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data> message(
 	    hxcomm::vx::instruction::jtag_from_hicann::Data::Payload(id.value()));
 
-	obj.decode({message});
+	obj.decode({&message, &message + 1});
 
 	std::stringstream stream;
 	stream << obj;

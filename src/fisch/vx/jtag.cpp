@@ -39,9 +39,7 @@ ResetJTAGTap::encode_write(coordinate_type const& /* coord */) const
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Init>()};
 }
 
-void ResetJTAGTap::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
-{}
+void ResetJTAGTap::decode(UTMessageFromFPGARangeJTAG const& /* messages */) {}
 
 template <class Archive>
 void ResetJTAGTap::serialize(Archive& /*ar*/)
@@ -93,9 +91,7 @@ JTAGClockScaler::encode_write(coordinate_type const& /* coord */) const
 	    hxcomm::vx::instruction::to_fpga_jtag::Scaler::Payload(m_value.value()))};
 }
 
-void JTAGClockScaler::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
-{}
+void JTAGClockScaler::decode(UTMessageFromFPGARangeJTAG const& /* messages */) {}
 
 template <class Archive>
 void JTAGClockScaler::serialize(Archive& ar)
@@ -189,13 +185,9 @@ OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void OmnibusChipOverJTAG::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
+void OmnibusChipOverJTAG::decode(UTMessageFromFPGARangeJTAG const& messages)
 {
-	using data = hxcomm::vx::instruction::jtag_from_hicann::Data;
-
-	auto data_message = boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]);
-	m_data = value_type(static_cast<uint32_t>(data_message.get_payload()));
+	m_data = value_type(static_cast<uint32_t>(messages[0].decode()));
 }
 
 template <class Archive>
@@ -256,13 +248,9 @@ JTAGIdCode::encode_write(coordinate_type const& /* coord */) const
 	return {};
 }
 
-void JTAGIdCode::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
+void JTAGIdCode::decode(UTMessageFromFPGARangeJTAG const& messages)
 {
-	using data = hxcomm::vx::instruction::jtag_from_hicann::Data;
-
-	m_value = Value(static_cast<uint32_t>(
-	    boost::get<hxcomm::vx::UTMessageFromFPGA<data> >(messages[0]).decode()));
+	m_value = Value(static_cast<uint32_t>(messages[0].decode()));
 }
 
 template <class Archive>
@@ -333,10 +321,7 @@ JTAGPLLRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void JTAGPLLRegister::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const&
-    /*messages*/)
-{}
+void JTAGPLLRegister::decode(UTMessageFromFPGARangeJTAG const& /* messages */) {}
 
 template <class Archive>
 void JTAGPLLRegister::serialize(Archive& ar)
@@ -401,9 +386,7 @@ JTAGPhyRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-void JTAGPhyRegister::decode(
-    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& /* messages */)
-{}
+void JTAGPhyRegister::decode(UTMessageFromFPGARangeJTAG const& /* messages */) {}
 
 template <class Archive>
 void JTAGPhyRegister::serialize(Archive& ar)

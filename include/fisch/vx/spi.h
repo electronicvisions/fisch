@@ -4,6 +4,7 @@
 #include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
+#include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/omnibus_data.h"
 
@@ -62,9 +63,7 @@ public:
 	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(
-	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
-	    GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_data;
@@ -124,9 +123,7 @@ public:
 	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(
-	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
-	    GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_data;
@@ -186,9 +183,7 @@ public:
 	    coordinate_type const& coord) GENPYBIND(hidden);
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(
-	    std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages)
-	    GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
 	Value m_data;

@@ -120,9 +120,7 @@ void test_omnibus_decode()
 	UTMessageFromFPGA<instruction::omnibus_from_fpga::Data> message(
 	    instruction::omnibus_from_fpga::Data::Payload(0x123));
 
-	std::array<UTMessageFromFPGAVariant, 1> messages{message};
-
-	obj.decode(messages);
+	obj.decode({&message, &message + 1});
 	EXPECT_EQ(obj.get(), 0x123);
 }
 

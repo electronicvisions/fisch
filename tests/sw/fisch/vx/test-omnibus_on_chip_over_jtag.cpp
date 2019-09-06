@@ -114,9 +114,7 @@ TEST(OmnibusChipOverJTAG, Decode)
 	UTMessageFromFPGA<instruction::jtag_from_hicann::Data> message(
 	    instruction::jtag_from_hicann::Data::Payload(0x123));
 
-	std::array<UTMessageFromFPGAVariant, 1> messages{message};
-
-	obj.decode(messages);
+	obj.decode({&message, &message + 1});
 	EXPECT_EQ(obj.get(), 0x123);
 }
 
