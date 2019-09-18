@@ -1,4 +1,5 @@
 #pragma once
+#include <variant>
 
 #include "fisch/vx/container.h"
 #include "fisch/vx/genpybind.h"
@@ -25,6 +26,8 @@ public:
 	class ContainerTicket
 	{
 	public:
+		typedef ContainerT container_type;
+
 		/**
 		 * Get container data.
 		 * @return Container filled with decoded data from playback program results.
@@ -44,6 +47,9 @@ public:
 		 * @return FPGATime value
 		 */
 		FPGATime fpga_time() const;
+
+		ContainerTicket(ContainerTicket const& other);
+		~ContainerTicket();
 
 	private:
 		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
@@ -69,6 +75,8 @@ public:
 	class ContainerVectorTicket
 	{
 	public:
+		typedef ContainerT container_type;
+
 		/**
 		 * Get data of containers.
 		 * @return Containers filled with decoded data from playback program results
@@ -88,6 +96,9 @@ public:
 		 * @return FPGATime value
 		 */
 		FPGATime fpga_time() const;
+
+		ContainerVectorTicket(ContainerVectorTicket const& other);
+		~ContainerVectorTicket();
 
 	private:
 		ContainerVectorTicket(
@@ -181,6 +192,19 @@ public:
 
 private:
 	friend class PlaybackProgramBuilder;
+
+	template <typename U>
+	void register_ticket(U* const ticket) const;
+
+	template <typename U>
+	void deregister_ticket(U* const ticket) const;
+
+#define LAST_PLAYBACK_CONTAINER(Name, Type) ContainerTicket<Type>*, ContainerVectorTicket<Type>*
+#define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
+	mutable std::unordered_set<std::variant<
+#include "fisch/vx/container.def"
+	    >>
+	    m_tickets;
 
 	std::vector<to_fpga_message_type> m_instructions;
 
@@ -319,6 +343,13 @@ public:
 	 */
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder);
+
+	/**
+	 * Merge other PlaybackProgramBuilder to the end of this builder instance.
+	 * The moved-from builder is emptied during the process.
+	 * @param other Builder to move to this instance at the back
+	 */
+	void merge_back(PlaybackProgramBuilder& other);
 
 private:
 	std::shared_ptr<PlaybackProgram> m_program;

@@ -24,7 +24,23 @@ PlaybackProgram::ContainerTicket<ContainerT>::ContainerTicket(
     size_t pos, std::shared_ptr<PlaybackProgram const> pbp) :
     m_pos(pos),
     m_pbp(pbp)
-{}
+{
+	m_pbp->register_ticket(this);
+}
+
+template <class ContainerT>
+PlaybackProgram::ContainerTicket<ContainerT>::ContainerTicket(ContainerTicket const& other) :
+    m_pos(other.m_pos),
+    m_pbp(other.m_pbp)
+{
+	m_pbp->register_ticket(this);
+}
+
+template <class ContainerT>
+PlaybackProgram::ContainerTicket<ContainerT>::~ContainerTicket()
+{
+	m_pbp->deregister_ticket(this);
+}
 
 template <class ContainerT>
 ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
@@ -84,7 +100,25 @@ PlaybackProgram::ContainerVectorTicket<ContainerT>::ContainerVectorTicket(
     m_container_count(container_count),
     m_pos(pos),
     m_pbp(pbp)
-{}
+{
+	m_pbp->register_ticket(this);
+}
+
+template <class ContainerT>
+PlaybackProgram::ContainerVectorTicket<ContainerT>::ContainerVectorTicket(
+    ContainerVectorTicket const& other) :
+    m_container_count(other.m_container_count),
+    m_pos(other.m_pos),
+    m_pbp(other.m_pbp)
+{
+	m_pbp->register_ticket(this);
+}
+
+template <class ContainerT>
+PlaybackProgram::ContainerVectorTicket<ContainerT>::~ContainerVectorTicket()
+{
+	m_pbp->deregister_ticket(this);
+}
 
 template <class ContainerT>
 std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get() const
@@ -162,6 +196,21 @@ PlaybackProgram::PlaybackProgram() :
         m_spike_pack_counts,
         m_madc_sample_pack_counts)
 {}
+
+template <typename U>
+void PlaybackProgram::register_ticket(U* const ticket) const
+{
+	assert((m_tickets.find(ticket) == m_tickets.cend()) && "ticket can't be registered twice.");
+	m_tickets.insert(ticket);
+}
+
+template <typename U>
+void PlaybackProgram::deregister_ticket(U* const ticket) const
+{
+	auto const it = m_tickets.find(ticket);
+	assert((it != m_tickets.cend()) && "unknown ticket can't be deregistered.");
+	m_tickets.erase(it);
+}
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
 {
@@ -357,6 +406,54 @@ std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder
 {
 	os << *(builder.m_program);
 	return os;
+}
+
+void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
+{
+	// move instructions
+	std::copy(
+	    other.m_program->m_instructions.cbegin(), other.m_program->m_instructions.cend(),
+	    std::back_inserter(m_program->m_instructions));
+	other.m_program->m_instructions.clear();
+
+	// change program in tickets of other builder
+	// update position in response queues in tickets of other builder
+	auto ticket_changer = [this](auto const& ticket_ptr) {
+		typedef typename std::remove_pointer<typename std::remove_reference<
+		    typename std::remove_cv<decltype(ticket_ptr)>::type>::type>::type ticket_type;
+		typedef typename ticket_type::container_type container_type;
+		size_t translation = 0; // translation of response queue position
+		if constexpr (hate::is_in_type_list<container_type, omnibus_queue_container_list>::value) {
+			translation = m_omnibus_receive_queue_size;
+		} else if constexpr (hate::is_in_type_list<
+		                         container_type, jtag_queue_container_list>::value) {
+			translation = m_jtag_receive_queue_size;
+		} else {
+			throw std::logic_error("Container response queue not implemented.");
+		}
+		if constexpr (std::is_same<
+		                  ticket_type, PlaybackProgram::ContainerTicket<container_type>>::value) {
+			*ticket_ptr = PlaybackProgram::ContainerTicket<container_type>(
+			    ticket_ptr->m_pos + translation, m_program);
+		} else {
+			*ticket_ptr = PlaybackProgram::ContainerVectorTicket<container_type>(
+			    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
+		}
+	};
+	for (auto const& ticket_ptr_variant : other.m_program->m_tickets) {
+		std::visit(ticket_changer, ticket_ptr_variant);
+	}
+
+	// move ticket list from other builder
+	m_program->m_tickets.merge(other.m_program->m_tickets);
+	assert(other.m_program->m_tickets.empty() && "Ticket(s) are not unique to a PlaybackProgram.");
+
+	// update receive queue sizes
+	m_jtag_receive_queue_size += other.m_jtag_receive_queue_size;
+	m_omnibus_receive_queue_size += other.m_omnibus_receive_queue_size;
+
+	// reset other builder
+	other.done();
 }
 
 // explicit instantiation
