@@ -26,7 +26,8 @@ public:
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::BaseType<Value, uint32_t>
 	{
-		Value(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
+		constexpr explicit Value(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value)
+		{}
 	};
 
 	/**

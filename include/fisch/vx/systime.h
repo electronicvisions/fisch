@@ -69,14 +69,18 @@ private:
 struct GENPYBIND(inline_base("*")) FPGATime
     : public halco::common::detail::RantWrapper<FPGATime, uint64_t, 0x7ffffffffff, 0>
 {
-	explicit FPGATime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
+	constexpr explicit FPGATime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
+	    rant_t(value)
+	{}
 };
 
 /** Systime type for chip annotated times. */
 struct GENPYBIND(inline_base("*")) ChipTime
     : public halco::common::detail::RantWrapper<ChipTime, uint64_t, 0x7ffffffffff, 0>
 {
-	explicit ChipTime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
+	constexpr explicit ChipTime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
+	    rant_t(value)
+	{}
 };
 
 } // namespace fisch::vx

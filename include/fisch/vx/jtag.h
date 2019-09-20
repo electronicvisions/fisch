@@ -61,7 +61,9 @@ public:
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 255, 0>
 	{
-		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
+		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
+		    rant_t(value)
+		{}
 	};
 
 	/**
@@ -175,7 +177,9 @@ public:
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::BaseType<Value, uint32_t>
 	{
-		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
+		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
+		    base_t(value)
+		{}
 	};
 
 	/**
@@ -237,7 +241,9 @@ public:
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::BaseType<Value, uint32_t>
 	{
-		explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
+		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
+		    base_t(value)
+		{}
 	};
 
 	/**
@@ -296,7 +302,9 @@ public:
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 4194303 /* 2^22-1 */, 0>
 	{
-		explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) : rant_t(value) {}
+		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
+		    rant_t(value)
+		{}
 	};
 
 	/**

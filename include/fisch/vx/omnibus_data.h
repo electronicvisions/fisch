@@ -8,8 +8,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 struct GENPYBIND(inline_base("*")) OmnibusData
     : public halco::common::detail::BaseType<OmnibusData, uint32_t>
 {
-	constexpr OmnibusData() : base_t(0) {}
-	constexpr explicit OmnibusData(value_type const value) GENPYBIND(implicit_conversion) :
+	constexpr explicit OmnibusData(value_type const value = 0) GENPYBIND(implicit_conversion) :
 	    base_t(value)
 	{}
 };
