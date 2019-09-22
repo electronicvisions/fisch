@@ -5,7 +5,10 @@
 
 namespace fisch::vx {
 
-Timer::Timer(Value const value) : m_value(value) {}
+Timer::Timer(Value const value) : m_value()
+{
+	set(value);
+}
 
 Timer::Value Timer::get() const
 {
