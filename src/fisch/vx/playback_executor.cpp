@@ -10,16 +10,9 @@ PlaybackProgramExecutor<Connection>::PlaybackProgramExecutor(Args... args) : m_c
 template <class Connection>
 void PlaybackProgramExecutor<Connection>::run(std::shared_ptr<PlaybackProgram> const& program)
 {
-	m_connection.add(program->get_to_fpga_messages());
-	m_connection.add(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Halt>());
-	m_connection.commit();
-
-	m_connection.run_until_halt();
-
+	auto responses = run(program->get_to_fpga_messages());
 	program->clear_from_fpga_messages();
-
-	typename PlaybackProgram::from_fpga_message_type message;
-	while (m_connection.try_receive(message)) {
+	for (auto const& message : responses) {
 		program->push_from_fpga_message(message);
 	}
 }
