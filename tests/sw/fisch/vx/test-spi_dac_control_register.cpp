@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "fisch/vx/omnibus_constants.h"
 #include "fisch/vx/spi.h"
 
+#include "fisch/vx/omnibus_constants.h"
+#include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 
 using namespace fisch::vx;

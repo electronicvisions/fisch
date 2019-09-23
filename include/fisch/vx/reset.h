@@ -3,7 +3,7 @@
 #include "halco/common/relations.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/genpybind.h"
 
@@ -40,7 +40,7 @@ public:
 	void set(bool value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset) SYMBOL_VISIBLE;
+	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset);
 
 	bool operator==(ResetChip const& other) const;
 	bool operator!=(ResetChip const& other) const;

@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 
+#include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 
 using namespace fisch::vx;

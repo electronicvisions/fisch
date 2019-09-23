@@ -1,10 +1,8 @@
 #pragma once
 
-#include "halco/hicann-dls/vx/coordinates.h"
-
-#include "hxcomm/vx/utmessage.h"
-
 #include "fisch/vx/genpybind.h"
+#include "halco/hicann-dls/vx/coordinates.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 class access;

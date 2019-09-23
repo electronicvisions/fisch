@@ -2,7 +2,7 @@
 
 #include "fisch/vx/container.h"
 #include "fisch/vx/genpybind.h"
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/event.h"
 #include "fisch/vx/playback_decoder.h"

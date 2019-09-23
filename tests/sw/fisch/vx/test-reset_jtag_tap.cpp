@@ -4,6 +4,7 @@
 
 #include <cereal/archives/json.hpp>
 #include <cereal/cereal.hpp>
+#include "hxcomm/vx/utmessage.h"
 
 TEST(ResetJTAGTap, General)
 {

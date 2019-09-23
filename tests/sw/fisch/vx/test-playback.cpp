@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 #include "fisch/vx/playback_program.h"
-#include "fisch/vx/traits.h"
 
 #include "fisch/vx/omnibus.h"
+#include "fisch/vx/traits.h"
 #include "hxcomm/vx/utmessage.h"
 
 using namespace fisch::vx;

@@ -1,6 +1,7 @@
 #include "fisch/vx/playback_decoder.h"
 
 #include "hate/math.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 

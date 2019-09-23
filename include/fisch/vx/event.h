@@ -3,7 +3,7 @@
 #include "fisch/vx/systime.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 #include "hate/join.h"
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 class access;

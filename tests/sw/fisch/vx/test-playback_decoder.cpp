@@ -2,6 +2,8 @@
 
 #include "fisch/vx/playback_decoder.h"
 
+#include "hxcomm/vx/utmessage.h"
+
 TEST(PlaybackDecoder, JTAG)
 {
 	using namespace fisch::vx;

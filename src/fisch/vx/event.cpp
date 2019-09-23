@@ -1,8 +1,9 @@
 #include "fisch/vx/event.h"
-#include "fisch/cerealization.h"
 
 #include "cereal/types/array.hpp"
+#include "fisch/cerealization.h"
 #include "halco/common/cerealization_geometry.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 

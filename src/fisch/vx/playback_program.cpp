@@ -2,8 +2,8 @@
 
 #include "fisch/vx/container.h"
 #include "fisch/vx/traits.h"
-
 #include "hate/type_list.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 

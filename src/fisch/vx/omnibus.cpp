@@ -1,10 +1,10 @@
+#include "fisch/vx/omnibus.h"
+
 #include <array>
 
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
-
 #include "fisch/cerealization.h"
-#include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 
 #include "hate/bitset.h"

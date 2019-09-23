@@ -1,14 +1,13 @@
-#include <array>
+#include "fisch/vx/spi.h"
 
-#include "halco/common/cerealization_geometry.h"
-#include "hxcomm/vx/utmessage.h"
+#include <array>
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
-#include "fisch/vx/spi.h"
-
+#include "halco/common/cerealization_geometry.h"
 #include "hate/bitset.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 

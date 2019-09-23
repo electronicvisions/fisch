@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/event.h"
 #include "fisch/vx/genpybind.h"

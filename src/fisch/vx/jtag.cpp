@@ -1,11 +1,10 @@
+#include "fisch/vx/jtag.h"
+
 #include <array>
 
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
-
 #include "fisch/cerealization.h"
-#include "fisch/vx/jtag.h"
-
 #include "hate/bitset.h"
 
 namespace fisch::vx {

@@ -2,7 +2,7 @@
 
 #include "halco/common/geometry.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/omnibus_data.h"
