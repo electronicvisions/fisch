@@ -2,7 +2,7 @@
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/systime.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-
+#include "hate/join.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace cereal {
@@ -121,11 +121,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, SpikePackToChip const& spike_pack)
 	{
 		std::stringstream ss;
-		os << "SpikePack" << NumPack << "ToChip(";
-		for (size_t i = 0; i < spike_pack.m_labels.size() - 1; ++i) {
-			os << spike_pack.m_labels[i] << ", ";
-		}
-		os << spike_pack.m_labels[spike_pack.m_labels.size() - 1] << ")";
+		os << "SpikePack" << NumPack << "ToChip(" << hate::join_string(spike_pack.m_labels, ", ")
+		   << ")";
 		return os;
 	}
 
