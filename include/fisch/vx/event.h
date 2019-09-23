@@ -155,28 +155,31 @@ protected:
 /**
  * Spike pack to chip holding one spike label.
  */
-class SpikePack1ToChip : public SpikePackToChip<1>
+class GENPYBIND(inline_base("*")) SpikePack1ToChip : public SpikePackToChip<1>
 {
 public:
-	using SpikePackToChip<1>::SpikePackToChip;
+	SpikePack1ToChip() : SpikePackToChip<1>() {}
+	SpikePack1ToChip(labels_type const& labels) : SpikePackToChip<1>(labels) {}
 };
 
 /**
  * Spike pack to chip holding two spike labels.
  */
-class SpikePack2ToChip : public SpikePackToChip<2>
+class GENPYBIND(inline_base("*")) SpikePack2ToChip : public SpikePackToChip<2>
 {
 public:
-	using SpikePackToChip<2>::SpikePackToChip;
+	SpikePack2ToChip() : SpikePackToChip<2>() {}
+	SpikePack2ToChip(labels_type const& labels) : SpikePackToChip<2>(labels) {}
 };
 
 /**
  * Spike pack to chip holding three spike labels.
  */
-class SpikePack3ToChip : public SpikePackToChip<3>
+class GENPYBIND(inline_base("*")) SpikePack3ToChip : public SpikePackToChip<3>
 {
 public:
-	using SpikePackToChip<3>::SpikePackToChip;
+	SpikePack3ToChip() : SpikePackToChip<3>() {}
+	SpikePack3ToChip(labels_type const& labels) : SpikePackToChip<3>(labels) {}
 };
 
 
