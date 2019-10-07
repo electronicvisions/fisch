@@ -127,23 +127,6 @@ bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
 	return (queue_size >= (m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
 }
 
-PlaybackProgram::PlaybackProgram() :
-    m_instructions(),
-    m_receive_queue_jtag(),
-    m_receive_queue_omnibus(),
-    m_spike_response_queue(),
-    m_madc_sample_response_queue(),
-    m_spike_pack_counts(),
-    m_madc_sample_pack_counts(),
-    m_decoder(
-        m_receive_queue_jtag,
-        m_receive_queue_omnibus,
-        m_spike_response_queue,
-        m_madc_sample_response_queue,
-        m_spike_pack_counts,
-        m_madc_sample_pack_counts)
-{}
-
 template <class ContainerT>
 FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
 {
@@ -162,6 +145,23 @@ FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
 		throw std::logic_error("Container response queue not implemented.");
 	}
 }
+
+PlaybackProgram::PlaybackProgram() :
+    m_instructions(),
+    m_receive_queue_jtag(),
+    m_receive_queue_omnibus(),
+    m_spike_response_queue(),
+    m_madc_sample_response_queue(),
+    m_spike_pack_counts(),
+    m_madc_sample_pack_counts(),
+    m_decoder(
+        m_receive_queue_jtag,
+        m_receive_queue_omnibus,
+        m_spike_response_queue,
+        m_madc_sample_response_queue,
+        m_spike_pack_counts,
+        m_madc_sample_pack_counts)
+{}
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
 {
