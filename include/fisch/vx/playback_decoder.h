@@ -58,6 +58,13 @@ public:
 		}
 
 		TimedResponseQueue() {}
+
+		bool operator==(TimedResponseQueue const& other) const
+		{
+			return m_messages == other.m_messages && m_times == other.m_times;
+		}
+
+		bool operator!=(TimedResponseQueue const& other) const { return !(*this == other); }
 	};
 
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>

@@ -176,6 +176,9 @@ public:
 	 */
 	void clear_from_fpga_messages();
 
+	bool operator==(PlaybackProgram const& other) const;
+	bool operator!=(PlaybackProgram const& other) const;
+
 private:
 	friend class PlaybackProgramBuilder;
 

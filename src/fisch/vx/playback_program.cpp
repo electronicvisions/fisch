@@ -212,6 +212,22 @@ void PlaybackProgram::clear_from_fpga_messages()
 	m_decoder.clear();
 }
 
+bool PlaybackProgram::operator==(PlaybackProgram const& other) const
+{
+	return m_instructions == other.m_instructions &&
+	       m_receive_queue_jtag == other.m_receive_queue_jtag &&
+	       m_receive_queue_omnibus == other.m_receive_queue_omnibus &&
+	       m_spike_response_queue == other.m_spike_response_queue &&
+	       m_madc_sample_response_queue == other.m_madc_sample_response_queue &&
+	       m_spike_pack_counts == other.m_spike_pack_counts &&
+	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts;
+}
+
+bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
+{
+	return !(*this == other);
+}
+
 
 PlaybackProgramBuilder::PlaybackProgramBuilder() :
     m_program(std::make_shared<PlaybackProgram>()),

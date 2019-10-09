@@ -92,6 +92,7 @@ TEST(PlaybackProgramBuilder, General)
 	// new program started on last done() call
 	auto empty_program = builder.done();
 	EXPECT_NE(empty_program, small_program);
+	EXPECT_NE(*empty_program, *small_program);
 }
 
 TEST(PlaybackProgramBuilder, WriteSingle)
