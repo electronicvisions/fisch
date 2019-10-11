@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/vx/constants.h"
+#include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"
@@ -34,8 +35,8 @@ std::shared_ptr<PlaybackProgram> get_write_program(
 	return builder.done();
 }
 
-std::tuple<std::shared_ptr<PlaybackProgram>, PlaybackProgram::ContainerTicket<OmnibusChipOverJTAG>>
-get_read_program(OmnibusChipOverJTAGAddress address)
+std::tuple<std::shared_ptr<PlaybackProgram>, ContainerTicket<OmnibusChipOverJTAG>> get_read_program(
+    OmnibusChipOverJTAGAddress address)
 {
 	PlaybackProgramBuilder builder;
 

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fisch/vx/container_ticket.h"
 #include "fisch/vx/playback_program.h"
 
 #include "fisch/cerealization.h"
@@ -163,7 +164,7 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 	EXPECT_NO_THROW(builder.read(coord));
 	builder.done(); // reset
 
-	PlaybackProgram::ContainerTicket<OmnibusChip> ticket = builder.read(coord);
+	ContainerTicket<OmnibusChip> ticket = builder.read(coord);
 
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
@@ -197,7 +198,7 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 	EXPECT_NO_THROW(builder.read(addresses));
 	builder.done(); // reset
 
-	PlaybackProgram::ContainerVectorTicket<OmnibusChip> ticket = builder.read(addresses);
+	ContainerVectorTicket<OmnibusChip> ticket = builder.read(addresses);
 
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
@@ -247,7 +248,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 	EXPECT_NO_THROW(builder.read(addresses));
 	builder.done(); // reset
 
-	std::vector<PlaybackProgram::ContainerTicket<OmnibusChip>> tickets;
+	std::vector<ContainerTicket<OmnibusChip>> tickets;
 	for (auto address : addresses) {
 		tickets.push_back(builder.read(address));
 	}
@@ -297,7 +298,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	    {OmnibusChipAddress(0), OmnibusChipAddress(1)},
 	    {OmnibusChipAddress(2), OmnibusChipAddress(3)}};
 
-	std::vector<PlaybackProgram::ContainerVectorTicket<OmnibusChip>> tickets;
+	std::vector<ContainerVectorTicket<OmnibusChip>> tickets;
 	for (auto address : addresses) {
 		tickets.push_back(builder.read(address));
 	}

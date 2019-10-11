@@ -1,13 +1,11 @@
 #include "fisch/vx/playback_program.h"
 
-#include "fisch/vx/container.h"
-#include "fisch/vx/traits.h"
-
 #include <cereal/types/boost_variant.hpp>
 #include <cereal/types/vector.hpp>
-
 #include "fisch/cerealization.h"
 #include "fisch/vx/container.h"
+#include "fisch/vx/container_ticket.h"
+#include "fisch/vx/traits.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/common/cerealization_typed_array.h"
 #include "halco/hicann-dls/vx/coordinates.h"
@@ -55,192 +53,6 @@ typedef hate::
 
 } // namespace
 
-template <class ContainerT>
-PlaybackProgram::ContainerTicket<ContainerT>::ContainerTicket(
-    size_t pos, std::shared_ptr<PlaybackProgram const> pbp) :
-    m_pos(pos),
-    m_pbp(pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerTicket<ContainerT>::ContainerTicket(ContainerTicket const& other) :
-    m_pos(other.m_pos),
-    m_pbp(other.m_pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerTicket<ContainerT>::~ContainerTicket()
-{
-	m_pbp->deregister_ticket(this);
-}
-
-template <class ContainerT>
-ContainerT PlaybackProgram::ContainerTicket<ContainerT>::get() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-		ContainerT config;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() + m_pos;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-		return config;
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-bool PlaybackProgram::ContainerTicket<ContainerT>::valid() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		size_t queue_size = 0;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_omnibus.size();
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_jtag.size();
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-		return (queue_size >= (m_pos + ContainerT::decode_ut_message_count));
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-FPGATime PlaybackProgram::ContainerTicket<ContainerT>::fpga_time() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
-			    ContainerT::decode_ut_message_count - 1);
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
-			    ContainerT::decode_ut_message_count - 1);
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerVectorTicket<ContainerT>::ContainerVectorTicket(
-    size_t container_count, size_t pos, std::shared_ptr<fisch::vx::PlaybackProgram const> pbp) :
-    m_container_count(container_count),
-    m_pos(pos),
-    m_pbp(pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerVectorTicket<ContainerT>::ContainerVectorTicket(
-    ContainerVectorTicket const& other) :
-    m_container_count(other.m_container_count),
-    m_pos(other.m_pos),
-    m_pbp(other.m_pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-PlaybackProgram::ContainerVectorTicket<ContainerT>::~ContainerVectorTicket()
-{
-	m_pbp->deregister_ticket(this);
-}
-
-template <class ContainerT>
-std::vector<ContainerT> PlaybackProgram::ContainerVectorTicket<ContainerT>::get() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-
-		std::vector<ContainerT> containers;
-
-		for (size_t c = 0; c < m_container_count; ++c) {
-			ContainerT config;
-			if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-				auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() +
-				                      m_pos + c * ContainerT::decode_ut_message_count;
-				config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-			} else if constexpr (hate::is_in_type_list<
-			                         ContainerT, jtag_queue_container_list>::value) {
-				auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos +
-				                      c * ContainerT::decode_ut_message_count;
-				config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-			} else {
-				throw std::logic_error("Container response queue not implemented.");
-			}
-			containers.push_back(config);
-		}
-		return containers;
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-bool PlaybackProgram::ContainerVectorTicket<ContainerT>::valid() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		size_t queue_size;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_omnibus.size();
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_jtag.size();
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-		return (queue_size >= (m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
-			    m_container_count * ContainerT::decode_ut_message_count - 1);
-		} else if (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
-			    m_container_count * ContainerT::decode_ut_message_count - 1);
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
 PlaybackProgram::PlaybackProgram() :
     m_tickets(),
     m_tickets_mutex(),
@@ -281,6 +93,13 @@ void PlaybackProgram::deregister_ticket(U* const ticket) const
 	assert((it != m_tickets.cend()) && "unknown ticket can't be deregistered.");
 	m_tickets.erase(it);
 }
+
+#define PLAYBACK_CONTAINER(Name, Type)                                                             \
+	template void PlaybackProgram::register_ticket(ContainerTicket<Type>* ticket) const;           \
+	template void PlaybackProgram::deregister_ticket(ContainerTicket<Type>* ticket) const;         \
+	template void PlaybackProgram::register_ticket(ContainerVectorTicket<Type>* ticket) const;     \
+	template void PlaybackProgram::deregister_ticket(ContainerVectorTicket<Type>* ticket) const;
+#include "fisch/vx/container.def"
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
 {
@@ -415,8 +234,7 @@ void PlaybackProgramBuilder::write(
 }
 
 template <class CoordinateT>
-PlaybackProgram::ContainerTicket<
-    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+ContainerTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
 PlaybackProgramBuilder::read(CoordinateT const& coord)
 {
 	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
@@ -442,13 +260,12 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		return PlaybackProgram::ContainerTicket<ContainerT>(pos, m_program);
+		return ContainerTicket<ContainerT>(pos, m_program);
 	}
 }
 
 template <class CoordinateT>
-PlaybackProgram::ContainerVectorTicket<
-    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+ContainerVectorTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
 PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 {
 	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
@@ -482,7 +299,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		return PlaybackProgram::ContainerVectorTicket<ContainerT>(coords.size(), pos, m_program);
+		return ContainerVectorTicket<ContainerT>(coords.size(), pos, m_program);
 	}
 }
 
@@ -525,12 +342,11 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		if constexpr (std::is_same<
-		                  ticket_type, PlaybackProgram::ContainerTicket<container_type>>::value) {
-			*ticket_ptr = PlaybackProgram::ContainerTicket<container_type>(
-			    ticket_ptr->m_pos + translation, m_program);
+		if constexpr (std::is_same<ticket_type, ContainerTicket<container_type>>::value) {
+			*ticket_ptr =
+			    ContainerTicket<container_type>(ticket_ptr->m_pos + translation, m_program);
 		} else {
-			*ticket_ptr = PlaybackProgram::ContainerVectorTicket<container_type>(
+			*ticket_ptr = ContainerVectorTicket<container_type>(
 			    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
 		}
 	};
@@ -557,12 +373,9 @@ bool PlaybackProgramBuilder::empty() const
 
 // explicit instantiation
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
-	template class PlaybackProgram::ContainerTicket<Name>;                                         \
-	template class PlaybackProgram::ContainerVectorTicket<Name>;                                   \
-	template PlaybackProgram::ContainerTicket<Name>                                                \
-	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
+	template ContainerTicket<Name> PlaybackProgramBuilder::read<typename Name::coordinate_type>(   \
 	    typename Name::coordinate_type const& coord);                                              \
-	template PlaybackProgram::ContainerVectorTicket<Name>                                          \
+	template ContainerVectorTicket<Name>                                                           \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
 	template void PlaybackProgramBuilder::write<Name>(                                             \

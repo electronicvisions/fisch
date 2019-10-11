@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/reset.h"

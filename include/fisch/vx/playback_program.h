@@ -19,112 +19,17 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
 
+template <typename ContainerT>
+class ContainerTicket;
+
+template <typename ContainerT>
+class ContainerVectorTicket;
+
 /** Playback program. */
 class GENPYBIND(visible, holder_type("std::shared_ptr<fisch::vx::PlaybackProgram>")) PlaybackProgram
     : public std::enable_shared_from_this<PlaybackProgram>
 {
 public:
-	/**
-	 * Single container read-ticket.
-	 * @tparam ContainerT Container type of corresponding data.
-	 */
-	template <class ContainerT>
-	class ContainerTicket
-	{
-	public:
-		typedef ContainerT container_type;
-
-		/**
-		 * Get container data.
-		 * @return Container filled with decoded data from playback program results.
-		 */
-		ContainerT get() const;
-
-		/**
-		 * Check whether ticket data is already available.
-		 * @return Boolean value
-		 */
-		bool valid() const;
-
-		/**
-		 * Get FPGA executor timestamp of last response message if time annotation is enabled.
-		 * If time annotation is not enabled, get message count since last time annotation or
-		 * from the beginning of the response stream.
-		 * @return FPGATime value
-		 */
-		FPGATime fpga_time() const;
-
-		ContainerTicket(ContainerTicket const& other);
-		~ContainerTicket();
-
-	private:
-		ContainerTicket(size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
-
-		friend class PlaybackProgramBuilder;
-
-		size_t m_pos;
-		std::shared_ptr<PlaybackProgram const> m_pbp;
-	};
-
-#ifdef __GENPYBIND__
-// Explicit instantiation of template class for all valid playback container types.
-#define PLAYBACK_CONTAINER(Name, Type)                                                             \
-	typedef PlaybackProgram::ContainerTicket<Type> _##Name##ContainerTicket GENPYBIND(opaque);
-#include "fisch/vx/container.def"
-#endif // __GENPYBIND__
-
-	/**
-	 * Read-ticket for multiple containers.
-	 * @tparam ContainerT Container type of corresponding data
-	 */
-	template <class ContainerT>
-	class ContainerVectorTicket
-	{
-	public:
-		typedef ContainerT container_type;
-
-		/**
-		 * Get data of containers.
-		 * @return Containers filled with decoded data from playback program results
-		 */
-		std::vector<ContainerT> get() const;
-
-		/**
-		 * Check whether ticket data is already available.
-		 * @return Boolean value
-		 */
-		bool valid() const;
-
-		/**
-		 * Get FPGA executor timestamp of last container response if time annotation is enabled.
-		 * If time annotation is not enabled, get message count since last time annotation or
-		 * from the beginning of the response stream.
-		 * @return FPGATime value
-		 */
-		FPGATime fpga_time() const;
-
-		ContainerVectorTicket(ContainerVectorTicket const& other);
-		~ContainerVectorTicket();
-
-	private:
-		ContainerVectorTicket(
-		    size_t container_count, size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
-
-		friend class PlaybackProgramBuilder;
-
-		size_t m_container_count;
-		size_t m_pos;
-		std::shared_ptr<PlaybackProgram const> m_pbp;
-	};
-
-#ifdef __GENPYBIND__
-// Explicit instantiation of template class for all valid playback container types.
-#define PLAYBACK_CONTAINER(Name, Type)                                                             \
-	typedef PlaybackProgram::ContainerVectorTicket<Type> _##Name##ContainerVectorTicket GENPYBIND( \
-	    opaque);
-#include "fisch/vx/container.def"
-#endif // __GENPYBIND__
-
 	/** Default constructor */
 	PlaybackProgram();
 
@@ -206,6 +111,12 @@ public:
 
 private:
 	friend class PlaybackProgramBuilder;
+
+	template <typename T>
+	friend class ContainerTicket;
+
+	template <typename T>
+	friend class ContainerVectorTicket;
 
 	template <typename U>
 	void register_ticket(U* const ticket) const;
@@ -338,9 +249,8 @@ public:
 	 * @return Ticket accessor to response data
 	 */
 	template <class CoordinateT>
-	PlaybackProgram::ContainerTicket<
-	    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
-	read(CoordinateT const& coord);
+	ContainerTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type> read(
+	    CoordinateT const& coord);
 
 	/**
 	 * Add read instruction for multiple containers.
@@ -349,8 +259,7 @@ public:
 	 * @return Ticket accessor to response data
 	 */
 	template <class CoordinateT>
-	PlaybackProgram::ContainerVectorTicket<
-	    typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+	ContainerVectorTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
 	read(std::vector<CoordinateT> const& coords);
 
 	/**
@@ -388,10 +297,10 @@ private:
 #ifdef __GENPYBIND__
 // Explicit instantiation of template member functions for all valid playback container types.
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
-	extern template PlaybackProgram::ContainerTicket<Name>                                         \
+	extern template ContainerTicket<Name>                                                          \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    typename Name::coordinate_type const& coord);                                              \
-	extern template PlaybackProgram::ContainerVectorTicket<Name>                                   \
+	extern template ContainerVectorTicket<Name>                                                    \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
 	extern template void PlaybackProgramBuilder::write<Name>(                                      \
