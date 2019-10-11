@@ -2,6 +2,7 @@
 
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/playback_program.h"
+#include "fisch/vx/playback_program_builder.h"
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"

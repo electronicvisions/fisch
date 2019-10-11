@@ -4,6 +4,7 @@
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/playback_program.h"
+#include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
