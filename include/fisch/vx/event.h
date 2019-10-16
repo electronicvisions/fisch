@@ -266,7 +266,7 @@ public:
 	 * @param spike SpikeFromChip spike data
 	 * @param fpga_time FPGATime time annotation
 	 */
-	SpikeFromChipEvent(
+	explicit SpikeFromChipEvent(
 	    SpikeFromChip const& spike = SpikeFromChip(), FPGATime const& fpga_time = FPGATime()) :
 	    m_spike(spike),
 	    m_fpga_time(fpga_time)
