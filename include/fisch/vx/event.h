@@ -12,65 +12,12 @@ class access;
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
- * Spike label holding NeuronLabel and SPL1Address information.
+ * Spike payload information.
  */
-class GENPYBIND(visible) SpikeLabel
+struct GENPYBIND(inline_base("*")) SpikeLabel
+    : public halco::common::detail::BaseType<SpikeLabel, uint16_t>
 {
-public:
-	typedef halco::hicann_dls::vx::NeuronLabel neuron_label_type;
-	typedef halco::hicann_dls::vx::SPL1Address spl1_address_type;
-
-	/** Default constructor. */
-	SpikeLabel();
-
-	/**
-	 * Construct spike label with neuron and spl1 address.
-	 * @param neuron NeuronLabel value to use
-	 * @param spl1 SPL1Address value to use
-	 */
-	SpikeLabel(neuron_label_type const& neuron, spl1_address_type const& spl1);
-
-	/**
-	 * Get neuron address value.
-	 * @return NeuronLabel
-	 */
-	GENPYBIND(getter_for(neuron_label))
-	neuron_label_type get_neuron_label() const;
-
-	/**
-	 * Set neuron address value.
-	 * @param value NeuronLabel to set
-	 */
-	GENPYBIND(setter_for(neuron_label))
-	void set_neuron_label(neuron_label_type const& value);
-
-	/**
-	 * Get spl1 address value.
-	 * @return SPL1Address
-	 */
-	GENPYBIND(getter_for(spl1_address))
-	spl1_address_type get_spl1_address() const;
-
-	/**
-	 * Set spl1 address value.
-	 * @param value SPL1Address to set
-	 */
-	GENPYBIND(setter_for(spl1_address))
-	void set_spl1_address(spl1_address_type const& value);
-
-	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SpikeLabel const& spike_label);
-
-	bool operator==(SpikeLabel const& other) const;
-	bool operator!=(SpikeLabel const& other) const;
-
-private:
-	neuron_label_type m_neuron_label;
-	spl1_address_type m_spl1_address;
-
-	friend class cereal::access;
-	template <class Archive>
-	void serialize(Archive& ar);
+	constexpr explicit SpikeLabel(value_type const val = 0) : base_t(val) {}
 };
 
 

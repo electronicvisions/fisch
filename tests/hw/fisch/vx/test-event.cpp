@@ -102,8 +102,7 @@ TEST(SpikePack1ToChip, Loopback)
 
 	std::vector<SpikeLabel> to_fpga_spike_labels;
 	for (size_t i = 0; i < num_spikes; ++i) {
-		SpikePack1ToChip spike(
-		    {SpikeLabel(NeuronLabel(i % NeuronLabel::size), SPL1Address(i % SPL1Address::size))});
+		SpikePack1ToChip spike({SpikeLabel(i)});
 		builder.write(SpikePack1ToChipOnDLS(), spike);
 		builder.write(TimerOnDLS(), Timer());
 		builder.wait_until(TimerOnDLS(), Timer::Value(10));

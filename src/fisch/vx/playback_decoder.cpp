@@ -69,7 +69,7 @@ void PlaybackDecoder::process(
 {
 	auto spikes = message.decode().get_spikes();
 	for (auto spike : spikes) {
-		SpikeLabel label(spike.get_neuron_label(), spike.get_spl1_address());
+		SpikeLabel label(static_cast<uint16_t>(spike.get_spike()));
 		m_spike_queue.push_back(SpikeFromChipEvent(
 		    SpikeFromChip(label, calculate_chip_time(spike.get_timestamp())), m_time_current));
 	}

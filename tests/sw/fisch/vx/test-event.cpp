@@ -3,73 +3,6 @@
 #include "fisch/cerealization.h"
 #include "fisch/vx/event.h"
 
-TEST(SpikeLabel, General)
-{
-	using namespace fisch::vx;
-	using namespace halco::hicann_dls::vx;
-
-	EXPECT_NO_THROW(SpikeLabel());
-	EXPECT_NO_THROW(SpikeLabel(NeuronLabel(), SPL1Address()));
-
-	SpikeLabel config;
-	SpikeLabel other_config = config;
-
-	EXPECT_EQ(other_config, config);
-
-	{
-		NeuronLabel value(12);
-		config.set_neuron_label(value);
-		EXPECT_EQ(config.get_neuron_label(), value);
-	}
-
-	{
-		SPL1Address value(3);
-		config.set_spl1_address(value);
-		EXPECT_EQ(config.get_spl1_address(), value);
-	}
-
-	EXPECT_NE(config, other_config);
-
-	SpikeLabel config3 = config;
-	EXPECT_EQ(config, config3);
-}
-
-TEST(SpikeLabel, Ostream)
-{
-	using namespace fisch::vx;
-
-	SpikeLabel obj;
-
-	std::stringstream stream;
-	stream << obj;
-
-	EXPECT_EQ(stream.str(), "SpikeLabel(NeuronLabel(0), SPL1Address(0))");
-}
-
-TEST(SpikeLabel, CerealizeCoverage)
-{
-	using namespace fisch::vx;
-	using namespace halco::hicann_dls::vx;
-
-	SpikeLabel obj1, obj2;
-
-	obj1.set_neuron_label(NeuronLabel(12));
-	obj1.set_spl1_address(SPL1Address(2));
-
-	std::ostringstream ostream;
-	{
-		cereal::JSONOutputArchive oa(ostream);
-		oa(obj1);
-	}
-
-	std::istringstream istream(ostream.str());
-	{
-		cereal::JSONInputArchive ia(istream);
-		ia(obj2);
-	}
-	ASSERT_EQ(obj1, obj2);
-}
-
 template <size_t NumPack>
 void test_spike_pack_to_chip_general()
 {
@@ -90,7 +23,7 @@ void test_spike_pack_to_chip_general()
 		typename spike_pack_t::labels_type labels;
 		size_t i = 0;
 		for (auto& label : labels) {
-			label = SpikeLabel(NeuronLabel(10 + i), SPL1Address(i));
+			label = SpikeLabel(10 + i);
 			i++;
 		}
 		config.set_labels(labels);
@@ -123,7 +56,7 @@ void test_spike_pack_to_chip_ostream()
 	{
 		size_t i = 0;
 		for (auto& label : labels) {
-			label = SpikeLabel(NeuronLabel(10 + i), SPL1Address(i));
+			label = SpikeLabel(10 + i);
 			i++;
 		}
 		obj.set_labels(labels);
@@ -166,7 +99,7 @@ void test_spike_pack_to_chip_cereal()
 	{
 		size_t i = 0;
 		for (auto& label : labels) {
-			label = SpikeLabel(NeuronLabel(10 + i), SPL1Address(i));
+			label = SpikeLabel(10 + i);
 			i++;
 		}
 		obj1.set_labels(labels);
@@ -199,7 +132,7 @@ TEST(SpikeFromChip, General)
 	using namespace halco::hicann_dls::vx;
 
 	EXPECT_NO_THROW(SpikeFromChip());
-	EXPECT_NO_THROW(SpikeFromChip(SpikeLabel(NeuronLabel(), SPL1Address()), ChipTime()));
+	EXPECT_NO_THROW(SpikeFromChip(SpikeLabel(), ChipTime()));
 
 	SpikeFromChip config;
 	SpikeFromChip other_config = config;
@@ -207,7 +140,7 @@ TEST(SpikeFromChip, General)
 	EXPECT_EQ(other_config, config);
 
 	{
-		SpikeLabel value(NeuronLabel(12), SPL1Address(2));
+		SpikeLabel value(12);
 		config.set_label(value);
 		EXPECT_EQ(config.get_label(), value);
 	}
@@ -229,13 +162,12 @@ TEST(SpikeFromChip, Ostream)
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	SpikeFromChip obj(SpikeLabel(NeuronLabel(12), SPL1Address(2)), ChipTime(3));
+	SpikeFromChip obj(SpikeLabel(12), ChipTime(3));
 
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(
-	    stream.str(), "SpikeFromChip(SpikeLabel(NeuronLabel(12), SPL1Address(2)), ChipTime(3))");
+	EXPECT_EQ(stream.str(), "SpikeFromChip(SpikeLabel(12), ChipTime(3))");
 }
 
 TEST(SpikeFromChip, CerealizeCoverage)
@@ -245,7 +177,7 @@ TEST(SpikeFromChip, CerealizeCoverage)
 
 	SpikeFromChip obj1, obj2;
 
-	obj1.set_label(SpikeLabel(NeuronLabel(12), SPL1Address(2)));
+	obj1.set_label(SpikeLabel(12));
 	obj1.set_chip_time(ChipTime(3));
 
 	std::ostringstream ostream;
@@ -336,8 +268,7 @@ TEST(SpikeFromChipEvent, General)
 	using namespace halco::hicann_dls::vx;
 
 	EXPECT_NO_THROW(SpikeFromChipEvent());
-	EXPECT_NO_THROW(SpikeFromChipEvent(
-	    SpikeFromChip(SpikeLabel(NeuronLabel(), SPL1Address()), ChipTime()), FPGATime()));
+	EXPECT_NO_THROW(SpikeFromChipEvent(SpikeFromChip(SpikeLabel(), ChipTime()), FPGATime()));
 
 	SpikeFromChipEvent config;
 	SpikeFromChipEvent other_config = config;
@@ -345,7 +276,7 @@ TEST(SpikeFromChipEvent, General)
 	EXPECT_EQ(other_config, config);
 
 	{
-		SpikeFromChip value(SpikeLabel(NeuronLabel(12), SPL1Address(2)), ChipTime(5));
+		SpikeFromChip value(SpikeLabel(12), ChipTime(5));
 		config.set_spike(value);
 		EXPECT_EQ(config.get_spike(), value);
 	}
@@ -367,15 +298,14 @@ TEST(SpikeFromChipEvent, Ostream)
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	SpikeFromChipEvent obj(
-	    SpikeFromChip(SpikeLabel(NeuronLabel(12), SPL1Address(2)), ChipTime(3)), FPGATime(6));
+	SpikeFromChipEvent obj(SpikeFromChip(SpikeLabel(12), ChipTime(3)), FPGATime(6));
 
 	std::stringstream stream;
 	stream << obj;
 
 	EXPECT_EQ(
-	    stream.str(), "SpikeFromChipEvent(SpikeFromChip(SpikeLabel(NeuronLabel(12), "
-	                  "SPL1Address(2)), ChipTime(3)), FPGATime(6))");
+	    stream.str(),
+	    "SpikeFromChipEvent(SpikeFromChip(SpikeLabel(12), ChipTime(3)), FPGATime(6))");
 }
 
 TEST(SpikeFromChipEvent, CerealizeCoverage)
@@ -385,7 +315,7 @@ TEST(SpikeFromChipEvent, CerealizeCoverage)
 
 	SpikeFromChipEvent obj1, obj2;
 
-	obj1.set_spike(SpikeFromChip(SpikeLabel(NeuronLabel(12), SPL1Address(2)), ChipTime(6)));
+	obj1.set_spike(SpikeFromChip(SpikeLabel(12), ChipTime(6)));
 	obj1.set_fpga_time(FPGATime(3));
 
 	std::ostringstream ostream;

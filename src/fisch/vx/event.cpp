@@ -7,60 +7,6 @@
 
 namespace fisch::vx {
 
-SpikeLabel::SpikeLabel() : m_neuron_label(), m_spl1_address() {}
-
-SpikeLabel::SpikeLabel(neuron_label_type const& neuron, spl1_address_type const& spl1) :
-    m_neuron_label(neuron),
-    m_spl1_address(spl1)
-{}
-
-SpikeLabel::neuron_label_type SpikeLabel::get_neuron_label() const
-{
-	return m_neuron_label;
-}
-
-void SpikeLabel::set_neuron_label(neuron_label_type const& value)
-{
-	m_neuron_label = value;
-}
-
-SpikeLabel::spl1_address_type SpikeLabel::get_spl1_address() const
-{
-	return m_spl1_address;
-}
-
-void SpikeLabel::set_spl1_address(spl1_address_type const& value)
-{
-	m_spl1_address = value;
-}
-
-std::ostream& operator<<(std::ostream& os, SpikeLabel const& spike_label)
-{
-	std::stringstream ss;
-	os << "SpikeLabel(" << spike_label.m_neuron_label << ", " << spike_label.m_spl1_address << ")";
-	return os;
-}
-
-bool SpikeLabel::operator==(SpikeLabel const& other) const
-{
-	return (m_neuron_label == other.m_neuron_label) && (m_spl1_address == other.m_spl1_address);
-}
-
-bool SpikeLabel::operator!=(SpikeLabel const& other) const
-{
-	return !(*this == other);
-}
-
-template <class Archive>
-void SpikeLabel::serialize(Archive& ar)
-{
-	ar(CEREAL_NVP(m_neuron_label));
-	ar(CEREAL_NVP(m_spl1_address));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikeLabel)
-
-
 template <size_t NumPack>
 SpikePackToChip<NumPack>::SpikePackToChip() : m_labels()
 {}
@@ -99,10 +45,10 @@ std::array<
     SpikePackToChip<NumPack>::encode_write_ut_message_count>
 SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 {
-	std::array<hxcomm::vx::instruction::event_to_fpga::Spike, NumPack> spikes;
-	std::transform(m_labels.cbegin(), m_labels.cend(), spikes.begin(), [](auto label) {
-		return typename hxcomm::vx::instruction::event_to_fpga::Spike(
-		    label.get_neuron_label(), label.get_spl1_address());
+	typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload::spikes_type
+	    spikes;
+	std::transform(m_labels.cbegin(), m_labels.cend(), spikes.begin(), [](auto const& label) {
+		return typename decltype(spikes)::value_type(label.value());
 	});
 
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>>(
