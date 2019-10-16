@@ -21,7 +21,7 @@ TEST(JTAGPhyRegister, EncodeWrite)
 
 	EXPECT_EQ(messages.size(), 2);
 	auto message_ins = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
-	EXPECT_EQ(message_ins.decode().value(), 92);
+	EXPECT_EQ(message_ins.decode(), 92);
 	auto message_data =
 	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data.decode().get_payload(), 12);
