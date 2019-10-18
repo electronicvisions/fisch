@@ -11,6 +11,7 @@
 #include "halco/common/cerealization_geometry.h"
 #include "halco/common/cerealization_typed_array.h"
 #include "hate/type_list.h"
+#include "hate/type_traits.h"
 #include "hxcomm/vx/utmessage.h"
 #include "hxcomm/common/cerealization_utmessage.h"
 
@@ -491,8 +492,7 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	// change program in tickets of other builder
 	// update position in response queues in tickets of other builder
 	auto ticket_changer = [this](auto const& ticket_ptr) {
-		typedef typename std::remove_pointer<typename std::remove_reference<
-		    typename std::remove_cv<decltype(ticket_ptr)>::type>::type>::type ticket_type;
+		typedef hate::remove_all_qualifiers_t<decltype(ticket_ptr)> ticket_type;
 		typedef typename ticket_type::container_type container_type;
 		size_t translation = 0; // translation of response queue position
 		if constexpr (hate::is_in_type_list<container_type, omnibus_queue_container_list>::value) {
