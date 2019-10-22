@@ -163,6 +163,12 @@ public:
 	madc_sample_from_chip_events_type const& get_madc_samples() const;
 
 	/**
+	 * Check that result data to all tickets is available.
+	 * @return Boolean value
+	 */
+	bool valid() const;
+
+	/**
 	 * Print instruction UT messages to ostream.
 	 * @return Altered ostream
 	 */
@@ -220,6 +226,8 @@ private:
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 
 	PlaybackDecoder m_decoder;
+	size_t m_jtag_queue_expected_size;
+	size_t m_omnibus_queue_expected_size;
 
 	friend class cereal::access;
 	template <typename Archive>

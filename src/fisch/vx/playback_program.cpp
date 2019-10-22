@@ -254,7 +254,9 @@ PlaybackProgram::PlaybackProgram() :
         m_spike_response_queue,
         m_madc_sample_response_queue,
         m_spike_pack_counts,
-        m_madc_sample_pack_counts)
+        m_madc_sample_pack_counts),
+    m_jtag_queue_expected_size(0),
+    m_omnibus_queue_expected_size(0)
 {}
 
 template <typename U>
@@ -293,6 +295,12 @@ PlaybackProgram::madc_sample_from_chip_events_type const& PlaybackProgram::get_m
 	return m_madc_sample_response_queue;
 }
 
+bool PlaybackProgram::valid() const
+{
+	return m_receive_queue_jtag.size() == m_jtag_queue_expected_size &&
+	       m_receive_queue_omnibus.size() == m_omnibus_queue_expected_size;
+}
+
 std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 {
 	auto const& messages = program.get_to_fpga_messages();
@@ -329,7 +337,9 @@ bool PlaybackProgram::operator==(PlaybackProgram const& other) const
 	       m_spike_response_queue == other.m_spike_response_queue &&
 	       m_madc_sample_response_queue == other.m_madc_sample_response_queue &&
 	       m_spike_pack_counts == other.m_spike_pack_counts &&
-	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts;
+	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts &&
+	       m_jtag_queue_expected_size == other.m_jtag_queue_expected_size &&
+	       m_omnibus_queue_expected_size == other.m_omnibus_queue_expected_size;
 }
 
 bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
@@ -347,6 +357,8 @@ void PlaybackProgram::serialize(Archive& ar)
 	ar(m_madc_sample_response_queue);
 	ar(m_spike_pack_counts);
 	ar(m_madc_sample_pack_counts);
+	ar(m_jtag_queue_expected_size);
+	ar(m_omnibus_queue_expected_size);
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
@@ -468,6 +480,8 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
+	m_program->m_jtag_queue_expected_size = m_jtag_receive_queue_size;
+	m_program->m_omnibus_queue_expected_size = m_omnibus_receive_queue_size;
 	std::shared_ptr<PlaybackProgram> ret(m_program);
 	m_program = std::make_shared<PlaybackProgram>();
 	m_jtag_receive_queue_size = 0;

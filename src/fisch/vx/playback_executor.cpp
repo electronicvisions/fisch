@@ -15,6 +15,9 @@ void PlaybackProgramExecutor<Connection>::run(std::shared_ptr<PlaybackProgram> c
 	for (auto const& message : responses) {
 		program->push_from_fpga_message(message);
 	}
+	if (!program->valid()) {
+		throw std::runtime_error("Not all response data to PlaybackProgram valid.");
+	}
 }
 
 template <class Connection>
