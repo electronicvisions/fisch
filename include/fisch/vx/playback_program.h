@@ -367,6 +367,12 @@ public:
 	 */
 	void merge_back(PlaybackProgramBuilder& other);
 
+	/**
+	 * Get whether builder is empty, i.e. no instructions are embodied.
+	 * @return Boolean value
+	 */
+	bool empty() const;
+
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
 	size_t m_jtag_receive_queue_size;

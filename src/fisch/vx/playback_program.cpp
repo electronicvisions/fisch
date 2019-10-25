@@ -542,6 +542,11 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	other.done();
 }
 
+bool PlaybackProgramBuilder::empty() const
+{
+	return m_program->m_instructions.empty();
+}
+
 // explicit instantiation
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	template class PlaybackProgram::ContainerTicket<Name>;                                         \

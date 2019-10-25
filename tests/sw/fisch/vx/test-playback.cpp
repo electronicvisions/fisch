@@ -76,8 +76,10 @@ TEST(PlaybackProgramBuilder, General)
 	EXPECT_NO_THROW(PlaybackProgramBuilder());
 
 	PlaybackProgramBuilder builder;
+	EXPECT_TRUE(builder.empty());
 
 	builder.write(TimerOnDLS(), Timer());
+	EXPECT_FALSE(builder.empty());
 	std::stringstream ss_builder;
 	ss_builder << builder;
 
