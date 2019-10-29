@@ -57,7 +57,7 @@ public:
 			m_times.clear();
 		}
 
-		TimedResponseQueue() {}
+		TimedResponseQueue() : m_messages(), m_times() {}
 		TimedResponseQueue(
 		    std::vector<message_type> const& messages, std::vector<FPGATime> const& times) :
 		    m_messages(messages),

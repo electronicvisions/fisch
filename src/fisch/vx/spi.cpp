@@ -133,9 +133,9 @@ struct SPIDACDataRegisterBitfield
 		static_assert(sizeof(raw) == sizeof(m), "sizes of union types should match");
 	} u;
 
-	SPIDACDataRegisterBitfield() { u.raw = {0u, 0u}; }
+	SPIDACDataRegisterBitfield() : u({{0u, 0u}}) {}
 
-	SPIDACDataRegisterBitfield(std::array<uint8_t, 2> data) { u.raw = data; }
+	SPIDACDataRegisterBitfield(std::array<uint8_t, 2> data) : u({data}) {}
 };
 
 } // namespace

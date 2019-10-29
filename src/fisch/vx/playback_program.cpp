@@ -241,6 +241,7 @@ FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
 }
 
 PlaybackProgram::PlaybackProgram() :
+    m_tickets(),
     m_instructions(),
     m_receive_queue_jtag(),
     m_receive_queue_omnibus(),
