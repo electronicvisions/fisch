@@ -1,7 +1,6 @@
 #pragma once
 
 #include "halco/common/geometry.h"
-#include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/decode.h"
@@ -11,6 +10,15 @@
 namespace cereal {
 class access;
 } // namespace cereal
+
+namespace halco::hicann_dls::vx {
+struct ResetJTAGTapOnDLS;
+struct JTAGClockScalerOnDLS;
+struct OmnibusChipOverJTAGAddress;
+struct JTAGIdCodeOnDLS;
+struct JTAGPLLRegisterOnDLS;
+struct JTAGPhyRegisterOnDLS;
+} // namespace halco::hicann_dls::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 

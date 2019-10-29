@@ -2,10 +2,11 @@
 
 #include <array>
 
-#include "halco/common/cerealization_geometry.h"
-#include "hxcomm/vx/utmessage.h"
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus_constants.h"
+#include "halco/common/cerealization_geometry.h"
+#include "halco/hicann-dls/vx/omnibus.h"
+#include "hxcomm/vx/utmessage.h"
 
 #include "hate/bitset.h"
 

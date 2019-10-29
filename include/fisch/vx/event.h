@@ -1,13 +1,20 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/systime.h"
-#include "halco/hicann-dls/vx/coordinates.h"
 #include "hate/join.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 class access;
 } // namespace cereal
+
+namespace halco::hicann_dls::vx {
+struct NeuronLabel;
+struct SPL1Address;
+struct SpikePack1ToChipOnDLS;
+struct SpikePack2ToChipOnDLS;
+struct SpikePack3ToChipOnDLS;
+} // namespace halco::hicann_dls::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 

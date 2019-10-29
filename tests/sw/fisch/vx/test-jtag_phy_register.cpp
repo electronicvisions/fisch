@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 
+#include "halco/hicann-dls/vx/jtag.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 

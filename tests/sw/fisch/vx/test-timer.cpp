@@ -4,6 +4,7 @@
 
 #include <cereal/archives/json.hpp>
 #include <cereal/cereal.hpp>
+#include "halco/hicann-dls/vx/timing.h"
 #include "hxcomm/vx/utmessage.h"
 
 TEST(Timer, General)

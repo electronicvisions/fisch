@@ -1,6 +1,7 @@
 #include "fisch/vx/systime.h"
 
 #include "fisch/cerealization.h"
+#include "halco/hicann-dls/vx/timing.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {

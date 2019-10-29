@@ -6,6 +6,7 @@
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
+#include "halco/hicann-dls/vx/spi.h"
 #include "hate/bitset.h"
 #include "hxcomm/vx/utmessage.h"
 

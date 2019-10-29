@@ -11,6 +11,10 @@ namespace cereal {
 class access;
 } // namespace cereal
 
+namespace halco::hicann_dls::vx {
+struct ResetChipOnDLS;
+} // namespace halco::hicann_dls::vx
+
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**

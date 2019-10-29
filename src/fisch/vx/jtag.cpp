@@ -2,10 +2,12 @@
 
 #include <array>
 
-#include "halco/common/cerealization_geometry.h"
-#include "hxcomm/vx/utmessage.h"
 #include "fisch/cerealization.h"
+#include "halco/common/cerealization_geometry.h"
+#include "halco/hicann-dls/vx/jtag.h"
+#include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
