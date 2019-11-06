@@ -30,6 +30,7 @@ def configure(cfg):
 
 def build(bld):
     bld.env.DLSvx_HARDWARE_AVAILABLE = "cube" == os.environ.get("SLURM_JOB_PARTITION")
+    bld.env.DLSvx_SIM_AVAILABLE = "FLANGE_SIMULATION_RCF_PORT" in os.environ
 
     bld(
         target          = 'fisch_inc',
@@ -74,7 +75,7 @@ def build(bld):
         target = 'fisch_simtests_vx',
         use = ['fisch_vx', 'fisch_simtest_vx_inc', 'BOOST4FISCHTOOLS'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = True,
+        skip_run = not bld.env.DLSvx_SIM_AVAILABLE,
     )
 
     bld.recurse('pyfisch')
