@@ -45,6 +45,8 @@ PlaybackProgramARQExecutor::PlaybackProgramARQExecutor() : base_t() {}
 
 PlaybackProgramARQExecutor::PlaybackProgramARQExecutor(ip_t const ip) : base_t(ip) {}
 
+PlaybackProgramSimExecutor::PlaybackProgramSimExecutor() : base_t() {}
+
 PlaybackProgramSimExecutor::PlaybackProgramSimExecutor(ip_t const ip, port_t const port) :
     base_t(ip, port)
 {}

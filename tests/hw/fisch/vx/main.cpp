@@ -1,45 +1,17 @@
 #include <string>
 
-#include <boost/program_options.hpp>
 #include <gtest/gtest.h>
 
 #include "executor.h"
 
-#ifndef FISCH_TEST_ARQ_EXECUTOR
-typename fisch::vx::PlaybackProgramSimExecutor::ip_t simulation_ip;
-typename fisch::vx::PlaybackProgramSimExecutor::port_t simulation_port;
-#endif
-
 PlaybackProgramTestExecutor generate_playback_program_test_executor()
 {
-#ifdef FISCH_TEST_ARQ_EXECUTOR
 	return PlaybackProgramTestExecutor();
-#else
-	return PlaybackProgramTestExecutor(simulation_ip, simulation_port);
-#endif
 }
 
 int main(int argc, char* argv[])
 {
 	testing::InitGoogleTest(&argc, argv);
-
-#ifndef FISCH_TEST_ARQ_EXECUTOR
-	namespace bpo = boost::program_options;
-	bpo::options_description desc("Options");
-	// clang-format off
-	desc.add_options()("simulation_ip",
-	    bpo::value<typename fisch::vx::PlaybackProgramSimExecutor::ip_t>(&simulation_ip)
-	        ->default_value("127.0.0.1"));
-	desc.add_options()("simulation_port",
-	    bpo::value<typename fisch::vx::PlaybackProgramSimExecutor::port_t>(&simulation_port)
-	        ->required());
-	// clang-format on
-
-	bpo::variables_map vm;
-	bpo::store(
-	    bpo::basic_command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
-	bpo::notify(vm);
-#endif
 
 	return RUN_ALL_TESTS();
 }

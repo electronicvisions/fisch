@@ -76,6 +76,17 @@ public:
 	typedef hxcomm::vx::SimConnection::ip_t ip_t;
 	typedef hxcomm::vx::SimConnection::port_t port_t;
 
+	/**
+	 * Construct Simulation executor with port extracted from env.
+	 * @throws std::runtime_error On no port available in environment
+	 */
+	PlaybackProgramSimExecutor();
+
+	/**
+	 * Construct Simulation executor with given IP address and port.
+	 * @param ip IP address to use
+	 * @param port Port to use
+	 */
 	PlaybackProgramSimExecutor(ip_t ip, port_t port);
 
 	/**
