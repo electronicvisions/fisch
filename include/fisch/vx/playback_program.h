@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 #include <variant>
 
 #include "fisch/vx/container.h"
@@ -215,6 +216,8 @@ private:
 #include "fisch/vx/container.def"
 	    >>
 	    m_tickets;
+
+	mutable std::mutex m_tickets_mutex;
 
 	std::vector<to_fpga_message_type> m_instructions;
 

@@ -242,6 +242,7 @@ FPGATime PlaybackProgram::ContainerVectorTicket<ContainerT>::fpga_time() const
 
 PlaybackProgram::PlaybackProgram() :
     m_tickets(),
+    m_tickets_mutex(),
     m_instructions(),
     m_receive_queue_jtag(),
     m_receive_queue_omnibus(),
@@ -263,6 +264,7 @@ PlaybackProgram::PlaybackProgram() :
 template <typename U>
 void PlaybackProgram::register_ticket(U* const ticket) const
 {
+	std::lock_guard<std::mutex> lock(m_tickets_mutex);
 	assert((m_tickets.find(ticket) == m_tickets.cend()) && "ticket can't be registered twice.");
 	m_tickets.insert(ticket);
 }
@@ -270,6 +272,7 @@ void PlaybackProgram::register_ticket(U* const ticket) const
 template <typename U>
 void PlaybackProgram::deregister_ticket(U* const ticket) const
 {
+	std::lock_guard<std::mutex> lock(m_tickets_mutex);
 	auto const it = m_tickets.find(ticket);
 	assert((it != m_tickets.cend()) && "unknown ticket can't be deregistered.");
 	m_tickets.erase(it);
