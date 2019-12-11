@@ -1,6 +1,6 @@
 #pragma once
 #include "fisch/vx/omnibus_data.h"
-#include "halco/hicann-dls/vx/coordinates.h"
+#include "halco/hicann-dls/vx/omnibus.h"
 
 namespace fisch::vx {
 

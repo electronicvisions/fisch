@@ -4,6 +4,8 @@
 
 #include "fisch/vx/fisch.h"
 
+#include "halco/hicann-dls/vx/coordinates.h"
+
 template <typename T>
 void test_equal_coordinate()
 {

@@ -1,6 +1,7 @@
 #include "fisch/vx/reset.h"
 
 #include "fisch/cerealization.h"
+#include "halco/hicann-dls/vx/reset.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {

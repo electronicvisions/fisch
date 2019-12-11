@@ -3,6 +3,7 @@
 #include "fisch/vx/spi.h"
 
 #include "fisch/vx/omnibus_constants.h"
+#include "halco/hicann-dls/vx/spi.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 

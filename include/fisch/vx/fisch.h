@@ -3,3 +3,5 @@
 #include "fisch/vx/omnibus_data.h"
 #include "fisch/vx/playback_executor.h"
 #include "fisch/vx/playback_program.h"
+// needed for python wrapping
+#include "halco/hicann-dls/vx/coordinates.h"

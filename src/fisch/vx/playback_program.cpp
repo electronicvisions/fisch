@@ -10,10 +10,11 @@
 #include "fisch/vx/container.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/common/cerealization_typed_array.h"
+#include "halco/hicann-dls/vx/coordinates.h"
 #include "hate/type_list.h"
 #include "hate/type_traits.h"
-#include "hxcomm/vx/utmessage.h"
 #include "hxcomm/common/cerealization_utmessage.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace cereal {
 

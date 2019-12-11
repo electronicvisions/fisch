@@ -2,6 +2,7 @@
 
 #include "fisch/vx/reset.h"
 
+#include "halco/hicann-dls/vx/reset.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 

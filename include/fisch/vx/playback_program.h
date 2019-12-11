@@ -1,5 +1,6 @@
 #pragma once
 #include <mutex>
+#include <unordered_set>
 #include <variant>
 
 #include "fisch/vx/container.h"

@@ -2,17 +2,16 @@
 
 #include "fisch/vx/playback_program.h"
 
+#include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/traits.h"
-#include "hxcomm/vx/utmessage.h"
-
-using namespace fisch::vx;
-using namespace halco::hicann_dls::vx;
-
-#include "fisch/cerealization.h"
+#include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/vx/utmessage.h"
 
 #include <cereal/types/memory.hpp>
+
+using namespace fisch::vx;
+using namespace halco::hicann_dls::vx;
 
 template <typename ContainerT>
 void test_playback_program_builder_read_api()
