@@ -1,17 +1,20 @@
 #pragma once
-#include <array>
+#include <vector>
 #include <boost/range/sub_range.hpp>
 
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace fisch::vx {
 
-typedef boost::sub_range<std::vector<
-    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>> const>
+template <typename Instruction>
+using UTMessageFromFPGARange =
+    boost::sub_range<std::vector<hxcomm::vx::UTMessageFromFPGA<Instruction>> const>;
+
+
+typedef UTMessageFromFPGARange<hxcomm::vx::instruction::jtag_from_hicann::Data>
     UTMessageFromFPGARangeJTAG;
 
-typedef boost::sub_range<std::vector<
-    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>> const>
+typedef UTMessageFromFPGARange<hxcomm::vx::instruction::omnibus_from_fpga::Data>
     UTMessageFromFPGARangeOmnibus;
 
 } // namespace fisch::vx
