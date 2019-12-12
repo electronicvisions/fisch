@@ -24,7 +24,6 @@ def configure(cfg):
     cfg.load('gtest')
     cfg.load('test_base')
     cfg.load("doxygen")
-    cfg.check_boost(lib='program_options', uselib_store='BOOST4FISCHTOOLS')
     cfg.recurse('pyfisch')
 
 
@@ -64,7 +63,7 @@ def build(bld):
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
         target = 'fisch_hwtests_vx',
-        use = ['fisch_vx', 'fisch_hwtest_vx_inc', 'BOOST4FISCHTOOLS'],
+        use = ['fisch_vx', 'fisch_hwtest_vx_inc'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE
     )
@@ -73,7 +72,7 @@ def build(bld):
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
         target = 'fisch_simtests_vx',
-        use = ['fisch_vx', 'fisch_simtest_vx_inc', 'BOOST4FISCHTOOLS'],
+        use = ['fisch_vx', 'fisch_simtest_vx_inc'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = not bld.env.DLSvx_SIM_AVAILABLE,
     )
