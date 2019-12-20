@@ -127,6 +127,8 @@ public:
 	/** Default constructor */
 	PlaybackProgram();
 
+	~PlaybackProgram();
+
 	typedef std::vector<SpikeFromChipEvent> spike_from_chip_events_type;
 	typedef std::vector<MADCSampleFromChipEvent> madc_sample_from_chip_events_type;
 

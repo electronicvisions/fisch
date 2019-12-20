@@ -261,6 +261,9 @@ PlaybackProgram::PlaybackProgram() :
     m_omnibus_queue_expected_size(0)
 {}
 
+PlaybackProgram::~PlaybackProgram()
+{}
+
 template <typename U>
 void PlaybackProgram::register_ticket(U* const ticket) const
 {
