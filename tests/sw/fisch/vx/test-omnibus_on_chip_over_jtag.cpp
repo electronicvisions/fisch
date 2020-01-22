@@ -14,13 +14,13 @@ TEST(OmnibusChipOverJTAG, General)
 	EXPECT_NO_THROW(OmnibusChipOverJTAG());
 
 	OmnibusChipOverJTAG default_config;
-	EXPECT_EQ(default_config.get(), OmnibusChipOverJTAG::value_type());
+	EXPECT_EQ(default_config.get(), OmnibusChipOverJTAG::Value());
 
-	OmnibusChipOverJTAG::value_type value(0x12345678);
+	OmnibusChipOverJTAG::Value value(0x12345678);
 	OmnibusChipOverJTAG value_config(value);
 	EXPECT_EQ(value_config.get(), value);
 
-	OmnibusChipOverJTAG::value_type other_value(0x87654321);
+	OmnibusChipOverJTAG::Value other_value(0x87654321);
 	value_config.set(other_value);
 	EXPECT_EQ(value_config.get(), other_value);
 
@@ -136,7 +136,7 @@ TEST(OmnibusChipOverJTAG, CerealizeCoverage)
 	using namespace fisch::vx;
 
 	OmnibusChipOverJTAG obj1, obj2;
-	obj1.set(OmnibusChipOverJTAG::value_type(0x12345678));
+	obj1.set(OmnibusChipOverJTAG::Value(0x12345678));
 
 	std::ostringstream ostream;
 	{

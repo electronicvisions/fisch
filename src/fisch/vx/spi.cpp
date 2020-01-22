@@ -56,18 +56,18 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
 	auto encoded1 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 2)))
+	    OmnibusFPGA(OmnibusFPGA::Value(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 2)))
 	        .encode_write(addr);
 	ret[0] = encoded1[0];
 	ret[1] = encoded1[1];
 	auto encoded2 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 1)))
+	    OmnibusFPGA(OmnibusFPGA::Value(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 1)))
 	        .encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];
 	auto encoded3 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(
-	                    spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
+	    OmnibusFPGA(
+	        OmnibusFPGA::Value(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
 	        .encode_write(addr);
 	ret[4] = encoded3[0];
 	ret[5] = encoded3[1];
@@ -157,12 +157,11 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	bitfield.u.m.channel = coord.toSPIDACDataRegisterOnDAC().toEnum();
 	bitfield.u.m.data = m_data.value();
 
-	auto encoded1 = OmnibusFPGA(OmnibusFPGA::value_type(bitfield.u.raw[1])).encode_write(addr);
+	auto encoded1 = OmnibusFPGA(OmnibusFPGA::Value(bitfield.u.raw[1])).encode_write(addr);
 	ret[0] = encoded1[0];
 	ret[1] = encoded1[1];
-	auto encoded2 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(spi_over_omnibus_stop_bit | bitfield.u.raw[0]))
-	        .encode_write(addr);
+	auto encoded2 = OmnibusFPGA(OmnibusFPGA::Value(spi_over_omnibus_stop_bit | bitfield.u.raw[0]))
+	                    .encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];
 
@@ -237,15 +236,14 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
 	auto encoded1 =
-	    OmnibusFPGA(OmnibusFPGA::value_type(
+	    OmnibusFPGA(OmnibusFPGA::Value(
 	                    (control_mask | (coord.toSPIDACControlRegisterOnDAC().toEnum() << 5))))
 	        .encode_write(addr);
 	ret[0] = encoded1[0];
 	ret[1] = encoded1[1];
 
-	auto encoded2 =
-	    OmnibusFPGA(OmnibusFPGA::value_type((spi_over_omnibus_stop_bit | m_data.value())))
-	        .encode_write(addr);
+	auto encoded2 = OmnibusFPGA(OmnibusFPGA::Value((spi_over_omnibus_stop_bit | m_data.value())))
+	                    .encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];
 

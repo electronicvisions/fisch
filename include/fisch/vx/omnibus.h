@@ -25,25 +25,25 @@ class GENPYBIND(visible) OmnibusChip
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusChipAddress coordinate_type;
-	typedef OmnibusData value_type;
+	typedef OmnibusData Value;
 
 	/**
 	 * Construct an instance with a word value.
 	 * @param value OmnibusChip word value to construct instance with
 	 */
-	OmnibusChip(value_type value = value_type());
+	OmnibusChip(Value value = Value());
 
 	/**
 	 * Get value.
 	 * @return OmnibusChip word value
 	 */
-	value_type get() const;
+	Value get() const;
 
 	/**
 	 * Set value.
 	 * @param value OmnibusChip word value to set
 	 */
-	void set(value_type value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, OmnibusChip const& word);
@@ -62,7 +62,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
-	value_type m_data;
+	Value m_data;
 
 	friend class cereal::access;
 	template <class Archive>
@@ -77,25 +77,25 @@ class GENPYBIND(visible) OmnibusFPGA
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusFPGAAddress coordinate_type;
-	typedef OmnibusData value_type;
+	typedef OmnibusData Value;
 
 	/**
 	 * Construct an instance with a word value.
 	 * @param value OmnibusFPGA word value to construct instance with
 	 */
-	OmnibusFPGA(value_type value = value_type());
+	OmnibusFPGA(Value value = Value());
 
 	/**
 	 * Get value.
 	 * @return OmnibusFPGA word value
 	 */
-	value_type get() const;
+	Value get() const;
 
 	/**
 	 * Set value.
 	 * @param value OmnibusFPGA word value to set
 	 */
-	void set(value_type value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, OmnibusFPGA const& word);
@@ -114,7 +114,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
-	value_type m_data;
+	Value m_data;
 
 	friend class cereal::access;
 	template <class Archive>

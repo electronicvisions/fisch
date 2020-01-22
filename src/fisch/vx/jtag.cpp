@@ -88,14 +88,14 @@ void JTAGClockScaler::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
 
 
-OmnibusChipOverJTAG::OmnibusChipOverJTAG(value_type const value) : m_data(value) {}
+OmnibusChipOverJTAG::OmnibusChipOverJTAG(Value const value) : m_data(value) {}
 
-OmnibusChipOverJTAG::value_type OmnibusChipOverJTAG::get() const
+OmnibusChipOverJTAG::Value OmnibusChipOverJTAG::get() const
 {
 	return m_data;
 }
 
-void OmnibusChipOverJTAG::set(value_type const value)
+void OmnibusChipOverJTAG::set(Value const value)
 {
 	m_data = value;
 }
@@ -106,7 +106,7 @@ std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word)
 	ss_d << "0d" << std::dec << word.m_data.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<sizeof(typename OmnibusChipOverJTAG::value_type::value_type) * CHAR_BIT> bits(
+	hate::bitset<sizeof(typename OmnibusChipOverJTAG::Value::value_type) * CHAR_BIT> bits(
 	    word.m_data.value());
 	os << "OmnibusChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
@@ -132,7 +132,7 @@ OmnibusChipOverJTAG::encode_read(coordinate_type const& coord)
 
 	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS);
 
-	hate::bitset<sizeof(value_type) * CHAR_BIT + 1> addr(coord.value());
+	hate::bitset<sizeof(Value) * CHAR_BIT + 1> addr(coord.value());
 	addr.set(addr.size - 1, true);
 	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
 	    data::Payload(false, data::Payload::NumBits(addr.size), addr));
@@ -173,7 +173,7 @@ OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 
 void OmnibusChipOverJTAG::decode(UTMessageFromFPGARangeJTAG const& messages)
 {
-	m_data = value_type(static_cast<uint32_t>(messages[0].decode()));
+	m_data = Value(static_cast<uint32_t>(messages[0].decode()));
 }
 
 template <class Archive>

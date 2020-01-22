@@ -14,11 +14,11 @@ namespace fisch::vx {
 
 #define OMNIBUS_X_IMPL(Name, AddressMask)                                                          \
                                                                                                    \
-	Name::Name(value_type const value) : m_data(value) {}                                          \
+	Name::Name(Value const value) : m_data(value) {}                                               \
                                                                                                    \
-	Name::value_type Name::get() const { return m_data; }                                          \
+	Name::Value Name::get() const { return m_data; }                                               \
                                                                                                    \
-	void Name::set(value_type const value) { m_data = value; }                                     \
+	void Name::set(Value const value) { m_data = value; }                                          \
                                                                                                    \
 	std::ostream& operator<<(std::ostream& os, Name const& word)                                   \
 	{                                                                                              \
@@ -26,7 +26,7 @@ namespace fisch::vx {
 		ss_d << "0d" << std::dec << word.m_data.value();                                           \
 		std::stringstream ss_x;                                                                    \
 		ss_x << "0x" << std::hex << word.m_data.value();                                           \
-		hate::bitset<sizeof(typename Name::value_type::value_type) * CHAR_BIT> bits(               \
+		hate::bitset<sizeof(typename Name::Value::value_type) * CHAR_BIT> bits(                    \
 		    word.m_data.value());                                                                  \
 		os << #Name << "(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";             \
 		return os;                                                                                 \
@@ -66,7 +66,7 @@ namespace fisch::vx {
                                                                                                    \
 	void Name::decode(UTMessageFromFPGARangeOmnibus const& messages)                               \
 	{                                                                                              \
-		m_data = value_type(static_cast<uint32_t>(messages[0].decode()));                          \
+		m_data = Value(static_cast<uint32_t>(messages[0].decode()));                               \
 	}                                                                                              \
                                                                                                    \
 	template <class Archive>                                                                       \

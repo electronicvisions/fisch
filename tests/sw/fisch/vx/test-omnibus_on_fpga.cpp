@@ -13,13 +13,13 @@ void test_omnibus_general()
 	EXPECT_NO_THROW(T());
 
 	T default_config;
-	EXPECT_EQ(default_config.get(), typename T::value_type());
+	EXPECT_EQ(default_config.get(), typename T::Value());
 
-	typename T::value_type value(0x12345678);
+	typename T::Value value(0x12345678);
 	T value_config(value);
 	EXPECT_EQ(value_config.get(), value);
 
-	typename T::value_type other_value(0x87654321);
+	typename T::Value other_value(0x87654321);
 	value_config.set(other_value);
 	EXPECT_EQ(value_config.get(), other_value);
 
@@ -164,7 +164,7 @@ template <typename T>
 void test_cerealize_coverage()
 {
 	T obj1, obj2;
-	obj1.set(typename T::value_type(0x12345678));
+	obj1.set(typename T::Value(0x12345678));
 
 	std::ostringstream ostream;
 	{

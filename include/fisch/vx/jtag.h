@@ -113,25 +113,25 @@ class GENPYBIND(visible) OmnibusChipOverJTAG
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusChipOverJTAGAddress coordinate_type;
-	typedef OmnibusData value_type;
+	typedef OmnibusData Value;
 
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Omnibus word value to construct instance with
 	 */
-	OmnibusChipOverJTAG(value_type value = value_type());
+	OmnibusChipOverJTAG(Value value = Value());
 
 	/**
 	 * Get value.
 	 * @return Omnibus word value
 	 */
-	value_type get() const;
+	Value get() const;
 
 	/**
 	 * Set value.
 	 * @param value Omnibus word value to set
 	 */
-	void set(value_type value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word);
@@ -150,7 +150,7 @@ public:
 	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
-	value_type m_data;
+	Value m_data;
 
 	friend class cereal::access;
 	template <class Archive>
