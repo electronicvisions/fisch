@@ -20,24 +20,25 @@ class GENPYBIND(visible) ResetChip
 {
 public:
 	typedef halco::hicann_dls::vx::ResetChipOnDLS coordinate_type;
+	typedef bool Value;
 
 	/**
 	 * Construct reset with boolean value.
 	 * @param value Boolean value to set
 	 */
-	ResetChip(bool value = false);
+	ResetChip(Value value = false);
 
 	/**
 	 * Get reset value.
 	 * @return Boolean reset value
 	 */
-	bool get() const;
+	Value get() const;
 
 	/**
 	 * Set reset value.
 	 * @param value Boolean value to set reset to
 	 */
-	void set(bool value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset);
@@ -51,7 +52,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	bool m_value;
+	Value m_value;
 
 	friend class cereal::access;
 	template <class Archive>

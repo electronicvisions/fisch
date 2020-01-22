@@ -22,22 +22,23 @@ class GENPYBIND(visible) SystimeSync
 {
 public:
 	typedef halco::hicann_dls::vx::SystimeSyncOnFPGA coordinate_type;
+	typedef bool Value;
 
-	SystimeSync(bool do_sync = false);
+	SystimeSync(Value do_sync = false);
 
 	/**
 	 * Get systime sync enable value.
 	 * On true, systime sync is triggered, on false only a systime update response is emitted.
 	 * @return Boolean value
 	 */
-	bool get() const;
+	Value get() const;
 
 	/**
 	 * Set systime sync enable value.
 	 * On true, systime sync is triggered, on false only a systime update response is emitted.
 	 * @param value Boolean value
 	 */
-	void set(bool value);
+	void set(Value value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, SystimeSync const& systime_sync);
@@ -51,7 +52,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	bool m_do_sync;
+	Value m_do_sync;
 
 	friend class cereal::access;
 	template <class Archive>
