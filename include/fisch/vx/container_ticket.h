@@ -41,6 +41,7 @@ public:
 	FPGATime fpga_time() const;
 
 	ContainerTicket(ContainerTicket const& other);
+	ContainerTicket& operator=(ContainerTicket const& other) = default;
 	~ContainerTicket();
 
 private:
@@ -84,6 +85,7 @@ public:
 	FPGATime fpga_time() const;
 
 	ContainerVectorTicket(ContainerVectorTicket const& other);
+	ContainerVectorTicket& operator=(ContainerVectorTicket const& other) = default;
 	~ContainerVectorTicket();
 
 private:
