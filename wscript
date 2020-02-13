@@ -8,6 +8,7 @@ def depends(dep):
     dep('halco')
     dep('hxcomm')
     dep('code-format')
+    dep('logger')
     dep.recurse('pyfisch')
 
 
@@ -17,6 +18,11 @@ def options(opt):
     opt.load('test_base')
     opt.load("doxygen")
     opt.recurse('pyfisch')
+    opt.add_option("--fisch-loglevel",
+                   choices=["trace", "debug", "info",
+                            "warning", "error", "fatal"],
+                   default="warning",
+                   help="Maximal loglevel to compile in.")
 
 
 def configure(cfg):
@@ -25,6 +31,15 @@ def configure(cfg):
     cfg.load('test_base')
     cfg.load("doxygen")
     cfg.recurse('pyfisch')
+    cfg.define(
+        "FISCH_LOG_THRESHOLD",
+        {'trace':   0,
+         'debug':   1,
+         'info':    2,
+         'warning': 3,
+         'error':   4,
+         'fatal':   5}[cfg.options.fisch_loglevel]
+    )
 
 
 def build(bld):
@@ -39,7 +54,7 @@ def build(bld):
     bld.shlib(
         source = bld.path.ant_glob('src/fisch/vx/*.cpp'),
         target = 'fisch_vx',
-        use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx'],
+        use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
     )
 
     bld(
