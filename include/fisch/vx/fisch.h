@@ -5,5 +5,3 @@
 #include "fisch/vx/playback_executor.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
-// needed for python wrapping
-#include "halco/hicann-dls/vx/coordinates.h"

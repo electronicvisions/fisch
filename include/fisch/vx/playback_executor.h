@@ -1,55 +1,33 @@
 #pragma once
-#include "hxcomm/vx/arqconnection.h"
-#include "hxcomm/vx/simconnection.h"
 
+#include "hxcomm/common/connect_to_remote_parameter_defs.h"
+
+#include "fisch/vx/detail/playback_executor.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/playback_program.h"
+
+namespace hxcomm::vx {
+
+class ARQConnection;
+class SimConnection;
+
+} // namespace hxcomm::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
-/**
- * Executor base class for playback program.
- * @tparam Connection Connection type
- */
-template <class Connection>
-class PlaybackProgramExecutor
-{
-public:
-	/**
-	 * Create executor with connection specific arguments.
-	 * @tparam Args Arguments used for creation of connection
-	 */
-	template <class... Args>
-	PlaybackProgramExecutor(Args... args);
-
-	/**
-	 * Transfer and execute the given playback program and fetch results.
-	 * @param program PlaybackProgram to run
-	 */
-	void run(std::shared_ptr<PlaybackProgram> const& program);
-
-	/**
-	 * Transfer and execute the given messages and return responses.
-	 * @param messages UT messages to transfer
-	 * @return Response UT messages
-	 */
-	std::vector<PlaybackProgram::from_fpga_message_type> run(
-	    std::vector<PlaybackProgram::to_fpga_message_type> const& messages) GENPYBIND(hidden);
-
-protected:
-	Connection m_connection;
-};
-
+extern template class detail::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
+extern template class detail::PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
 
 /**
  * Executor executing with an ARQConnection.
+ *
+ * Defined again so that genpybind can instanciate explicit constructors.
  */
 class GENPYBIND(inline_base("*")) PlaybackProgramARQExecutor
-    : public PlaybackProgramExecutor<hxcomm::vx::ARQConnection>
+    : public detail::PlaybackProgramExecutor<hxcomm::vx::ARQConnection>
 {
 public:
-	typedef PlaybackProgramExecutor<hxcomm::vx::ARQConnection> base_t;
-	typedef hxcomm::vx::ARQConnection::ip_t ip_t;
+	using base_t = PlaybackProgramExecutor<hxcomm::vx::ARQConnection>;
+	using ip_t = hxcomm::ip_t;
 
 	/**
 	 * Construct ARQ executor with IP address extracted from env.
@@ -67,14 +45,16 @@ public:
 
 /**
  * Executor executing with a SimConnection.
+ *
+ * Defined again so that genpybind can instanciate explicit constructors.
  */
 class GENPYBIND(inline_base("*")) PlaybackProgramSimExecutor
-    : public PlaybackProgramExecutor<hxcomm::vx::SimConnection>
+    : public detail::PlaybackProgramExecutor<hxcomm::vx::SimConnection>
 {
 public:
-	typedef PlaybackProgramExecutor<hxcomm::vx::SimConnection> base_t;
-	typedef hxcomm::vx::SimConnection::ip_t ip_t;
-	typedef hxcomm::vx::SimConnection::port_t port_t;
+	using base_t = PlaybackProgramExecutor<hxcomm::vx::SimConnection>;
+	using ip_t = hxcomm::ip_t;
+	using port_t = hxcomm::port_t;
 
 	/**
 	 * Construct Simulation executor with port extracted from env.

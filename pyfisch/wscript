@@ -30,7 +30,7 @@ def configure(cfg):
 def build(bld):
     bld(
         target='pyfisch_vx',
-        source='../include/fisch/vx/fisch.h',
+        source='../include/fisch/vx/python_bindings.h',
         genpybind_tags='fisch_vx',
         features='genpybind cxx cxxshlib pyext',
         use=['fisch_vx', 'PYBIND11FISCH', 'pyhalco_hicann_dls_vx'],
