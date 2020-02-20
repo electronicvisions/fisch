@@ -26,7 +26,8 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 	{                                                                                              \
 	public:                                                                                        \
 		typedef halco::hicann_dls::vx::Name##Address coordinate_type;                              \
-		typedef OmnibusData Value;                                                                 \
+		typedef OmnibusData Value GENPYBIND(opaque(false));                                        \
+		typedef std::array<bool, sizeof(OmnibusData::value_type)> ByteEnables;                     \
                                                                                                    \
 		/**                                                                                        \
 		 * Default constructor.                                                                    \
@@ -40,6 +41,13 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 		Name(Value value);                                                                         \
                                                                                                    \
 		/**                                                                                        \
+		 * Construct an instance with a word value and byte enables.                               \
+		 * @param value Word value to construct instance with                                      \
+		 * @param byte_enables Byte enables to construct instance with                             \
+		 */                                                                                        \
+		Name(Value value, ByteEnables byte_enables);                                               \
+                                                                                                   \
+		/**                                                                                        \
 		 * Get value.                                                                              \
 		 * @return Word value                                                                      \
 		 */                                                                                        \
@@ -50,6 +58,18 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 		 * @param value Word value to set                                                          \
 		 */                                                                                        \
 		void set(Value value);                                                                     \
+                                                                                                   \
+		/**                                                                                        \
+		 * Get byte enables.                                                                       \
+		 * @return ByteEnables value                                                               \
+		 */                                                                                        \
+		ByteEnables const& get_byte_enables() const;                                               \
+                                                                                                   \
+		/**                                                                                        \
+		 * Set byte enables.                                                                       \
+		 * @param value ByteEnables value                                                          \
+		 */                                                                                        \
+		void set_byte_enables(ByteEnables const& value);                                           \
                                                                                                    \
 		GENPYBIND(stringstream)                                                                    \
 		friend std::ostream& operator<<(std::ostream& os, Name const& word);                       \
@@ -69,6 +89,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
                                                                                                    \
 	private:                                                                                       \
 		Value m_data;                                                                              \
+		ByteEnables m_byte_enables;                                                                \
                                                                                                    \
 		friend class cereal::access;                                                               \
 		template <class Archive>                                                                   \

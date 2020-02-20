@@ -16,12 +16,16 @@ void test_omnibus_general()
 	EXPECT_EQ(default_config.get(), typename T::Value());
 
 	typename T::Value value(0x12345678);
-	T value_config(value);
+	typename T::ByteEnables byte_enables = {true};
+	T value_config(value, byte_enables);
 	EXPECT_EQ(value_config.get(), value);
 
 	typename T::Value other_value(0x87654321);
+	typename T::ByteEnables other_byte_enables = {false};
 	value_config.set(other_value);
 	EXPECT_EQ(value_config.get(), other_value);
+	value_config.set_byte_enables(other_byte_enables);
+	EXPECT_EQ(value_config.get_byte_enables(), other_byte_enables);
 
 	T other_config = value_config;
 
@@ -80,6 +84,7 @@ void test_omnibus_encode_write()
 
 	T obj;
 	obj.set(OmnibusData(12));
+	obj.set_byte_enables({false});
 
 	typename T::coordinate_type coord(3);
 	auto messages = obj.encode_write(coord);
@@ -90,7 +95,7 @@ void test_omnibus_encode_write()
 	EXPECT_EQ(
 	    message_addr,
 	    UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
-	        instruction::omnibus_to_fpga::Address::Payload(AddressMask | coord, false)));
+	        instruction::omnibus_to_fpga::Address::Payload(AddressMask | coord, false, 0)));
 	auto message_data =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
@@ -122,6 +127,7 @@ void test_omnibus_decode()
 
 	obj.decode({&message, &message + 1});
 	EXPECT_EQ(obj.get(), 0x123);
+	EXPECT_EQ(obj.get_byte_enables(), typename T::ByteEnables({true, true, true, true}));
 }
 
 TEST(OmnibusChip, Decode)
@@ -145,7 +151,9 @@ TEST(OmnibusChip, Ostream)
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "OmnibusChip(0d13 0xd 0b00000000000000000000000000001101)");
+	EXPECT_EQ(
+	    stream.str(),
+	    "OmnibusChip(0d13 0xd 0b00000000000000000000000000001101, byte_enables: 1111)");
 }
 
 TEST(OmnibusFPGA, Ostream)
@@ -157,7 +165,9 @@ TEST(OmnibusFPGA, Ostream)
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "OmnibusFPGA(0d13 0xd 0b00000000000000000000000000001101)");
+	EXPECT_EQ(
+	    stream.str(),
+	    "OmnibusFPGA(0d13 0xd 0b00000000000000000000000000001101, byte_enables: 1111)");
 }
 
 template <typename T>
