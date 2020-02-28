@@ -3,6 +3,7 @@
 #include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
+#include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/omnibus_data.h"
@@ -84,7 +85,8 @@ public:
 
 	/** DAC data value. */
 	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0xfff, 0>
+	    : public halco::common::detail::
+	          RantWrapper<Value, uint_fast32_t, dac_value_max, dac_value_min>
 	{
 		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
 		    rant_t(value)

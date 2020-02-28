@@ -3,6 +3,7 @@
 #include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
+#include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/omnibus_data.h"
@@ -61,7 +62,8 @@ public:
 
 	/** Clock-scaler value type. The JTAG clock scales with 1 / (value + 2). */
 	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 255, 0>
+	    : public halco::common::detail::
+	          RantWrapper<Value, uint_fast16_t, jtag_clock_scaler_max, jtag_clock_scaler_min>
 	{
 		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
 		    rant_t(value)
