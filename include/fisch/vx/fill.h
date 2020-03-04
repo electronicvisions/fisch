@@ -38,7 +38,7 @@ struct HasValue<T, typename boost::enable_if_has_type<typename T::Value>::type>
  * @return random value
  */
 template <typename T>
-T fill_random(std::mt19937& gen)
+inline T fill_random(std::mt19937& gen)
 {
 	if constexpr (detail::HasValue<T>::value) {
 		if constexpr (detail::IsRangedType<typename T::Value>::value) {
@@ -60,7 +60,7 @@ T fill_random(std::mt19937& gen)
  * @return Value filled with ones
  */
 template <typename T>
-T fill_ones()
+inline T fill_ones()
 {
 	if constexpr (detail::HasValue<T>::value) {
 		if constexpr (detail::IsRangedType<typename T::Value>::value) {
@@ -82,20 +82,20 @@ T fill_ones()
 
 
 template <>
-Timer fill_random(std::mt19937&)
+inline Timer fill_random(std::mt19937&)
 {
 	return Timer();
 }
 
 template <>
-Timer fill_ones()
+inline Timer fill_ones()
 {
 	return Timer();
 }
 
 #define SPIKE_PACK_TO_CHIP(Num)                                                                    \
 	template <>                                                                                    \
-	SpikePack##Num##ToChip fill_random(std::mt19937& gen)                                          \
+	inline SpikePack##Num##ToChip fill_random(std::mt19937& gen)                                          \
 	{                                                                                              \
 		SpikePack##Num##ToChip spike_pack;                                                         \
 		auto labels = spike_pack.get_labels();                                                     \
@@ -109,7 +109,7 @@ Timer fill_ones()
 	}                                                                                              \
                                                                                                    \
 	template <>                                                                                    \
-	SpikePack##Num##ToChip fill_ones()                                                             \
+	inline SpikePack##Num##ToChip fill_ones()                                                             \
 	{                                                                                              \
 		SpikePack##Num##ToChip spike_pack;                                                         \
 		auto labels = spike_pack.get_labels();                                                     \
