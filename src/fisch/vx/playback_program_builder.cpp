@@ -199,6 +199,17 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	other.done();
 }
 
+void PlaybackProgramBuilder::copy_back(PlaybackProgramBuilder const& other)
+{
+	if (!other.is_write_only()) {
+		throw std::runtime_error("PlaybackProgramBuilder to copy is not write only.");
+	}
+	// copy instructions
+	std::copy(
+	    other.m_program->m_instructions.cbegin(), other.m_program->m_instructions.cend(),
+	    std::back_inserter(m_program->m_instructions));
+}
+
 bool PlaybackProgramBuilder::empty() const
 {
 	return m_program->m_instructions.empty();

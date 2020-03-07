@@ -447,3 +447,21 @@ TEST(PlaybackProgram, CerealizeCoverage)
 	EXPECT_TRUE(obj2);
 	ASSERT_EQ(*obj1, *obj2);
 }
+
+TEST(PlaybackProgramBuilder, CopyBack)
+{
+	PlaybackProgramBuilder builder;
+	PlaybackProgramBuilder other;
+
+	EXPECT_NO_THROW(builder.copy_back(other));
+
+	other.read(OmnibusChipAddress());
+	EXPECT_THROW(builder.copy_back(other), std::runtime_error);
+	other.done();
+	EXPECT_TRUE(builder.empty());
+
+	other.write(OmnibusChipAddress(), OmnibusChip());
+	EXPECT_NO_THROW(builder.copy_back(other));
+	EXPECT_FALSE(builder.empty());
+	EXPECT_EQ(*(builder.done()), *(other.done()));
+}
