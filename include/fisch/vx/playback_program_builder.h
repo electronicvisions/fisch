@@ -152,6 +152,12 @@ public:
 	bool empty() const;
 
 private:
+	/**
+	 * Get whether program only contains write data.
+	 * @return Boolean Value
+	 */
+	bool is_write_only() const;
+
 	std::shared_ptr<PlaybackProgram> m_program;
 	size_t m_jtag_receive_queue_size;
 	size_t m_omnibus_receive_queue_size;

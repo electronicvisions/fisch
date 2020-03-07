@@ -204,6 +204,11 @@ bool PlaybackProgramBuilder::empty() const
 	return m_program->m_instructions.empty();
 }
 
+bool PlaybackProgramBuilder::is_write_only() const
+{
+	return (m_jtag_receive_queue_size == 0) && (m_omnibus_receive_queue_size == 0);
+}
+
 // explicit instantiation
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	template ContainerTicket<Name> PlaybackProgramBuilder::read<typename Name::coordinate_type>(   \
