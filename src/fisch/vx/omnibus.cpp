@@ -14,6 +14,7 @@ namespace fisch::vx {
 
 #define OMNIBUS_X_IMPL(Name, AddressMask)                                                          \
                                                                                                    \
+	Name::Name() : m_data() {}                                                                     \
 	Name::Name(Value const value) : m_data(value) {}                                               \
                                                                                                    \
 	Name::Value Name::get() const { return m_data; }                                               \
