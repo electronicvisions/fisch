@@ -5,6 +5,7 @@
 #include "fisch/vx/event.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/systime.h"
+#include "halco/common/typed_array.h"
 #include "halco/hicann-dls/vx/event.h"
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
