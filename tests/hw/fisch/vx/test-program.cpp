@@ -6,10 +6,11 @@
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/run.h"
 #include "fisch/vx/timer.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
-#include "executor.h"
+#include "connection.h"
 
 using namespace halco::hicann_dls::vx;
 using namespace fisch::vx;
@@ -65,13 +66,13 @@ TEST(PlaybackProgram, Rerun)
 	auto read_program = std::get<0>(program_n_ticket);
 	auto read_ticket = std::get<1>(program_n_ticket);
 
-	auto executor = generate_playback_program_test_executor();
-	executor.run(program_write_1);
-	executor.run(read_program);
+	auto connection = generate_test_connection();
+	run(connection, program_write_1);
+	run(connection, read_program);
 	EXPECT_EQ(read_ticket.get().at(0), config_1);
 
-	executor.run(program_write_2);
-	executor.run(read_program);
+	run(connection, program_write_2);
+	run(connection, read_program);
 	EXPECT_EQ(read_ticket.get().at(0), config_2);
 }
 
@@ -136,8 +137,8 @@ TEST(PlaybackProgramBuilder, MergeBack)
 
 	auto program = builder.done();
 
-	auto executor = generate_playback_program_test_executor();
-	executor.run(program);
+	auto connection = generate_test_connection();
+	run(connection, program);
 
 	EXPECT_TRUE(ticket_1.valid());
 	EXPECT_TRUE(ticket_2.valid());

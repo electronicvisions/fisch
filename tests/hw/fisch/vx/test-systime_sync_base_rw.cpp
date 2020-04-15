@@ -6,10 +6,11 @@
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/run.h"
 #include "fisch/vx/timer.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
-#include "executor.h"
+#include "connection.h"
 
 using namespace fisch::vx;
 using namespace halco::hicann_dls::vx;
@@ -44,8 +45,8 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
 	auto program = builder.done();
 
-	auto executor = generate_playback_program_test_executor();
-	executor.run(program);
+	auto connection = generate_test_connection();
+	run(connection, program);
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());

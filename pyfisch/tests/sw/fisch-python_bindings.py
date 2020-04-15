@@ -22,7 +22,7 @@ def get_all_classes(m):
 
 classes = get_all_classes(pyfisch_vx)
 
-ignored_classes = [pyfisch_vx.PlaybackProgramSimExecutor, pyfisch_vx.PlaybackProgramARQExecutor]
+ignored_classes = []
 
 class PyBindings(unittest.TestCase):
     def instantiate_with_guessed_constructor(self, obj):

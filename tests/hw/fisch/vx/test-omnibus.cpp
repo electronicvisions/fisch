@@ -8,11 +8,12 @@
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
+#include "fisch/vx/run.h"
 #include "fisch/vx/timer.h"
 #include "halco/common/iter_all.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
-#include "executor.h"
+#include "connection.h"
 
 using namespace halco::common;
 using namespace halco::hicann_dls::vx;
@@ -24,8 +25,8 @@ constexpr uint32_t synram_synacc_top_base_address{(top_ppu_base_address | (1 << 
 constexpr uint32_t synram_synapse_top_base_address{synram_synacc_top_base_address + 0x000f'0000};
 
 
-template <typename Executor>
-bool is_HXv2(Executor& executor)
+template <typename Connection>
+bool is_HXv2(Connection& connection)
 {
 	PlaybackProgramBuilder builder;
 
@@ -44,7 +45,7 @@ bool is_HXv2(Executor& executor)
 
 	{
 		auto program = builder.done();
-		executor.run(program);
+		run(connection, program);
 	}
 	auto const jtag_id = jtag_id_ticket.get().at(0).get();
 	if (jtag_id == 0x048580AF) {
@@ -59,9 +60,9 @@ bool is_HXv2(Executor& executor)
 
 TEST(OmnibusChip, ByteEnables)
 {
-	auto executor = generate_playback_program_test_executor();
+	auto connection = generate_test_connection();
 
-	if (is_HXv2(executor)) {
+	if (is_HXv2(connection)) {
 		PlaybackProgramBuilder builder;
 
 		// ------ start of setup chip ------
@@ -155,7 +156,7 @@ TEST(OmnibusChip, ByteEnables)
 		builder.wait_until(TimerOnDLS(), Timer::Value(1000));
 		auto program = builder.done();
 
-		executor.run(program);
+		run(connection, program);
 
 		EXPECT_TRUE(ticket_initial.valid());
 		EXPECT_EQ(ticket_initial.get().at(0).get(), OmnibusData(0x12345678));

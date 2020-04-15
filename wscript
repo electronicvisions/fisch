@@ -66,12 +66,12 @@ def build(bld):
 
     bld(
         target = 'fisch_hwtest_vx_inc',
-        export_includes = 'tests/hw/fisch/vx/executor_hw/',
+        export_includes = 'tests/hw/fisch/vx/connection_hw/',
     )
 
     bld(
         target = 'fisch_simtest_vx_inc',
-        export_includes = 'tests/hw/fisch/vx/executor_sim/',
+        export_includes = 'tests/hw/fisch/vx/connection_sim/',
     )
 
     bld(

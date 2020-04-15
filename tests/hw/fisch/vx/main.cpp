@@ -2,11 +2,11 @@
 
 #include <gtest/gtest.h>
 
-#include "executor.h"
+#include "connection.h"
 
-PlaybackProgramTestExecutor generate_playback_program_test_executor()
+TestConnection generate_test_connection()
 {
-	return PlaybackProgramTestExecutor();
+	return TestConnection();
 }
 
 int main(int argc, char* argv[])
