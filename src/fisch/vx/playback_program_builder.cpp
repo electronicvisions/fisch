@@ -5,6 +5,7 @@
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/traits.h"
 #include "halco/hicann-dls/vx/coordinates.h"
+#include "hate/join.h"
 #include "hate/type_list.h"
 #include "hate/type_traits.h"
 #include "hxcomm/vx/utmessage.h"
@@ -33,7 +34,7 @@ void PlaybackProgramBuilder::write(
 		ss << config << " can't be written.";
 		throw std::logic_error(ss.str());
 	} else {
-		auto messages = config.encode_write(coord);
+		auto const messages = config.encode_write(coord);
 		m_program->m_instructions.insert(
 		    m_program->m_instructions.end(), messages.begin(), messages.end());
 	}
@@ -44,12 +45,21 @@ void PlaybackProgramBuilder::write(
     std::vector<typename ContainerT::coordinate_type> const& coords,
     std::vector<ContainerT> const& configs)
 {
-	if (coords.size() != configs.size()) {
+	size_t const size = coords.size();
+	if (configs.size() != size) {
 		throw std::runtime_error("Coordinate count does not match configuration count.");
 	}
 
-	for (size_t i = 0; i < coords.size(); ++i) {
-		write(coords[i], configs[i]);
+	if constexpr (!IsWritable<ContainerT>::value) {
+		std::stringstream ss;
+		ss << "Containers [" << hate::join_string(configs, ", ") << "] can't be written.";
+		throw std::logic_error(ss.str());
+	} else {
+		for (size_t i = 0; i < size; ++i) {
+			auto const messages = configs[i].encode_write(coords[i]);
+			m_program->m_instructions.insert(
+			    m_program->m_instructions.end(), messages.cbegin(), messages.cend());
+		}
 	}
 }
 
@@ -65,7 +75,7 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		ss << "Coordinate " << coord << " can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
-		auto messages = ContainerT::encode_read(coord);
+		auto const messages = ContainerT::encode_read(coord);
 
 		m_program->m_instructions.insert(
 		    m_program->m_instructions.end(), messages.begin(), messages.end());
@@ -86,21 +96,13 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 
 	if constexpr (!IsReadable<ContainerT>::value) {
 		std::stringstream ss;
-		ss << "Coordinates [";
-		for (auto it = coords.cbegin(); it != coords.cend(); ++it) {
-			ss << *it;
-			if (it != (coords.cend() - 1)) {
-				ss << ", ";
-			}
-		}
-		ss << "] can't be read.";
+		ss << "Coordinates [" << hate::join_string(coords, ", ") << "] can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
-		for (auto coord : coords) {
-			auto messages = ContainerT::encode_read(coord);
-
+		for (auto const coord : coords) {
+			auto const messages = ContainerT::encode_read(coord);
 			m_program->m_instructions.insert(
-			    m_program->m_instructions.end(), messages.begin(), messages.end());
+			    m_program->m_instructions.end(), messages.cbegin(), messages.cend());
 		}
 
 		size_t& queue_expected_size =
@@ -127,9 +129,9 @@ std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder
 void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 {
 	// move instructions
-	std::copy(
-	    other.m_program->m_instructions.cbegin(), other.m_program->m_instructions.cend(),
-	    std::back_inserter(m_program->m_instructions));
+	m_program->m_instructions.insert(
+	    m_program->m_instructions.end(), other.m_program->m_instructions.cbegin(),
+	    other.m_program->m_instructions.cend());
 	other.m_program->m_instructions.clear();
 
 	// change program in tickets of other builder
@@ -174,9 +176,9 @@ void PlaybackProgramBuilder::copy_back(PlaybackProgramBuilder const& other)
 		throw std::runtime_error("PlaybackProgramBuilder to copy is not write only.");
 	}
 	// copy instructions
-	std::copy(
-	    other.m_program->m_instructions.cbegin(), other.m_program->m_instructions.cend(),
-	    std::back_inserter(m_program->m_instructions));
+	m_program->m_instructions.insert(
+	    m_program->m_instructions.end(), other.m_program->m_instructions.cbegin(),
+	    other.m_program->m_instructions.cend());
 }
 
 bool PlaybackProgramBuilder::empty() const
