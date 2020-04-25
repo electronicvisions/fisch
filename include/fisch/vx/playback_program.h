@@ -136,16 +136,14 @@ private:
 
 	std::vector<to_fpga_message_type> m_instructions;
 
-	PlaybackDecoder::jtag_queue_type m_receive_queue_jtag;
-	PlaybackDecoder::omnibus_queue_type m_receive_queue_omnibus;
+	PlaybackDecoder::response_queue_type m_receive_queue;
 	PlaybackDecoder::spike_queue_type m_spike_response_queue;
 	PlaybackDecoder::madc_sample_queue_type m_madc_sample_response_queue;
 	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 
 	PlaybackDecoder m_decoder;
-	size_t m_jtag_queue_expected_size;
-	size_t m_omnibus_queue_expected_size;
+	std::array<size_t, std::tuple_size<decltype(m_receive_queue)>::value> m_queue_expected_size;
 
 	friend class cereal::access;
 	template <typename Archive>

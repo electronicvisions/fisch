@@ -1,5 +1,7 @@
 #include "fisch/vx/playback_program.h"
 
+#include <boost/hana/ext/std/tuple.hpp>
+#include <boost/hana/for_each.hpp>
 #include <cereal/types/boost_variant.hpp>
 #include <cereal/types/vector.hpp>
 #include "fisch/cerealization.h"
@@ -46,22 +48,21 @@ PlaybackProgram::PlaybackProgram() :
     m_tickets(),
     m_tickets_mutex(),
     m_instructions(),
-    m_receive_queue_jtag(),
-    m_receive_queue_omnibus(),
+    m_receive_queue(),
     m_spike_response_queue(),
     m_madc_sample_response_queue(),
     m_spike_pack_counts(),
     m_madc_sample_pack_counts(),
     m_decoder(
-        m_receive_queue_jtag,
-        m_receive_queue_omnibus,
+        m_receive_queue,
         m_spike_response_queue,
         m_madc_sample_response_queue,
         m_spike_pack_counts,
         m_madc_sample_pack_counts),
-    m_jtag_queue_expected_size(0),
-    m_omnibus_queue_expected_size(0)
-{}
+    m_queue_expected_size()
+{
+	m_queue_expected_size.fill(0);
+}
 
 PlaybackProgram::~PlaybackProgram()
 {}
@@ -111,8 +112,13 @@ PlaybackProgram::madc_sample_from_chip_events_type const& PlaybackProgram::get_m
 
 bool PlaybackProgram::valid() const
 {
-	return m_receive_queue_jtag.size() == m_jtag_queue_expected_size &&
-	       m_receive_queue_omnibus.size() == m_omnibus_queue_expected_size;
+	size_t i = 0;
+	bool valid = true;
+	boost::hana::for_each(m_receive_queue, [this, &valid, &i](auto const& q) {
+		valid = valid && q.size() == m_queue_expected_size.at(i);
+		i++;
+	});
+	return valid;
 }
 
 std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
@@ -150,15 +156,12 @@ bool PlaybackProgram::empty() const
 
 bool PlaybackProgram::operator==(PlaybackProgram const& other) const
 {
-	return m_instructions == other.m_instructions &&
-	       m_receive_queue_jtag == other.m_receive_queue_jtag &&
-	       m_receive_queue_omnibus == other.m_receive_queue_omnibus &&
+	return m_instructions == other.m_instructions && m_receive_queue == other.m_receive_queue &&
 	       m_spike_response_queue == other.m_spike_response_queue &&
 	       m_madc_sample_response_queue == other.m_madc_sample_response_queue &&
 	       m_spike_pack_counts == other.m_spike_pack_counts &&
 	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts &&
-	       m_jtag_queue_expected_size == other.m_jtag_queue_expected_size &&
-	       m_omnibus_queue_expected_size == other.m_omnibus_queue_expected_size;
+	       m_queue_expected_size == other.m_queue_expected_size;
 }
 
 bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
@@ -170,18 +173,16 @@ template <typename Archive>
 void PlaybackProgram::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_instructions));
-	ar(CEREAL_NVP(m_receive_queue_jtag));
-	ar(CEREAL_NVP(m_receive_queue_omnibus));
+	boost::hana::for_each(m_receive_queue, [&ar](auto& queue) { ar(CEREAL_NVP(queue)); });
 	ar(CEREAL_NVP(m_spike_response_queue));
 	ar(CEREAL_NVP(m_madc_sample_response_queue));
 	ar(CEREAL_NVP(m_spike_pack_counts));
 	ar(CEREAL_NVP(m_madc_sample_pack_counts));
-	ar(CEREAL_NVP(m_jtag_queue_expected_size));
-	ar(CEREAL_NVP(m_omnibus_queue_expected_size));
+	ar(CEREAL_NVP(m_queue_expected_size));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 0)
+CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 1)

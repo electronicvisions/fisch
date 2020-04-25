@@ -1,12 +1,15 @@
 #pragma once
+#include <tuple>
 
-#include "hxcomm/vx/utmessage_fwd.h"
+#include "hxcomm/vx/utmessage.h"
 
+#include "fisch/vx/decode_message_types.h"
 #include "fisch/vx/event.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/systime.h"
 #include "halco/common/typed_array.h"
 #include "halco/hicann-dls/vx/event.h"
+#include "hate/type_list.h"
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
@@ -76,13 +79,21 @@ public:
 		bool operator!=(TimedResponseQueue const& other) const { return !(*this == other); }
 	};
 
+	template <typename TL>
+	struct ToResponseQueueTuple;
+
+	template <typename... Ts>
+	struct ToResponseQueueTuple<hate::type_list<Ts...>>
+	{
+		typedef std::tuple<TimedResponseQueue<Ts>...> type;
+	};
+
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::jtag_from_hicann::Data>
 	    ut_message_from_fpga_jtag_type;
 	typedef hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
 	    ut_message_from_fpga_omnibus_type;
 
-	typedef TimedResponseQueue<ut_message_from_fpga_jtag_type> jtag_queue_type;
-	typedef TimedResponseQueue<ut_message_from_fpga_omnibus_type> omnibus_queue_type;
+	typedef typename ToResponseQueueTuple<detail::decode_message_types>::type response_queue_type;
 	typedef std::vector<SpikeFromChipEvent> spike_queue_type;
 	typedef std::vector<MADCSampleFromChipEvent> madc_sample_queue_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>
@@ -94,16 +105,14 @@ public:
 
 	/**
 	 * Construct decoder from JTAG and Omnibus queue references to put messages in.
-	 * @param jtag_queue Reference to a JTAG message queue
-	 * @param omnibus_queue Reference to a Omnibus message queue
+	 * @param response_queue Reference to response message queue
 	 * @param spike_queue Reference to a spike event message queue
 	 * @param madc_sample_queue Reference to a MADC sample event message queue
 	 * @param spike_pack_counts Reference to a spike pack count array
 	 * @param madc_sample_pack_counts Reference to a MADC sample pack count array
 	 */
 	PlaybackDecoder(
-	    jtag_queue_type& jtag_queue,
-	    omnibus_queue_type& omnibus_queue,
+	    response_queue_type& response_queue,
 	    spike_queue_type& spike_queue,
 	    madc_sample_queue_type& madc_sample_queue,
 	    spike_pack_counts_type& spike_pack_counts,
@@ -148,8 +157,7 @@ private:
 
 	ChipTime calculate_chip_time(uint8_t timestamp) const;
 
-	jtag_queue_type& m_jtag_queue;
-	omnibus_queue_type& m_omnibus_queue;
+	response_queue_type& m_response_queue;
 	spike_queue_type& m_spike_queue;
 	madc_sample_queue_type& m_madc_sample_queue;
 	spike_pack_counts_type& m_spike_pack_counts;

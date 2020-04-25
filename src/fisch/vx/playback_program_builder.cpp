@@ -23,11 +23,7 @@ typedef hate::
 
 } // namespace
 
-PlaybackProgramBuilder::PlaybackProgramBuilder() :
-    m_program(std::make_shared<PlaybackProgram>()),
-    m_jtag_receive_queue_size(0),
-    m_omnibus_receive_queue_size(0)
-{}
+PlaybackProgramBuilder::PlaybackProgramBuilder() : m_program(std::make_shared<PlaybackProgram>()) {}
 
 // TODO: to be modified once multi-timer support available
 void PlaybackProgramBuilder::wait_until(
@@ -83,16 +79,10 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		m_program->m_instructions.insert(
 		    m_program->m_instructions.end(), messages.begin(), messages.end());
 
-		size_t pos;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			pos = m_omnibus_receive_queue_size;
-			m_omnibus_receive_queue_size += ContainerT::decode_ut_message_count;
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			pos = m_jtag_receive_queue_size;
-			m_jtag_receive_queue_size += ContainerT::decode_ut_message_count;
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
+		size_t& queue_expected_size =
+		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
+		size_t pos = queue_expected_size;
+		queue_expected_size += ContainerT::decode_ut_message_count;
 		return ContainerTicket<ContainerT>(1, pos, m_program);
 	}
 }
@@ -122,28 +112,18 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 			    m_program->m_instructions.end(), messages.begin(), messages.end());
 		}
 
-		size_t pos;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			pos = m_omnibus_receive_queue_size;
-			m_omnibus_receive_queue_size += coords.size() * ContainerT::decode_ut_message_count;
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			pos = m_jtag_receive_queue_size;
-			m_jtag_receive_queue_size += coords.size() * ContainerT::decode_ut_message_count;
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
+		size_t& queue_expected_size =
+		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
+		size_t pos = queue_expected_size;
+		queue_expected_size += coords.size() * ContainerT::decode_ut_message_count;
 		return ContainerTicket<ContainerT>(coords.size(), pos, m_program);
 	}
 }
 
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
-	m_program->m_jtag_queue_expected_size = m_jtag_receive_queue_size;
-	m_program->m_omnibus_queue_expected_size = m_omnibus_receive_queue_size;
 	std::shared_ptr<PlaybackProgram> ret(m_program);
 	m_program = std::make_shared<PlaybackProgram>();
-	m_jtag_receive_queue_size = 0;
-	m_omnibus_receive_queue_size = 0;
 	return ret;
 }
 
@@ -166,17 +146,13 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	auto ticket_changer = [this](auto const& ticket_ptr) {
 		typedef hate::remove_all_qualifiers_t<decltype(ticket_ptr)> ticket_type;
 		typedef typename ticket_type::container_type container_type;
-		size_t translation = 0; // translation of response queue position
-		if constexpr (hate::is_in_type_list<container_type, omnibus_queue_container_list>::value) {
-			translation = m_omnibus_receive_queue_size;
-		} else if constexpr (hate::is_in_type_list<
-		                         container_type, jtag_queue_container_list>::value) {
-			translation = m_jtag_receive_queue_size;
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
+		if constexpr (IsReadable<container_type>::value) {
+			// translation of response queue position
+			size_t translation = m_program->m_queue_expected_size.at(
+			    detail::decode_message_types_index<container_type>);
+			*ticket_ptr = ContainerTicket<container_type>(
+			    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
 		}
-		*ticket_ptr = ContainerTicket<container_type>(
-		    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
 	};
 	for (auto const& ticket_ptr_variant : other.m_program->m_tickets) {
 		std::visit(ticket_changer, ticket_ptr_variant);
@@ -187,8 +163,9 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	assert(other.m_program->m_tickets.empty() && "Ticket(s) are not unique to a PlaybackProgram.");
 
 	// update receive queue sizes
-	m_jtag_receive_queue_size += other.m_jtag_receive_queue_size;
-	m_omnibus_receive_queue_size += other.m_omnibus_receive_queue_size;
+	for (size_t i = 0; i < m_program->m_queue_expected_size.size(); ++i) {
+		m_program->m_queue_expected_size.at(i) += other.m_program->m_queue_expected_size.at(i);
+	}
 
 	// reset other builder
 	other.done();
@@ -218,7 +195,9 @@ bool PlaybackProgramBuilder::empty() const
 
 bool PlaybackProgramBuilder::is_write_only() const
 {
-	return (m_jtag_receive_queue_size == 0) && (m_omnibus_receive_queue_size == 0);
+	return std::all_of(
+	    m_program->m_queue_expected_size.begin(), m_program->m_queue_expected_size.end(),
+	    [](auto const s) { return s == 0; });
 }
 
 // explicit instantiation

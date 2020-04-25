@@ -171,8 +171,6 @@ private:
 	bool is_write_only() const;
 
 	std::shared_ptr<PlaybackProgram> m_program;
-	size_t m_jtag_receive_queue_size;
-	size_t m_omnibus_receive_queue_size;
 };
 
 #ifdef __GENPYBIND__

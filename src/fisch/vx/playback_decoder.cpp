@@ -1,19 +1,20 @@
 #include "fisch/vx/playback_decoder.h"
 
+#include <boost/hana/ext/std/tuple.hpp>
+#include <boost/hana/for_each.hpp>
+
 #include "hate/math.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
 PlaybackDecoder::PlaybackDecoder(
-    jtag_queue_type& jtag_queue,
-    omnibus_queue_type& omnibus_queue,
+    response_queue_type& response_queue,
     spike_queue_type& spike_queue,
     madc_sample_queue_type& madc_sample_queue,
     spike_pack_counts_type& spike_pack_counts,
     madc_sample_pack_counts_type& madc_sample_pack_counts) :
-    m_jtag_queue(jtag_queue),
-    m_omnibus_queue(omnibus_queue),
+    m_response_queue(response_queue),
     m_spike_queue(spike_queue),
     m_madc_sample_queue(madc_sample_queue),
     m_spike_pack_counts(spike_pack_counts),
@@ -29,8 +30,7 @@ void PlaybackDecoder::operator()(ut_message_from_fpga_variant_type const& messag
 
 void PlaybackDecoder::clear()
 {
-	m_jtag_queue.clear();
-	m_omnibus_queue.clear();
+	boost::hana::for_each(m_response_queue, [](auto& q) { q.clear(); });
 	m_spike_queue.clear();
 	m_madc_sample_queue.clear();
 	m_spike_pack_counts.fill(0);
@@ -40,12 +40,14 @@ void PlaybackDecoder::clear()
 
 void PlaybackDecoder::process(ut_message_from_fpga_jtag_type const& message)
 {
-	m_jtag_queue.push_back(message, m_time_current);
+	std::get<TimedResponseQueue<ut_message_from_fpga_jtag_type>>(m_response_queue)
+	    .push_back(message, m_time_current);
 }
 
 void PlaybackDecoder::process(ut_message_from_fpga_omnibus_type const& message)
 {
-	m_omnibus_queue.push_back(message, m_time_current);
+	std::get<TimedResponseQueue<ut_message_from_fpga_omnibus_type>>(m_response_queue)
+	    .push_back(message, m_time_current);
 }
 
 void PlaybackDecoder::process(ut_message_from_fpga_halt_type const&)
