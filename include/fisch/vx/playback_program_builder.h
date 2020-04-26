@@ -12,9 +12,6 @@ class PlaybackProgram;
 template <typename ContainerT>
 class ContainerTicket;
 
-template <typename ContainerT>
-class ContainerVectorTicket;
-
 namespace detail {
 
 #define LAST_PLAYBACK_CONTAINER(Name, Type) Type
@@ -122,8 +119,8 @@ public:
 	 * @return Ticket accessor to response data
 	 */
 	template <class CoordinateT>
-	ContainerVectorTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
-	read(std::vector<CoordinateT> const& coords);
+	ContainerTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type> read(
+	    std::vector<CoordinateT> const& coords);
 
 	/**
 	 * Finish playback program creation and return built program. Resets the state of the builder.
@@ -177,7 +174,7 @@ private:
 	extern template ContainerTicket<Name>                                                          \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    typename Name::coordinate_type const& coord);                                              \
-	extern template ContainerVectorTicket<Name>                                                    \
+	extern template ContainerTicket<Name>                                                          \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
 	extern template void PlaybackProgramBuilder::write<Name>(                                      \

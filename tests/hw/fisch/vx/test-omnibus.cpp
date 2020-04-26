@@ -46,7 +46,7 @@ bool is_HXv2(Executor& executor)
 		auto program = builder.done();
 		executor.run(program);
 	}
-	auto const jtag_id = jtag_id_ticket.get().get();
+	auto const jtag_id = jtag_id_ticket.get().at(0).get();
 	if (jtag_id == 0x048580AF) {
 		return false;
 	} else if (jtag_id == 0x248580AF) {
@@ -158,7 +158,7 @@ TEST(OmnibusChip, ByteEnables)
 		executor.run(program);
 
 		EXPECT_TRUE(ticket_initial.valid());
-		EXPECT_EQ(ticket_initial.get().get(), OmnibusData(0x12345678));
+		EXPECT_EQ(ticket_initial.get().at(0).get(), OmnibusData(0x12345678));
 
 		std::vector<OmnibusData> expectations;
 		expectations.push_back(OmnibusData(0x12345621));
@@ -168,7 +168,7 @@ TEST(OmnibusChip, ByteEnables)
 
 		for (size_t i = 0; i < tickets.size(); ++i) {
 			EXPECT_TRUE(tickets.at(i).valid());
-			EXPECT_EQ(tickets.at(i).get().get(), expectations.at(i));
+			EXPECT_EQ(tickets.at(i).get().at(0).get(), expectations.at(i));
 		}
 	}
 }

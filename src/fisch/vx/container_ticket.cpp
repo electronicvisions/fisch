@@ -22,7 +22,8 @@ typedef hate::
 
 template <class ContainerT>
 ContainerTicket<ContainerT>::ContainerTicket(
-    size_t pos, std::shared_ptr<PlaybackProgram const> pbp) :
+    size_t container_count, size_t pos, std::shared_ptr<fisch::vx::PlaybackProgram const> pbp) :
+    m_container_count(container_count),
     m_pos(pos),
     m_pbp(pbp)
 {
@@ -31,8 +32,7 @@ ContainerTicket<ContainerT>::ContainerTicket(
 
 template <class ContainerT>
 ContainerTicket<ContainerT>::ContainerTicket(ContainerTicket const& other) :
-    m_pos(other.m_pos),
-    m_pbp(other.m_pbp)
+    m_container_count(other.m_container_count), m_pos(other.m_pos), m_pbp(other.m_pbp)
 {
 	m_pbp->register_ticket(this);
 }
@@ -44,96 +44,7 @@ ContainerTicket<ContainerT>::~ContainerTicket()
 }
 
 template <class ContainerT>
-ContainerT ContainerTicket<ContainerT>::get() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-		ContainerT config;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_omnibus.get_messages().cbegin() + m_pos;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			auto const begin_it = m_pbp->m_receive_queue_jtag.get_messages().cbegin() + m_pos;
-			config.decode({begin_it, begin_it + ContainerT::decode_ut_message_count});
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-		return config;
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-bool ContainerTicket<ContainerT>::valid() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		size_t queue_size = 0;
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_omnibus.size();
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			queue_size = m_pbp->m_receive_queue_jtag.size();
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-		return (queue_size >= (m_pos + ContainerT::decode_ut_message_count));
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-FPGATime ContainerTicket<ContainerT>::fpga_time() const
-{
-	if constexpr (IsReadable<ContainerT>::value) {
-		if (!valid()) {
-			throw std::runtime_error("Data not available.");
-		}
-		if constexpr (hate::is_in_type_list<ContainerT, omnibus_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_omnibus.get_times().cbegin() + m_pos +
-			    ContainerT::decode_ut_message_count - 1);
-		} else if constexpr (hate::is_in_type_list<ContainerT, jtag_queue_container_list>::value) {
-			return *(
-			    m_pbp->m_receive_queue_jtag.get_times().cbegin() + m_pos +
-			    ContainerT::decode_ut_message_count - 1);
-		} else {
-			throw std::logic_error("Container response queue not implemented.");
-		}
-	} else {
-		throw std::logic_error("Container not readable.");
-	}
-}
-
-template <class ContainerT>
-ContainerVectorTicket<ContainerT>::ContainerVectorTicket(
-    size_t container_count, size_t pos, std::shared_ptr<fisch::vx::PlaybackProgram const> pbp) :
-    m_container_count(container_count),
-    m_pos(pos),
-    m_pbp(pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-ContainerVectorTicket<ContainerT>::ContainerVectorTicket(ContainerVectorTicket const& other) :
-    m_container_count(other.m_container_count),
-    m_pos(other.m_pos),
-    m_pbp(other.m_pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-ContainerVectorTicket<ContainerT>::~ContainerVectorTicket()
-{
-	m_pbp->deregister_ticket(this);
-}
-
-template <class ContainerT>
-std::vector<ContainerT> ContainerVectorTicket<ContainerT>::get() const
+std::vector<ContainerT> ContainerTicket<ContainerT>::get() const
 {
 	if constexpr (IsReadable<ContainerT>::value) {
 		if (!valid()) {
@@ -165,7 +76,7 @@ std::vector<ContainerT> ContainerVectorTicket<ContainerT>::get() const
 }
 
 template <class ContainerT>
-bool ContainerVectorTicket<ContainerT>::valid() const
+bool ContainerTicket<ContainerT>::valid() const
 {
 	if constexpr (IsReadable<ContainerT>::value) {
 		size_t queue_size;
@@ -183,7 +94,7 @@ bool ContainerVectorTicket<ContainerT>::valid() const
 }
 
 template <class ContainerT>
-FPGATime ContainerVectorTicket<ContainerT>::fpga_time() const
+FPGATime ContainerTicket<ContainerT>::fpga_time() const
 {
 	if constexpr (IsReadable<ContainerT>::value) {
 		if (!valid()) {
@@ -206,9 +117,7 @@ FPGATime ContainerVectorTicket<ContainerT>::fpga_time() const
 }
 
 // explicit instantiation
-#define PLAYBACK_CONTAINER(Name, _Type)                                                            \
-	template class ContainerTicket<Name>;                                                          \
-	template class ContainerVectorTicket<Name>;
+#define PLAYBACK_CONTAINER(Name, _Type) template class ContainerTicket<Name>;
 #include "fisch/vx/container.def"
 
 } // namespace fisch::vx

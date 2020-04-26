@@ -36,6 +36,6 @@ TEST(JTAGIdCode, Readout)
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
-	auto jtag_id = ticket.get().get();
+	auto jtag_id = ticket.get().at(0).get();
 	EXPECT_TRUE((jtag_id == 0x048580AF) || (jtag_id == 0x248580AF));
 }

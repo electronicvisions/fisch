@@ -20,9 +20,6 @@ class PlaybackProgramBuilder;
 template <typename ContainerT>
 class ContainerTicket;
 
-template <typename ContainerT>
-class ContainerVectorTicket;
-
 #define PLAYBACK_CONTAINER(Name, Type) class Name;
 #include "fisch/vx/container.def"
 
@@ -116,16 +113,13 @@ private:
 	template <typename T>
 	friend class ContainerTicket;
 
-	template <typename T>
-	friend class ContainerVectorTicket;
-
 	template <typename U>
 	void register_ticket(U* const ticket) const;
 
 	template <typename U>
 	void deregister_ticket(U* const ticket) const;
 
-#define LAST_PLAYBACK_CONTAINER(Name, Type) ContainerTicket<Type>*, ContainerVectorTicket<Type>*
+#define LAST_PLAYBACK_CONTAINER(Name, Type) ContainerTicket<Type>*
 #define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
 	mutable std::unordered_set<std::variant<
 #include "fisch/vx/container.def"

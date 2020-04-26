@@ -93,12 +93,12 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		return ContainerTicket<ContainerT>(pos, m_program);
+		return ContainerTicket<ContainerT>(1, pos, m_program);
 	}
 }
 
 template <class CoordinateT>
-ContainerVectorTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
+ContainerTicket<typename detail::coordinate_type_to_container_type<CoordinateT>::type>
 PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 {
 	typedef typename detail::coordinate_type_to_container_type<CoordinateT>::type ContainerT;
@@ -132,7 +132,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		return ContainerVectorTicket<ContainerT>(coords.size(), pos, m_program);
+		return ContainerTicket<ContainerT>(coords.size(), pos, m_program);
 	}
 }
 
@@ -175,13 +175,8 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 		} else {
 			throw std::logic_error("Container response queue not implemented.");
 		}
-		if constexpr (std::is_same<ticket_type, ContainerTicket<container_type>>::value) {
-			*ticket_ptr =
-			    ContainerTicket<container_type>(ticket_ptr->m_pos + translation, m_program);
-		} else {
-			*ticket_ptr = ContainerVectorTicket<container_type>(
-			    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
-		}
+		*ticket_ptr = ContainerTicket<container_type>(
+		    ticket_ptr->m_container_count, ticket_ptr->m_pos + translation, m_program);
 	};
 	for (auto const& ticket_ptr_variant : other.m_program->m_tickets) {
 		std::visit(ticket_changer, ticket_ptr_variant);
@@ -224,8 +219,7 @@ bool PlaybackProgramBuilder::is_write_only() const
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	template ContainerTicket<Name> PlaybackProgramBuilder::read<typename Name::coordinate_type>(   \
 	    typename Name::coordinate_type const& coord);                                              \
-	template ContainerVectorTicket<Name>                                                           \
-	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
+	template ContainerTicket<Name> PlaybackProgramBuilder::read<typename Name::coordinate_type>(   \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
 	template void PlaybackProgramBuilder::write<Name>(                                             \
 	    typename Name::coordinate_type const& coord, Name const& config);                          \

@@ -85,9 +85,7 @@ void PlaybackProgram::deregister_ticket(U* const ticket) const
 
 #define PLAYBACK_CONTAINER(Name, Type)                                                             \
 	template void PlaybackProgram::register_ticket(ContainerTicket<Type>* ticket) const;           \
-	template void PlaybackProgram::deregister_ticket(ContainerTicket<Type>* ticket) const;         \
-	template void PlaybackProgram::register_ticket(ContainerVectorTicket<Type>* ticket) const;     \
-	template void PlaybackProgram::deregister_ticket(ContainerVectorTicket<Type>* ticket) const;
+	template void PlaybackProgram::deregister_ticket(ContainerTicket<Type>* ticket) const;
 #include "fisch/vx/container.def"
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const

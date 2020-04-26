@@ -90,7 +90,7 @@ TEST(SystimeSync, TimeAnnotation)
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
-	EXPECT_EQ(ticket.get(), config);
+	EXPECT_EQ(ticket.get().at(0), config);
 	// JTAG is slow, 1 is expected, if no systime init happened
 	EXPECT_TRUE(ticket.fpga_time() > 1);
 }

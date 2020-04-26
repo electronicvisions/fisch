@@ -68,11 +68,11 @@ TEST(PlaybackProgram, Rerun)
 	auto executor = generate_playback_program_test_executor();
 	executor.run(program_write_1);
 	executor.run(read_program);
-	EXPECT_EQ(read_ticket.get(), config_1);
+	EXPECT_EQ(read_ticket.get().at(0), config_1);
 
 	executor.run(program_write_2);
 	executor.run(read_program);
-	EXPECT_EQ(read_ticket.get(), config_2);
+	EXPECT_EQ(read_ticket.get().at(0), config_2);
 }
 
 TEST(PlaybackProgramBuilder, MergeBack)
@@ -148,10 +148,10 @@ TEST(PlaybackProgramBuilder, MergeBack)
 	EXPECT_TRUE(vector_ticket_2_copy.valid());
 	EXPECT_TRUE(vector_ticket_3.valid());
 
-	EXPECT_EQ(ticket_1.get(), config_1);
-	EXPECT_EQ(ticket_2.get(), config_2);
-	EXPECT_EQ(ticket_2_copy.get(), config_2);
-	EXPECT_EQ(ticket_3.get(), config_3);
+	EXPECT_EQ(ticket_1.get().at(0), config_1);
+	EXPECT_EQ(ticket_2.get().at(0), config_2);
+	EXPECT_EQ(ticket_2_copy.get().at(0), config_2);
+	EXPECT_EQ(ticket_3.get().at(0), config_3);
 	EXPECT_EQ(vector_ticket_1.get().at(0), config_1);
 	EXPECT_EQ(vector_ticket_2.get().at(0), config_2);
 	EXPECT_EQ(vector_ticket_2_copy.get().at(0), config_2);

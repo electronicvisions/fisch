@@ -49,5 +49,5 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
-	EXPECT_EQ(ticket.get(), config);
+	EXPECT_EQ(ticket.get().at(0), config);
 }
