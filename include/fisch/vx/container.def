@@ -6,6 +6,8 @@
 #define LAST_PLAYBACK_CONTAINER(Name, Type) PLAYBACK_CONTAINER(Name, Type)
 #endif
 
+PLAYBACK_CONTAINER(Barrier, fisch::vx::Barrier)
+PLAYBACK_CONTAINER(WaitUntil, fisch::vx::WaitUntil)
 PLAYBACK_CONTAINER(SystimeSync, fisch::vx::SystimeSync)
 PLAYBACK_CONTAINER(SpikePack1ToChip, fisch::vx::SpikePack1ToChip)
 PLAYBACK_CONTAINER(SpikePack2ToChip, fisch::vx::SpikePack2ToChip)

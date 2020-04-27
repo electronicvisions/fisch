@@ -63,7 +63,7 @@ struct coordinate_type_to_container_type<std::vector<CoordinateT>>
 /**
  * Sequential playback program builder.
  * It allows building a (timed) sequence of logical instructions to be executed on the FPGA.
- * Instructions can be of type write, read and wait_until and are added to the current end of the
+ * Instructions can be of type write or read and are added to the current end of the
  * instruction sequence.
  * A write is defined as an instruction without deterministic response, whereas a read is defined as
  * instruction with deterministic response expectation which is encapsulated in a ticket accessor
@@ -74,13 +74,6 @@ class GENPYBIND(visible) PlaybackProgramBuilder
 public:
 	/** Default constructor. */
 	PlaybackProgramBuilder();
-
-	/**
-	 * Add wait instruction blocking further execution until timer reaches specified value.
-	 * @param coord Timer coordinate
-	 * @param time Timer time value until to wait
-	 */
-	void wait_until(Timer::coordinate_type const& coord, Timer::Value time);
 
 	/**
 	 * Add write instruction for container.

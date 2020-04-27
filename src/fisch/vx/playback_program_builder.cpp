@@ -25,14 +25,6 @@ typedef hate::
 
 PlaybackProgramBuilder::PlaybackProgramBuilder() : m_program(std::make_shared<PlaybackProgram>()) {}
 
-// TODO: to be modified once multi-timer support available
-void PlaybackProgramBuilder::wait_until(
-    Timer::coordinate_type const& /* coord */, Timer::Value time)
-{
-	m_program->m_instructions.push_back(
-	    hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::WaitUntil>(time.value()));
-}
-
 template <class ContainerT>
 void PlaybackProgramBuilder::write(
     typename ContainerT::coordinate_type const& coord, ContainerT const& config)

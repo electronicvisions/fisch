@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fisch/vx/barrier.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
@@ -21,15 +22,15 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
-	builder.wait_until(TimerOnDLS(), Timer::Value(22 * fpga_clock_cycles_per_us));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(22 * fpga_clock_cycles_per_us)));
 
 	OmnibusChipOverJTAG config;
 	// random data
@@ -42,7 +43,7 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 	auto ticket = builder.read(addr);
 	EXPECT_FALSE(ticket.valid());
 
-	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	auto program = builder.done();
 
 	auto connection = generate_test_connection();

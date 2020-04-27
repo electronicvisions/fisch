@@ -1,6 +1,7 @@
 #include <random>
 #include <gtest/gtest.h>
 
+#include "fisch/vx/barrier.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
@@ -32,16 +33,15 @@ bool is_HXv2(Connection& connection)
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	auto const jtag_id_ticket = builder.read(JTAGIdCodeOnDLS());
-	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(1000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 
 	{
 		auto program = builder.done();
@@ -68,9 +68,9 @@ TEST(OmnibusChip, ByteEnables)
 		// ------ start of setup chip ------
 		builder.write(ResetChipOnDLS(), ResetChip(true));
 		builder.write(TimerOnDLS(), Timer());
-		builder.wait_until(TimerOnDLS(), Timer::Value(10));
+		builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 		builder.write(ResetChipOnDLS(), ResetChip(false));
-		builder.wait_until(TimerOnDLS(), Timer::Value(100));
+		builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 		builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 		builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
@@ -93,7 +93,8 @@ TEST(OmnibusChip, ByteEnables)
 
 		// wait until PLL reconfiguration and Omnibus is up
 		builder.write(TimerOnDLS(), Timer());
-		builder.wait_until(TimerOnDLS(), Timer::Value(100 * fpga_clock_cycles_per_us));
+		builder.write(
+		    WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100 * fpga_clock_cycles_per_us)));
 
 		// configure FPGA-side PHYs
 		for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
@@ -124,7 +125,8 @@ TEST(OmnibusChip, ByteEnables)
 
 		// wait until highspeed is up
 		builder.write(TimerOnDLS(), Timer());
-		builder.wait_until(TimerOnDLS(), Timer::Value(80 * fpga_clock_cycles_per_us));
+		builder.write(
+		    WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
 		// ------ end of setup chip ------
 
 		// generate random address in top-PPU Synram
@@ -152,8 +154,7 @@ TEST(OmnibusChip, ByteEnables)
 			tickets.push_back(builder.read(address));
 		}
 
-		builder.write(TimerOnDLS(), Timer());
-		builder.wait_until(TimerOnDLS(), Timer::Value(1000));
+		builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 		auto program = builder.done();
 
 		run(connection, program);

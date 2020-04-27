@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fisch/vx/barrier.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
@@ -22,17 +23,18 @@ std::shared_ptr<PlaybackProgram> get_write_program(
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
-	builder.wait_until(TimerOnDLS(), Timer::Value(22 * fpga_clock_cycles_per_us));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(22 * fpga_clock_cycles_per_us)));
 
 	builder.write(address, config);
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 
 	return builder.done();
 }
@@ -45,7 +47,7 @@ std::tuple<std::shared_ptr<PlaybackProgram>, ContainerTicket<OmnibusChipOverJTAG
 	auto ticket = builder.read(address);
 
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	return std::make_tuple(builder.done(), ticket);
 }
 
@@ -87,15 +89,15 @@ TEST(PlaybackProgramBuilder, MergeBack)
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	// wait until Omnibus is up (22 us)
-	builder.wait_until(TimerOnDLS(), Timer::Value(22 * fpga_clock_cycles_per_us));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(22 * fpga_clock_cycles_per_us)));
 
 	OmnibusChipOverJTAG config_1;
 	config_1.set(OmnibusData(0x1));
@@ -132,8 +134,7 @@ TEST(PlaybackProgramBuilder, MergeBack)
 	auto ticket_3 = builder.read(address);
 	auto vector_ticket_3 = builder.read(vector_address);
 
-	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 
 	auto program = builder.done();
 

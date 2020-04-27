@@ -422,7 +422,7 @@ TEST(PlaybackProgramBuilder, WaitUntil)
 
 	PlaybackProgramBuilder builder;
 
-	EXPECT_NO_THROW(builder.wait_until(TimerOnDLS(), Timer::Value(0x123)));
+	EXPECT_NO_THROW(builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(0x123))));
 
 	auto program = builder.done();
 	auto program_to_fpga_messages = program->get_to_fpga_messages();

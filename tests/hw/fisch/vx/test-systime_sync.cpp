@@ -26,9 +26,9 @@ TEST(SystimeSync, TimeAnnotation)
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
@@ -54,7 +54,7 @@ TEST(SystimeSync, TimeAnnotation)
 	}
 
 	// wait until Omnibus is up
-	builder.wait_until(TimerOnDLS(), Timer::Value(22 * fpga_clock_cycles_per_us));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(22 * fpga_clock_cycles_per_us)));
 
 	// enable Chip-side PHYs
 	{
@@ -64,12 +64,12 @@ TEST(SystimeSync, TimeAnnotation)
 	}
 
 	// wait until highspeed is up
-	builder.wait_until(TimerOnDLS(), Timer::Value(80 * fpga_clock_cycles_per_us));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
 
 	builder.write(SystimeSyncOnFPGA(), SystimeSync(true));
 
 	// wait until systime init is finished
-	builder.wait_until(TimerOnDLS(), Timer::Value(85 * fpga_clock_cycles_per_us));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::systime));
 
 	OmnibusChipOverJTAG config;
 	// random data
@@ -82,8 +82,7 @@ TEST(SystimeSync, TimeAnnotation)
 	auto ticket = builder.read(addr);
 	EXPECT_FALSE(ticket.valid());
 
-	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	auto program = builder.done();
 
 	auto connection = generate_test_connection();

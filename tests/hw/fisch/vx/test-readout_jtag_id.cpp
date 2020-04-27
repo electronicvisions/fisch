@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fisch/vx/barrier.h"
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/playback_program.h"
@@ -20,16 +21,16 @@ TEST(JTAGIdCode, Readout)
 
 	builder.write(ResetChipOnDLS(), ResetChip(true));
 	builder.write(TimerOnDLS(), Timer());
-	builder.wait_until(TimerOnDLS(), Timer::Value(10));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
 	builder.write(ResetChipOnDLS(), ResetChip(false));
-	builder.wait_until(TimerOnDLS(), Timer::Value(100));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
 	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
 	auto ticket = builder.read(JTAGIdCodeOnDLS());
 
-	builder.wait_until(TimerOnDLS(), Timer::Value(1000));
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	auto program = builder.done();
 
 	auto connection = generate_test_connection();
