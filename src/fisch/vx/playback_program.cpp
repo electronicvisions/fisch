@@ -15,7 +15,9 @@ namespace cereal {
 
 template <typename Archive, typename MessageT>
 void CEREAL_SAVE_FUNCTION_NAME(
-    Archive& ar, fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT> const& queue)
+    Archive& ar,
+    fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT> const& queue,
+    std::uint32_t const)
 {
 	auto const& messages = queue.get_messages();
 	auto const& times = queue.get_times();
@@ -25,7 +27,9 @@ void CEREAL_SAVE_FUNCTION_NAME(
 
 template <typename Archive, typename MessageT>
 void CEREAL_LOAD_FUNCTION_NAME(
-    Archive& ar, fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT>& queue)
+    Archive& ar,
+    fisch::vx::PlaybackDecoder::TimedResponseQueue<MessageT>& queue,
+    std::uint32_t const)
 {
 	std::vector<MessageT> messages;
 	std::vector<fisch::vx::FPGATime> times;
@@ -160,19 +164,21 @@ bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
 }
 
 template <typename Archive>
-void PlaybackProgram::serialize(Archive& ar)
+void PlaybackProgram::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(m_instructions);
-	ar(m_receive_queue_jtag);
-	ar(m_receive_queue_omnibus);
-	ar(m_spike_response_queue);
-	ar(m_madc_sample_response_queue);
-	ar(m_spike_pack_counts);
-	ar(m_madc_sample_pack_counts);
-	ar(m_jtag_queue_expected_size);
-	ar(m_omnibus_queue_expected_size);
+	ar(CEREAL_NVP(m_instructions));
+	ar(CEREAL_NVP(m_receive_queue_jtag));
+	ar(CEREAL_NVP(m_receive_queue_omnibus));
+	ar(CEREAL_NVP(m_spike_response_queue));
+	ar(CEREAL_NVP(m_madc_sample_response_queue));
+	ar(CEREAL_NVP(m_spike_pack_counts));
+	ar(CEREAL_NVP(m_madc_sample_pack_counts));
+	ar(CEREAL_NVP(m_jtag_queue_expected_size));
+	ar(CEREAL_NVP(m_omnibus_queue_expected_size));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 0)

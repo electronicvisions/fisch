@@ -89,7 +89,7 @@ namespace fisch::vx {
 	}                                                                                              \
                                                                                                    \
 	template <class Archive>                                                                       \
-	void Name::serialize(Archive& ar)                                                              \
+	void Name::serialize(Archive& ar, std::uint32_t const)                                         \
 	{                                                                                              \
 		ar(CEREAL_NVP(m_data));                                                                    \
 		ar(CEREAL_NVP(m_byte_enables));                                                            \
@@ -103,3 +103,6 @@ OMNIBUS_X_IMPL(OmnibusFPGA, executor_omnibus_mask)
 #undef OMNIBUS_X_IMPL
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::OmnibusChip, 0)
+CEREAL_CLASS_VERSION(fisch::vx::OmnibusFPGA, 0)

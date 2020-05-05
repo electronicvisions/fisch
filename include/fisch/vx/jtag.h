@@ -48,7 +48,7 @@ public:
 private:
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 
@@ -104,7 +104,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 
@@ -156,7 +156,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 
@@ -213,7 +213,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 
@@ -270,7 +270,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 /**
@@ -324,7 +324,7 @@ private:
 
 	friend class cereal::access;
 	template <class Archive>
-	void serialize(Archive& ar);
+	void serialize(Archive& ar, std::uint32_t const version);
 };
 
 } // namespace fisch::vx

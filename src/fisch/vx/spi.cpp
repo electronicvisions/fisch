@@ -76,7 +76,7 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 }
 
 template <class Archive>
-void SPIShiftRegister::serialize(Archive& ar)
+void SPIShiftRegister::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -181,7 +181,7 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 }
 
 template <class Archive>
-void SPIDACDataRegister::serialize(Archive& ar)
+void SPIDACDataRegister::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -251,7 +251,7 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 }
 
 template <class Archive>
-void SPIDACControlRegister::serialize(Archive& ar)
+void SPIDACControlRegister::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -259,3 +259,7 @@ void SPIDACControlRegister::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACControlRegister)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::SPIShiftRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SPIDACDataRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SPIDACControlRegister, 0)

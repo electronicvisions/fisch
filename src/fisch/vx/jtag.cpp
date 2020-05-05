@@ -36,7 +36,7 @@ ResetJTAGTap::encode_write(coordinate_type const& /* coord */) const
 }
 
 template <class Archive>
-void ResetJTAGTap::serialize(Archive& /*ar*/)
+void ResetJTAGTap::serialize(Archive& /*ar*/, std::uint32_t const)
 {}
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetJTAGTap)
@@ -80,7 +80,7 @@ JTAGClockScaler::encode_write(coordinate_type const& /* coord */) const
 }
 
 template <class Archive>
-void JTAGClockScaler::serialize(Archive& ar)
+void JTAGClockScaler::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -177,7 +177,7 @@ void OmnibusChipOverJTAG::decode(UTMessageFromFPGARangeJTAG const& messages)
 }
 
 template <class Archive>
-void OmnibusChipOverJTAG::serialize(Archive& ar)
+void OmnibusChipOverJTAG::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_data));
 }
@@ -234,7 +234,7 @@ void JTAGIdCode::decode(UTMessageFromFPGARangeJTAG const& messages)
 }
 
 template <class Archive>
-void JTAGIdCode::serialize(Archive& ar)
+void JTAGIdCode::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -296,7 +296,7 @@ JTAGPLLRegister::encode_write(coordinate_type const& coord) const
 }
 
 template <class Archive>
-void JTAGPLLRegister::serialize(Archive& ar)
+void JTAGPLLRegister::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -353,7 +353,7 @@ JTAGPhyRegister::encode_write(coordinate_type const& coord) const
 }
 
 template <class Archive>
-void JTAGPhyRegister::serialize(Archive& ar)
+void JTAGPhyRegister::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -361,3 +361,10 @@ void JTAGPhyRegister::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPhyRegister)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::ResetJTAGTap, 0)
+CEREAL_CLASS_VERSION(fisch::vx::JTAGClockScaler, 0)
+CEREAL_CLASS_VERSION(fisch::vx::OmnibusChipOverJTAG, 0)
+CEREAL_CLASS_VERSION(fisch::vx::JTAGIdCode, 0)
+CEREAL_CLASS_VERSION(fisch::vx::JTAGPLLRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::JTAGPhyRegister, 0)

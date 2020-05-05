@@ -44,7 +44,7 @@ ResetChip::encode_write(coordinate_type const& /* coord */) const
 }
 
 template <class Archive>
-void ResetChip::serialize(Archive& ar)
+void ResetChip::serialize(Archive& ar, std::uint32_t)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -52,3 +52,5 @@ void ResetChip::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetChip)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::ResetChip, 0)

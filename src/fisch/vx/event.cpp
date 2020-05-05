@@ -58,7 +58,7 @@ SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 
 template <size_t NumPack>
 template <typename Archive>
-void SpikePackToChip<NumPack>::serialize(Archive& ar)
+void SpikePackToChip<NumPack>::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_labels));
 }
@@ -117,7 +117,7 @@ bool SpikeFromChip::operator!=(SpikeFromChip const& other) const
 }
 
 template <class Archive>
-void SpikeFromChip::serialize(Archive& ar)
+void SpikeFromChip::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_label));
 	ar(CEREAL_NVP(m_chip_time));
@@ -171,7 +171,7 @@ bool MADCSampleFromChip::operator!=(MADCSampleFromChip const& other) const
 }
 
 template <class Archive>
-void MADCSampleFromChip::serialize(Archive& ar)
+void MADCSampleFromChip::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 	ar(CEREAL_NVP(m_chip_time));
@@ -218,7 +218,7 @@ bool SpikeFromChipEvent::operator!=(SpikeFromChipEvent const& other) const
 }
 
 template <class Archive>
-void SpikeFromChipEvent::serialize(Archive& ar)
+void SpikeFromChipEvent::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_spike));
 	ar(CEREAL_NVP(m_fpga_time));
@@ -265,7 +265,7 @@ bool MADCSampleFromChipEvent::operator!=(MADCSampleFromChipEvent const& other) c
 }
 
 template <class Archive>
-void MADCSampleFromChipEvent::serialize(Archive& ar)
+void MADCSampleFromChipEvent::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_sample));
 	ar(CEREAL_NVP(m_fpga_time));
@@ -274,3 +274,11 @@ void MADCSampleFromChipEvent::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(MADCSampleFromChipEvent)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<1>, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<2>, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<3>, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChip, 0)
+CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChip, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChipEvent, 0)
+CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChipEvent, 0)

@@ -50,7 +50,7 @@ Timer::encode_write(coordinate_type const& /* coord */) const
 }
 
 template <class Archive>
-void Timer::serialize(Archive& ar)
+void Timer::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 }
@@ -58,3 +58,5 @@ void Timer::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Timer)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::Timer, 0)

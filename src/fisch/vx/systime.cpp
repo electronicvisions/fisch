@@ -43,7 +43,7 @@ SystimeSync::encode_write(coordinate_type const& /* coord */) const
 }
 
 template <class Archive>
-void SystimeSync::serialize(Archive& ar)
+void SystimeSync::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_do_sync));
 }
@@ -51,3 +51,5 @@ void SystimeSync::serialize(Archive& ar)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SystimeSync)
 
 } // namespace fisch::vx
+
+CEREAL_CLASS_VERSION(fisch::vx::SystimeSync, 0)

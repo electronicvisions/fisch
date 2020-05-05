@@ -93,7 +93,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
                                                                                                    \
 		friend class cereal::access;                                                               \
 		template <class Archive>                                                                   \
-		void serialize(Archive& ar);                                                               \
+		void serialize(Archive& ar, std::uint32_t const version);                                  \
 	};
 
 OMNIBUS_X(OmnibusChip)
