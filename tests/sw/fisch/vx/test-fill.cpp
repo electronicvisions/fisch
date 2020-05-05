@@ -10,12 +10,18 @@
 	TEST(Name, IsRandomFillable)                                                                   \
 	{                                                                                              \
 		/* Change this seed if (by chance) the default value is hit for any container */           \
+		constexpr size_t num_tries = 2;                                                            \
 		std::mt19937 rng(1234);                                                                    \
-		auto const config = fisch::vx::fill_random<Type>(rng);                                     \
+		bool is_non_default = false;                                                               \
+		Type default_config;                                                                       \
+		for (size_t i = 0; i < num_tries; ++i) {                                                   \
+			auto const config = fisch::vx::fill_random<Type>(rng);                                 \
+			is_non_default = is_non_default || config != default_config;                           \
+		}                                                                                          \
 		if constexpr (                                                                             \
 		    !std::is_same<Type, fisch::vx::Timer>::value &&                                        \
 		    fisch::vx::detail::HasValue<Type>::value) {                                            \
-			EXPECT_NE(config, Type{});                                                             \
+			EXPECT_TRUE(is_non_default);                                                           \
 		}                                                                                          \
 	}
 #include "fisch/vx/container.def"

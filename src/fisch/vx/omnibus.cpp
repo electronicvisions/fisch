@@ -108,6 +108,42 @@ void Omnibus::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
 
+
+PollingOmnibusBlock::PollingOmnibusBlock(Value const value) : m_value(value) {}
+
+std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config)
+{
+	std::stringstream ss;
+	ss << "PollingOmnibusBlock(" << std::boolalpha << config.m_value << ")";
+	return (os << ss.str());
+}
+
+bool PollingOmnibusBlock::operator==(PollingOmnibusBlock const& other) const
+{
+	return m_value == other.m_value;
+}
+
+bool PollingOmnibusBlock::operator!=(PollingOmnibusBlock const& other) const
+{
+	return !(*this == other);
+}
+
+std::array<hxcomm::vx::UTMessageToFPGAVariant, PollingOmnibusBlock::encode_write_ut_message_count>
+PollingOmnibusBlock::encode_write(coordinate_type const& /* coord */) const
+{
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::PollingOmnibusBlock>(
+	    hxcomm::vx::instruction::timing::PollingOmnibusBlock::Payload(m_value))};
+}
+
+template <class Archive>
+void PollingOmnibusBlock::serialize(Archive& ar, std::uint32_t const)
+{
+	ar(CEREAL_NVP(m_value));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PollingOmnibusBlock)
+
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 0)
+CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 0)

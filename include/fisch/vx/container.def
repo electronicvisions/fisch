@@ -6,6 +6,7 @@
 #define LAST_PLAYBACK_CONTAINER(Name, Type) PLAYBACK_CONTAINER(Name, Type)
 #endif
 
+PLAYBACK_CONTAINER(PollingOmnibusBlock, fisch::vx::PollingOmnibusBlock)
 PLAYBACK_CONTAINER(Barrier, fisch::vx::Barrier)
 PLAYBACK_CONTAINER(WaitUntil, fisch::vx::WaitUntil)
 PLAYBACK_CONTAINER(SystimeSync, fisch::vx::SystimeSync)

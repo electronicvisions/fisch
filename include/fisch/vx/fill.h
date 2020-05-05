@@ -45,8 +45,13 @@ inline T fill_random(std::mt19937& gen)
 			std::uniform_int_distribution<uintmax_t> d(T::Value::min, T::Value::max);
 			return T(typename T::Value(d(gen)));
 		} else {
-			std::uniform_int_distribution<uintmax_t> d;
-			return T(typename T::Value(d(gen)));
+			if constexpr (std::is_same_v<typename T::Value, bool>) {
+				std::bernoulli_distribution d;
+				return T(typename T::Value(d(gen)));
+			} else {
+				std::uniform_int_distribution<uintmax_t> d;
+				return T(typename T::Value(d(gen)));
+			}
 		}
 	} else {
 		return T();
