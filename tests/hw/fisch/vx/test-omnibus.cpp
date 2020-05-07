@@ -9,6 +9,7 @@
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
 #include "fisch/vx/timer.h"
+#include "halco/common/iter_all.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
 #include "executor.h"

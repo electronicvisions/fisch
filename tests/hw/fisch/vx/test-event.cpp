@@ -8,6 +8,7 @@
 #include "fisch/vx/reset.h"
 #include "fisch/vx/systime.h"
 #include "fisch/vx/timer.h"
+#include "halco/common/iter_all.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 
 #include "executor.h"
