@@ -21,13 +21,25 @@ namespace fisch::vx {
 	    m_data(value), m_byte_enables(byte_enables)                                                \
 	{}                                                                                             \
                                                                                                    \
-	Name::Value Name::get() const { return m_data; }                                               \
+	Name::Value Name::get() const                                                                  \
+	{                                                                                              \
+		return m_data;                                                                             \
+	}                                                                                              \
                                                                                                    \
-	void Name::set(Value const value) { m_data = value; }                                          \
+	void Name::set(Value const value)                                                              \
+	{                                                                                              \
+		m_data = value;                                                                            \
+	}                                                                                              \
                                                                                                    \
-	Name::ByteEnables const& Name::get_byte_enables() const { return m_byte_enables; }             \
+	Name::ByteEnables const& Name::get_byte_enables() const                                        \
+	{                                                                                              \
+		return m_byte_enables;                                                                     \
+	}                                                                                              \
                                                                                                    \
-	void Name::set_byte_enables(ByteEnables const& value) { m_byte_enables = value; }              \
+	void Name::set_byte_enables(ByteEnables const& value)                                          \
+	{                                                                                              \
+		m_byte_enables = value;                                                                    \
+	}                                                                                              \
                                                                                                    \
 	std::ostream& operator<<(std::ostream& os, Name const& word)                                   \
 	{                                                                                              \
@@ -47,7 +59,10 @@ namespace fisch::vx {
 		return (m_data == other.m_data) && (m_byte_enables == other.m_byte_enables);               \
 	}                                                                                              \
                                                                                                    \
-	bool Name::operator!=(Name const& other) const { return !(*this == other); }                   \
+	bool Name::operator!=(Name const& other) const                                                 \
+	{                                                                                              \
+		return !(*this == other);                                                                  \
+	}                                                                                              \
                                                                                                    \
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, Name::encode_read_ut_message_count>             \
 	Name::encode_read(coordinate_type const& coord)                                                \
