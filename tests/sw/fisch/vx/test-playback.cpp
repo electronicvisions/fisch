@@ -120,14 +120,14 @@ TEST(PlaybackProgramBuilder, General)
 TEST(PlaybackProgramBuilder, WriteSingle)
 {
 	PlaybackProgramBuilder builder;
-	OmnibusChip config;
-	OmnibusChipAddress coord;
+	Omnibus config;
+	OmnibusAddress coord;
 
 	EXPECT_NO_THROW(builder.write(coord, config));
 
 	auto program = builder.done();
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(program_to_fpga_messages.size(), OmnibusChip::encode_write_ut_message_count);
+	EXPECT_EQ(program_to_fpga_messages.size(), Omnibus::encode_write_ut_message_count);
 
 	auto expected_to_fpga_messages = config.encode_write(coord);
 	for (size_t i = 0; i < program_to_fpga_messages.size(); ++i) {
@@ -138,8 +138,8 @@ TEST(PlaybackProgramBuilder, WriteSingle)
 TEST(PlaybackProgramBuilder, WriteMultiple)
 {
 	PlaybackProgramBuilder builder;
-	std::vector<OmnibusChipAddress> addresses{OmnibusChipAddress(0), OmnibusChipAddress(1)};
-	std::vector<OmnibusChip> words{OmnibusChip(OmnibusData(0)), OmnibusChip(OmnibusData(1))};
+	std::vector<OmnibusAddress> addresses{OmnibusAddress(0), OmnibusAddress(1)};
+	std::vector<Omnibus> words{Omnibus(OmnibusData(0)), Omnibus(OmnibusData(1))};
 
 	auto const ref_addresses = addresses;
 	auto const ref_words = words;
@@ -147,26 +147,26 @@ TEST(PlaybackProgramBuilder, WriteMultiple)
 	EXPECT_NO_THROW(builder.write(addresses, words));
 
 	// too much addresses
-	addresses.push_back(OmnibusChipAddress(2));
+	addresses.push_back(OmnibusAddress(2));
 	EXPECT_THROW(builder.write(addresses, words), std::runtime_error);
 
 	// too much words
-	words.push_back(OmnibusChip(OmnibusData(2)));
-	words.push_back(OmnibusChip(OmnibusData(3)));
+	words.push_back(Omnibus(OmnibusData(2)));
+	words.push_back(Omnibus(OmnibusData(3)));
 	EXPECT_THROW(builder.write(addresses, words), std::runtime_error);
 
 	auto program = builder.done();
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
 	EXPECT_EQ(
 	    program_to_fpga_messages.size(),
-	    OmnibusChip::encode_write_ut_message_count * ref_addresses.size());
+	    Omnibus::encode_write_ut_message_count * ref_addresses.size());
 
 	for (size_t i = 0; i < ref_addresses.size(); ++i) {
 		auto expected_to_fpga_messages = ref_words.at(i).encode_write(ref_addresses.at(i));
 		for (size_t j = 0; j < expected_to_fpga_messages.size(); ++j) {
 			EXPECT_EQ(
 			    expected_to_fpga_messages.at(j),
-			    program_to_fpga_messages.at(j + i * OmnibusChip::encode_write_ut_message_count));
+			    program_to_fpga_messages.at(j + i * Omnibus::encode_write_ut_message_count));
 		}
 	}
 }
@@ -175,11 +175,11 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 {
 	PlaybackProgramBuilder builder;
 
-	auto coord = OmnibusChipAddress(13);
+	auto coord = OmnibusAddress(13);
 	EXPECT_NO_THROW(builder.read(coord));
 	builder.done(); // reset
 
-	ContainerTicket<OmnibusChip> ticket = builder.read(coord);
+	ContainerTicket<Omnibus> ticket = builder.read(coord);
 
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
@@ -189,9 +189,9 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 	auto program = builder.done();
 
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(program_to_fpga_messages.size(), OmnibusChip::encode_read_ut_message_count);
+	EXPECT_EQ(program_to_fpga_messages.size(), Omnibus::encode_read_ut_message_count);
 
-	auto expected_to_fpga_messages = OmnibusChip::encode_read(coord);
+	auto expected_to_fpga_messages = Omnibus::encode_read(coord);
 	for (size_t i = 0; i < program_to_fpga_messages.size(); ++i) {
 		EXPECT_EQ(expected_to_fpga_messages.at(i), program_to_fpga_messages.at(i));
 	}
@@ -209,12 +209,12 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 TEST(PlaybackProgramBuilder, ReadMultiple)
 {
 	PlaybackProgramBuilder builder;
-	std::vector<OmnibusChipAddress> addresses{OmnibusChipAddress(0), OmnibusChipAddress(1)};
+	std::vector<OmnibusAddress> addresses{OmnibusAddress(0), OmnibusAddress(1)};
 
 	EXPECT_NO_THROW(builder.read(addresses));
 	builder.done(); // reset
 
-	ContainerTicket<OmnibusChip> ticket = builder.read(addresses);
+	ContainerTicket<Omnibus> ticket = builder.read(addresses);
 
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
@@ -223,15 +223,14 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
 	EXPECT_EQ(
-	    program_to_fpga_messages.size(),
-	    OmnibusChip::encode_read_ut_message_count * addresses.size());
+	    program_to_fpga_messages.size(), Omnibus::encode_read_ut_message_count * addresses.size());
 
 	for (size_t i = 0; i < addresses.size(); ++i) {
-		auto expected_to_fpga_messages = OmnibusChip::encode_read(addresses.at(i));
+		auto expected_to_fpga_messages = Omnibus::encode_read(addresses.at(i));
 		for (size_t j = 0; j < expected_to_fpga_messages.size(); ++j) {
 			EXPECT_EQ(
 			    expected_to_fpga_messages.at(j),
-			    program_to_fpga_messages.at(j + i * OmnibusChip::encode_read_ut_message_count));
+			    program_to_fpga_messages.at(j + i * Omnibus::encode_read_ut_message_count));
 		}
 	}
 
@@ -259,12 +258,12 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 {
 	PlaybackProgramBuilder builder;
-	std::vector<OmnibusChipAddress> addresses{OmnibusChipAddress(0), OmnibusChipAddress(1)};
+	std::vector<OmnibusAddress> addresses{OmnibusAddress(0), OmnibusAddress(1)};
 
 	EXPECT_NO_THROW(builder.read(addresses));
 	builder.done(); // reset
 
-	std::vector<ContainerTicket<OmnibusChip>> tickets;
+	std::vector<ContainerTicket<Omnibus>> tickets;
 	for (auto address : addresses) {
 		tickets.push_back(builder.read(address));
 	}
@@ -313,11 +312,10 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 {
 	PlaybackProgramBuilder builder;
-	std::vector<std::vector<OmnibusChipAddress>> addresses{
-	    {OmnibusChipAddress(0), OmnibusChipAddress(1)},
-	    {OmnibusChipAddress(2), OmnibusChipAddress(3)}};
+	std::vector<std::vector<OmnibusAddress>> addresses{{OmnibusAddress(0), OmnibusAddress(1)},
+	                                                   {OmnibusAddress(2), OmnibusAddress(3)}};
 
-	std::vector<ContainerTicket<OmnibusChip>> tickets;
+	std::vector<ContainerTicket<Omnibus>> tickets;
 	for (auto address : addresses) {
 		tickets.push_back(builder.read(address));
 	}
@@ -390,7 +388,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 TEST(PlaybackProgramBuilder, ClearFromFPGAMessages)
 {
 	PlaybackProgramBuilder builder;
-	OmnibusChipAddress address;
+	OmnibusAddress address;
 
 	EXPECT_NO_THROW(builder.read(address));
 	builder.done(); // reset
@@ -440,7 +438,7 @@ TEST(PlaybackProgram, CerealizeCoverage)
 	using namespace fisch::vx;
 
 	PlaybackProgramBuilder builder;
-	builder.read(OmnibusChip::coordinate_type());         // add omnibus instructions
+	builder.read(Omnibus::coordinate_type());             // add omnibus instructions
 	builder.read(OmnibusChipOverJTAG::coordinate_type()); // add jtag instructions
 
 	auto obj1 = builder.done();
@@ -473,19 +471,19 @@ TEST(PlaybackProgramBuilder, MergeBack)
 
 	EXPECT_NO_THROW(builder.merge_back(other));
 
-	other.read(OmnibusChipAddress());
+	other.read(OmnibusAddress());
 	EXPECT_NO_THROW(builder.merge_back(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_TRUE(other.empty());
 
-	other.write(OmnibusChipAddress(), OmnibusChip());
+	other.write(OmnibusAddress(), Omnibus());
 	EXPECT_NO_THROW(builder.merge_back(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_TRUE(other.empty());
 
 	PlaybackProgramBuilder reference;
-	reference.read(OmnibusChipAddress());
-	reference.write(OmnibusChipAddress(), OmnibusChip());
+	reference.read(OmnibusAddress());
+	reference.write(OmnibusAddress(), Omnibus());
 
 	EXPECT_EQ(*(builder.done()), *(reference.done()));
 }
@@ -497,19 +495,19 @@ TEST(PlaybackProgramBuilder, MergeFront)
 
 	EXPECT_NO_THROW(builder.merge_front(other));
 
-	other.read(OmnibusChipAddress());
+	other.read(OmnibusAddress());
 	EXPECT_NO_THROW(builder.merge_front(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_TRUE(other.empty());
 
-	other.write(OmnibusChipAddress(), OmnibusChip());
+	other.write(OmnibusAddress(), Omnibus());
 	EXPECT_NO_THROW(builder.merge_front(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_TRUE(other.empty());
 
 	PlaybackProgramBuilder reference;
-	reference.write(OmnibusChipAddress(), OmnibusChip());
-	reference.read(OmnibusChipAddress());
+	reference.write(OmnibusAddress(), Omnibus());
+	reference.read(OmnibusAddress());
 
 	EXPECT_EQ(*(builder.done()), *(reference.done()));
 }
@@ -521,12 +519,12 @@ TEST(PlaybackProgramBuilder, CopyBack)
 
 	EXPECT_NO_THROW(builder.copy_back(other));
 
-	other.read(OmnibusChipAddress());
+	other.read(OmnibusAddress());
 	EXPECT_THROW(builder.copy_back(other), std::runtime_error);
 	other.done();
 	EXPECT_TRUE(builder.empty());
 
-	other.write(OmnibusChipAddress(), OmnibusChip());
+	other.write(OmnibusAddress(), Omnibus());
 	EXPECT_NO_THROW(builder.copy_back(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_EQ(*(builder.done()), *(other.done()));

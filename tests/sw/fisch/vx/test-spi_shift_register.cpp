@@ -23,8 +23,7 @@ TEST(SPIShiftRegister, EncodeWrite)
 
 	EXPECT_EQ(messages.size(), 6);
 	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
-	    instruction::omnibus_to_fpga::Address::Payload(
-	        1ul | spi_over_omnibus_mask | executor_omnibus_mask, false));
+	    instruction::omnibus_to_fpga::Address::Payload(1ul | spi_over_omnibus_mask, false));
 
 	auto message_addr_1 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
@@ -48,9 +47,8 @@ TEST(SPIShiftRegister, EncodeWrite)
 	auto message_data_3 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(5));
 	EXPECT_EQ(
-	    message_data_3,
-	    UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
-	        instruction::omnibus_to_fpga::Data::Payload(executor_omnibus_mask | 0x56)));
+	    message_data_3, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
+	                        instruction::omnibus_to_fpga::Data::Payload(fpga_omnibus_mask | 0x56)));
 }
 
 TEST(SPIShiftRegister, Ostream)

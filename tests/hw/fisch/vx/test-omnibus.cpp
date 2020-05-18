@@ -58,7 +58,7 @@ bool is_HXv2(Connection& connection)
 }
 
 
-TEST(OmnibusChip, ByteEnables)
+TEST(Omnibus, ByteEnables)
 {
 	auto connection = generate_test_connection();
 
@@ -98,15 +98,15 @@ TEST(OmnibusChip, ByteEnables)
 
 		// configure FPGA-side PHYs
 		for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
-			OmnibusFPGA config(OmnibusData(0x0020'4040));
-			OmnibusFPGAAddress coord(0x0600'0000 + i);
+			Omnibus config(OmnibusData(0x0020'4040));
+			OmnibusAddress coord(0x8600'0000 + i);
 			builder.write(coord, config);
 		}
 
 		// enable FPGA-side PHYs
 		{
-			OmnibusFPGA config(OmnibusData(0xff));
-			OmnibusFPGAAddress coord(0x0400'0000);
+			Omnibus config(OmnibusData(0xff));
+			OmnibusAddress coord(0x8400'0000);
 			builder.write(coord, config);
 		}
 
@@ -134,22 +134,22 @@ TEST(OmnibusChip, ByteEnables)
 		std::uniform_int_distribution<uint32_t> d(
 		    0, SynapseQuadColumnOnDLS::size * (SynapseRowOnSynram::size + 2 /* switch rows */) *
 		           2 /* weights + addresses */);
-		OmnibusChipAddress address(synram_synapse_top_base_address + d(rng));
+		OmnibusAddress address(synram_synapse_top_base_address + d(rng));
 
-		OmnibusChip initial(OmnibusData(0x12345678));
+		Omnibus initial(OmnibusData(0x12345678));
 		builder.write(address, initial);
 
 		auto ticket_initial = builder.read(address);
 
-		std::vector<ContainerTicket<OmnibusChip>> tickets;
+		std::vector<ContainerTicket<Omnibus>> tickets;
 
-		for (size_t i = 0; i < std::tuple_size<OmnibusChip::ByteEnables>::value; ++i) {
-			OmnibusChip::ByteEnables byte_enables;
+		for (size_t i = 0; i < std::tuple_size<Omnibus::ByteEnables>::value; ++i) {
+			Omnibus::ByteEnables byte_enables;
 			byte_enables.fill(false);
 
 			byte_enables.at(EntryOnQuad(i)) = true;
 
-			OmnibusChip only_one_byte(OmnibusData(0x87654321), byte_enables);
+			Omnibus only_one_byte(OmnibusData(0x87654321), byte_enables);
 			builder.write(address, only_one_byte);
 			tickets.push_back(builder.read(address));
 		}

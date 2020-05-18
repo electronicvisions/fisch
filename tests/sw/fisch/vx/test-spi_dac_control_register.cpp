@@ -25,11 +25,9 @@ TEST(SPIDACControlRegister, EncodeWrite)
 	auto message_addr_1 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(
-	    message_addr_1,
-	    UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
-	        instruction::omnibus_to_fpga::Address::Payload(
-	            executor_omnibus_mask | spi_over_omnibus_mask | (coord.toDACOnBoard() + 2),
-	            false)));
+	    message_addr_1, UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	                        instruction::omnibus_to_fpga::Address::Payload(
+	                            spi_over_omnibus_mask | (coord.toDACOnBoard() + 2), false)));
 	auto message_data_1 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
@@ -39,11 +37,9 @@ TEST(SPIDACControlRegister, EncodeWrite)
 	auto message_addr_2 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
 	EXPECT_EQ(
-	    message_addr_2,
-	    UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
-	        instruction::omnibus_to_fpga::Address::Payload(
-	            executor_omnibus_mask | spi_over_omnibus_mask | (coord.toDACOnBoard() + 2),
-	            false)));
+	    message_addr_2, UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	                        instruction::omnibus_to_fpga::Address::Payload(
+	                            spi_over_omnibus_mask | (coord.toDACOnBoard() + 2), false)));
 	auto message_data_2 =
 	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(3));
 	EXPECT_EQ(

@@ -54,15 +54,15 @@ TEST(SpikePack1ToChip, Loopback)
 
 	// configure FPGA-side PHYs
 	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
-		OmnibusFPGA config(OmnibusData(0x0020'4040));
-		OmnibusFPGAAddress coord(0x0600'0000 + i);
+		Omnibus config(OmnibusData(0x0020'4040));
+		OmnibusAddress coord(0x8600'0000 + i);
 		builder.write(coord, config);
 	}
 
 	// enable FPGA-side PHYs
 	{
-		OmnibusFPGA config(OmnibusData(0xff));
-		OmnibusFPGAAddress coord(0x0400'0000);
+		Omnibus config(OmnibusData(0xff));
+		OmnibusAddress coord(0x8400'0000);
 		builder.write(coord, config);
 	}
 
@@ -90,15 +90,15 @@ TEST(SpikePack1ToChip, Loopback)
 
 	// enable all counters
 	{
-		OmnibusChip config(OmnibusData(0xfff0));
-		OmnibusChipAddress coord(0x0013'0000);
+		Omnibus config(OmnibusData(0xfff0));
+		OmnibusAddress coord(0x0013'0000);
 		builder.write(coord, config);
 	}
 
 	// enable loopback on all l2in channels
 	for (size_t i = 0; i < 4; ++i) {
-		OmnibusChip config(OmnibusData(0x8000'0000));
-		OmnibusChipAddress coord(0x0013'0039 + i * 9);
+		Omnibus config(OmnibusData(0x8000'0000));
+		OmnibusAddress coord(0x0013'0039 + i * 9);
 		builder.write(coord, config);
 	}
 
