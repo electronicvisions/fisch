@@ -207,7 +207,7 @@ void PlaybackProgramBuilder::copy_back(PlaybackProgramBuilder const& other)
 
 bool PlaybackProgramBuilder::empty() const
 {
-	return m_program->m_instructions.empty();
+	return m_program->empty();
 }
 
 bool PlaybackProgramBuilder::is_write_only() const

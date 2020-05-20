@@ -104,6 +104,12 @@ public:
 	 */
 	void clear_from_fpga_messages();
 
+	/**
+	 * Get whether program is empty, i.e. no instructions are embodied.
+	 * @return Boolean value
+	 */
+	bool empty() const;
+
 	bool operator==(PlaybackProgram const& other) const;
 	bool operator!=(PlaybackProgram const& other) const;
 

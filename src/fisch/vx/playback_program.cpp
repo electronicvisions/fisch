@@ -143,6 +143,11 @@ void PlaybackProgram::clear_from_fpga_messages()
 	m_decoder.clear();
 }
 
+bool PlaybackProgram::empty() const
+{
+	return m_instructions.empty();
+}
+
 bool PlaybackProgram::operator==(PlaybackProgram const& other) const
 {
 	return m_instructions == other.m_instructions &&

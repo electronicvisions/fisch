@@ -72,6 +72,20 @@ TEST(PlaybackProgramBuilder, WriteAPI)
 #include "fisch/vx/container.def"
 }
 
+TEST(PlaybackProgram, General)
+{
+	EXPECT_NO_THROW(PlaybackProgram());
+
+	PlaybackProgram program;
+	EXPECT_TRUE(program.empty());
+
+	PlaybackProgramBuilder builder;
+	builder.write(TimerOnDLS(), Timer());
+	EXPECT_FALSE(builder.empty());
+	auto const nonempty_program = builder.done();
+	EXPECT_FALSE(nonempty_program->empty());
+}
+
 TEST(PlaybackProgramBuilder, General)
 {
 	EXPECT_NO_THROW(PlaybackProgramBuilder());
