@@ -143,6 +143,13 @@ public:
 	void merge_back(PlaybackProgramBuilder& other);
 
 	/**
+	 * Merge other PlaybackProgramBuilder to the beginning of this builder instance.
+	 * The moved-from builder is emptied during the process.
+	 * @param other Builder to move to this instance at the front
+	 */
+	void merge_front(PlaybackProgramBuilder& other);
+
+	/**
 	 * Copy other PlaybackProgramBuilder to the end of this builder instance.
 	 * The copied-from builder is untouched during the process.
 	 * @throws std::runtime_error On other builder not being write only

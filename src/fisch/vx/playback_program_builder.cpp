@@ -194,6 +194,12 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	other.done();
 }
 
+void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
+{
+	other.merge_back(*this);
+	std::swap(*this, other);
+}
+
 void PlaybackProgramBuilder::copy_back(PlaybackProgramBuilder const& other)
 {
 	if (!other.is_write_only()) {

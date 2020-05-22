@@ -466,6 +466,54 @@ TEST(PlaybackProgram, CerealizeCoverage)
 	ASSERT_EQ(*obj1, *obj2);
 }
 
+TEST(PlaybackProgramBuilder, MergeBack)
+{
+	PlaybackProgramBuilder builder;
+	PlaybackProgramBuilder other;
+
+	EXPECT_NO_THROW(builder.merge_back(other));
+
+	other.read(OmnibusChipAddress());
+	EXPECT_NO_THROW(builder.merge_back(other));
+	EXPECT_FALSE(builder.empty());
+	EXPECT_TRUE(other.empty());
+
+	other.write(OmnibusChipAddress(), OmnibusChip());
+	EXPECT_NO_THROW(builder.merge_back(other));
+	EXPECT_FALSE(builder.empty());
+	EXPECT_TRUE(other.empty());
+
+	PlaybackProgramBuilder reference;
+	reference.read(OmnibusChipAddress());
+	reference.write(OmnibusChipAddress(), OmnibusChip());
+
+	EXPECT_EQ(*(builder.done()), *(reference.done()));
+}
+
+TEST(PlaybackProgramBuilder, MergeFront)
+{
+	PlaybackProgramBuilder builder;
+	PlaybackProgramBuilder other;
+
+	EXPECT_NO_THROW(builder.merge_front(other));
+
+	other.read(OmnibusChipAddress());
+	EXPECT_NO_THROW(builder.merge_front(other));
+	EXPECT_FALSE(builder.empty());
+	EXPECT_TRUE(other.empty());
+
+	other.write(OmnibusChipAddress(), OmnibusChip());
+	EXPECT_NO_THROW(builder.merge_front(other));
+	EXPECT_FALSE(builder.empty());
+	EXPECT_TRUE(other.empty());
+
+	PlaybackProgramBuilder reference;
+	reference.write(OmnibusChipAddress(), OmnibusChip());
+	reference.read(OmnibusChipAddress());
+
+	EXPECT_EQ(*(builder.done()), *(reference.done()));
+}
+
 TEST(PlaybackProgramBuilder, CopyBack)
 {
 	PlaybackProgramBuilder builder;
