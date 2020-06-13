@@ -2,6 +2,7 @@
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/run_time_info.h"
 
+#include "hate/type_traits.h"
 #include "hxcomm/common/execute_messages.h"
 
 namespace fisch::vx {
@@ -9,12 +10,19 @@ namespace fisch::vx {
 template <typename Connection>
 RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& program)
 {
-	auto const [responses, connection_time_info] =
+	auto [responses, connection_time_info] =
 	    hxcomm::execute_messages(connection, program->get_to_fpga_messages());
 	hate::Timer timer;
 	program->clear_from_fpga_messages();
-	for (auto const& message : responses) {
-		program->push_from_fpga_message(message);
+	if constexpr (hate::is_container_v<decltype(responses)>) {
+		for (auto const& response : responses) {
+			program->push_from_fpga_message(response);
+		}
+	} else {
+		while (!responses.empty()) {
+			program->push_from_fpga_message(responses.front());
+			responses.pop();
+		}
 	}
 	if (!program->run_ok()) {
 		throw std::runtime_error("FPGA sent error notification(s). Please check"
