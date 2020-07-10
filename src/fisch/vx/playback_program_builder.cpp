@@ -185,6 +185,11 @@ bool PlaybackProgramBuilder::empty() const
 	return m_program->empty();
 }
 
+size_t PlaybackProgramBuilder::size_to_fpga() const
+{
+	return m_program->m_instructions.size();
+}
+
 bool PlaybackProgramBuilder::is_write_only() const
 {
 	return std::all_of(

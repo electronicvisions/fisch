@@ -156,13 +156,19 @@ public:
 	 */
 	bool empty() const;
 
-private:
 	/**
 	 * Get whether program only contains write data.
 	 * @return Boolean Value
 	 */
 	bool is_write_only() const;
 
+	/**
+	 * Get number of UT messages to FPGA.
+	 * @return Size
+	 */
+	size_t size_to_fpga() const;
+
+private:
 	std::shared_ptr<PlaybackProgram> m_program;
 };
 
