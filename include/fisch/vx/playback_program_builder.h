@@ -172,7 +172,6 @@ private:
 	std::shared_ptr<PlaybackProgram> m_program;
 };
 
-#ifdef __GENPYBIND__
 // Explicit instantiation of template member functions for all valid playback container types.
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
 	extern template ContainerTicket<Name>                                                          \
@@ -187,6 +186,5 @@ private:
 	    std::vector<typename Name::coordinate_type> const& coords,                                 \
 	    std::vector<Name> const& configs);
 #include "fisch/vx/container.def"
-#endif // __GENPYBIND__
 
 } // namespace fisch::vx

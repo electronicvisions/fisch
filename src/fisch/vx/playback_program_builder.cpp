@@ -26,7 +26,7 @@ PlaybackProgramBuilder::PlaybackProgramBuilder() : m_program(std::make_shared<Pl
 
 template <class ContainerT>
 void PlaybackProgramBuilder::write(
-    typename ContainerT::coordinate_type const& coord, ContainerT const& config)
+    [[maybe_unused]] typename ContainerT::coordinate_type const& coord, ContainerT const& config)
 {
 	if constexpr (!IsWritable<ContainerT>::value) {
 		std::stringstream ss;
