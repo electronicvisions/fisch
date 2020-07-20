@@ -5,8 +5,10 @@
 namespace fisch {
 namespace vx GENPYBIND_TAG_FISCH_VX {
 
-/** Number of FPGA clock cycles per microsecond. */
+/** Number of FPGA clock cycles per {micro,milli,}second. */
 constexpr size_t GENPYBIND(visible) fpga_clock_cycles_per_us = 125;
+constexpr size_t GENPYBIND(visible) fpga_clock_cycles_per_ms = fpga_clock_cycles_per_us * 1000;
+constexpr size_t GENPYBIND(visible) fpga_clock_cycles_per_s = fpga_clock_cycles_per_ms * 1000;
 
 /** Maximal JTAG clock-sclaer value. */
 constexpr size_t jtag_clock_scaler_max = 0xff;
