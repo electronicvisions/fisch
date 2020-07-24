@@ -48,13 +48,13 @@ public:
 	typedef std::array<SpikeLabel, NumPack> labels_type;
 
 	/** Default constructor. */
-	SpikePackToChip();
+	explicit SpikePackToChip();
 
 	/**
 	 * Construct spike pack with labels.
 	 * @param labels Array of SpikeLabel values to use
 	 */
-	SpikePackToChip(labels_type const& labels);
+	explicit SpikePackToChip(labels_type const& labels);
 
 	/**
 	 * Get spike labels.
@@ -102,8 +102,8 @@ protected:
 class GENPYBIND(inline_base("*")) SpikePack1ToChip : public SpikePackToChip<1>
 {
 public:
-	SpikePack1ToChip() : SpikePackToChip<1>() {}
-	SpikePack1ToChip(labels_type const& labels) : SpikePackToChip<1>(labels) {}
+	explicit SpikePack1ToChip() : SpikePackToChip<1>() {}
+	explicit SpikePack1ToChip(labels_type const& labels) : SpikePackToChip<1>(labels) {}
 };
 
 /**
@@ -112,8 +112,8 @@ public:
 class GENPYBIND(inline_base("*")) SpikePack2ToChip : public SpikePackToChip<2>
 {
 public:
-	SpikePack2ToChip() : SpikePackToChip<2>() {}
-	SpikePack2ToChip(labels_type const& labels) : SpikePackToChip<2>(labels) {}
+	explicit SpikePack2ToChip() : SpikePackToChip<2>() {}
+	explicit SpikePack2ToChip(labels_type const& labels) : SpikePackToChip<2>(labels) {}
 };
 
 /**
@@ -122,8 +122,8 @@ public:
 class GENPYBIND(inline_base("*")) SpikePack3ToChip : public SpikePackToChip<3>
 {
 public:
-	SpikePack3ToChip() : SpikePackToChip<3>() {}
-	SpikePack3ToChip(labels_type const& labels) : SpikePackToChip<3>(labels) {}
+	explicit SpikePack3ToChip() : SpikePackToChip<3>() {}
+	explicit SpikePack3ToChip(labels_type const& labels) : SpikePackToChip<3>(labels) {}
 };
 
 
@@ -134,14 +134,14 @@ class GENPYBIND(visible) SpikeFromChip
 {
 public:
 	/** Default constructor. */
-	SpikeFromChip();
+	explicit SpikeFromChip();
 
 	/**
 	 * Construct spike event with label and time.
 	 * @param label SpikeLabel value to use
 	 * @param time ChipTime value to use
 	 */
-	SpikeFromChip(SpikeLabel const& label, ChipTime const& time);
+	explicit SpikeFromChip(SpikeLabel const& label, ChipTime const& time);
 
 	/**
 	 * Get spike label value.
@@ -194,7 +194,7 @@ class GENPYBIND(visible) MADCSampleFromChip
 {
 public:
 	/** Default constructor. */
-	MADCSampleFromChip();
+	explicit MADCSampleFromChip();
 
 	/** Sample value. */
 	struct GENPYBIND(inline_base("*")) Value
@@ -208,7 +208,7 @@ public:
 	 * @param value Value value to use
 	 * @param time ChipTime value to use
 	 */
-	MADCSampleFromChip(Value const& value, ChipTime const& time);
+	explicit MADCSampleFromChip(Value const& value, ChipTime const& time);
 
 	/**
 	 * Get sample value.
@@ -328,11 +328,10 @@ public:
 	 * @param sample MADCSampleFromChip sample data
 	 * @param fpga_time FPGATime time annotation
 	 */
-	MADCSampleFromChipEvent(
+	explicit MADCSampleFromChipEvent(
 	    MADCSampleFromChip const& sample = MADCSampleFromChip(),
 	    FPGATime const& fpga_time = FPGATime()) :
-	    m_sample(sample),
-	    m_fpga_time(fpga_time)
+	    m_sample(sample), m_fpga_time(fpga_time)
 	{}
 
 	/**

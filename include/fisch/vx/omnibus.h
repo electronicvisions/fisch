@@ -31,20 +31,20 @@ public:
 	/**
 	 * Default constructor.
 	 */
-	Omnibus();
+	explicit Omnibus();
 
 	/**
 	 * Construct an instance with a word value.
 	 * @param value Word value to construct instance with
 	 */
-	Omnibus(Value value);
+	explicit Omnibus(Value value);
 
 	/**
 	 * Construct an instance with a word value and byte enables.
 	 * @param value Word value to construct instance with
 	 * @param byte_enables Byte enables to construct instance with
 	 */
-	Omnibus(Value value, ByteEnables byte_enables);
+	explicit Omnibus(Value value, ByteEnables byte_enables);
 
 	/**
 	 * Get value.

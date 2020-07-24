@@ -41,7 +41,7 @@ public:
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIShiftRegister(Value value = Value());
+	explicit SPIShiftRegister(Value value = Value());
 
 	/**
 	 * Get value.
@@ -97,7 +97,7 @@ public:
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIDACDataRegister(Value value = Value());
+	explicit SPIDACDataRegister(Value value = Value());
 
 	/**
 	 * Get value.
@@ -152,7 +152,7 @@ public:
 	 * Construct an instance with a word value.
 	 * @param value Value to construct instance with
 	 */
-	SPIDACControlRegister(Value value = Value());
+	explicit SPIDACControlRegister(Value value = Value());
 
 	/**
 	 * Get value.

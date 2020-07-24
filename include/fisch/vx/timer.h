@@ -34,7 +34,7 @@ public:
 	 * Construct timer with value.
 	 * @param value Value to construct timer with
 	 */
-	Timer(Value value = Value());
+	explicit Timer(Value value = Value());
 
 	/**
 	 * Get timer value.
@@ -81,7 +81,7 @@ public:
 	 * Construct timer with value.
 	 * @param value Value to construct timer with
 	 */
-	WaitUntil(Value value = Value());
+	explicit WaitUntil(Value value = Value());
 
 	/**
 	 * Get timer value.

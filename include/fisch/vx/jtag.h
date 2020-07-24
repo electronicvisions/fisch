@@ -74,7 +74,7 @@ public:
 	 * Construct scaler with value.
 	 * @param value Value to construct scaler with
 	 */
-	JTAGClockScaler(Value value = Value());
+	explicit JTAGClockScaler(Value value = Value());
 
 	/**
 	 * Get clock-scaler value.
@@ -121,7 +121,7 @@ public:
 	 * Construct an instance with a word value.
 	 * @param value Omnibus word value to construct instance with
 	 */
-	OmnibusChipOverJTAG(Value value = Value());
+	explicit OmnibusChipOverJTAG(Value value = Value());
 
 	/**
 	 * Get value.
@@ -181,7 +181,7 @@ public:
 	 * Construct IDCODE with value.
 	 * @param value Value to use
 	 */
-	JTAGIdCode(Value value = Value());
+	explicit JTAGIdCode(Value value = Value());
 
 	/**
 	 * Get JTAG IDCODE.
@@ -240,7 +240,7 @@ public:
 	 * Construct register by its value.
 	 * @param value Value to set on cosntruction
 	 */
-	JTAGPLLRegister(Value value = Value());
+	explicit JTAGPLLRegister(Value value = Value());
 
 	/**
 	 * Get register value.
@@ -294,7 +294,7 @@ public:
 	 * Construct register with value.
 	 * @param value Value to construct register with
 	 */
-	JTAGPhyRegister(Value value = Value());
+	explicit JTAGPhyRegister(Value value = Value());
 
 	/**
 	 * Get register value.
