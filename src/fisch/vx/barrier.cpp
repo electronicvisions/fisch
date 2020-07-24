@@ -52,7 +52,8 @@ bool Barrier::operator!=(Barrier const& other) const
 std::array<hxcomm::vx::UTMessageToFPGAVariant, Barrier::encode_write_ut_message_count>
 Barrier::encode_write(coordinate_type const& /* coord */) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Barrier>(m_value)};
+	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Barrier>(
+	    hxcomm::vx::instruction::timing::Barrier::Payload(m_value))};
 }
 
 template <class Archive>
