@@ -122,13 +122,18 @@ TEST(SpikePack1ToChip, Loopback)
 
 	auto spikes = program->get_spikes();
 
-	EXPECT_LE(spikes.size(), num_spikes);
-	EXPECT_GT(spikes.size(), 0);
+	EXPECT_LE(spikes.size(), num_spikes * 1.2);
+	EXPECT_GT(spikes.size(), num_spikes * 0.8);
 
+	unsigned num_unexpected_spikes = 0;
 	for (auto spike : spikes) {
 		auto it = std::find(
 		    to_fpga_spike_labels.cbegin(), to_fpga_spike_labels.cend(),
 		    spike.get_spike().get_label());
-		EXPECT_TRUE(it != to_fpga_spike_labels.cend()) << "Received spike not sent.";
+
+		if (it == to_fpga_spike_labels.cend()) {
+			num_unexpected_spikes++;
+		}
 	}
+	EXPECT_LE(num_unexpected_spikes, num_spikes * 0.2);
 }
