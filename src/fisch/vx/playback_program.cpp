@@ -51,12 +51,14 @@ PlaybackProgram::PlaybackProgram() :
     m_receive_queue(),
     m_spike_response_queue(),
     m_madc_sample_response_queue(),
+    m_highspeed_link_notification_response_queue(),
     m_spike_pack_counts(),
     m_madc_sample_pack_counts(),
     m_decoder(
         m_receive_queue,
         m_spike_response_queue,
         m_madc_sample_response_queue,
+        m_highspeed_link_notification_response_queue,
         m_spike_pack_counts,
         m_madc_sample_pack_counts),
     m_queue_expected_size()
@@ -110,6 +112,12 @@ PlaybackProgram::madc_sample_from_chip_events_type const& PlaybackProgram::get_m
 	return m_madc_sample_response_queue;
 }
 
+PlaybackProgram::highspeed_link_notifications_type const&
+PlaybackProgram::get_highspeed_link_notifications() const
+{
+	return m_highspeed_link_notification_response_queue;
+}
+
 bool PlaybackProgram::valid() const
 {
 	size_t i = 0;
@@ -159,6 +167,8 @@ bool PlaybackProgram::operator==(PlaybackProgram const& other) const
 	return m_instructions == other.m_instructions && m_receive_queue == other.m_receive_queue &&
 	       m_spike_response_queue == other.m_spike_response_queue &&
 	       m_madc_sample_response_queue == other.m_madc_sample_response_queue &&
+	       m_highspeed_link_notification_response_queue ==
+	           other.m_highspeed_link_notification_response_queue &&
 	       m_spike_pack_counts == other.m_spike_pack_counts &&
 	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts &&
 	       m_queue_expected_size == other.m_queue_expected_size;
@@ -176,6 +186,7 @@ void PlaybackProgram::serialize(Archive& ar, std::uint32_t const)
 	boost::hana::for_each(m_receive_queue, [&ar](auto& queue) { ar(CEREAL_NVP(queue)); });
 	ar(CEREAL_NVP(m_spike_response_queue));
 	ar(CEREAL_NVP(m_madc_sample_response_queue));
+	ar(CEREAL_NVP(m_highspeed_link_notification_response_queue));
 	ar(CEREAL_NVP(m_spike_pack_counts));
 	ar(CEREAL_NVP(m_madc_sample_pack_counts));
 	ar(CEREAL_NVP(m_queue_expected_size));
@@ -185,4 +196,4 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 1)
+CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 2)

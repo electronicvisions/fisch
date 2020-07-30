@@ -273,6 +273,53 @@ void MADCSampleFromChipEvent::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(MADCSampleFromChipEvent)
 
+
+HighspeedLinkNotification::Value HighspeedLinkNotification::get_value() const
+{
+	return m_value;
+}
+
+void HighspeedLinkNotification::set_value(Value const& value)
+{
+	m_value = value;
+}
+
+FPGATime HighspeedLinkNotification::get_fpga_time() const
+{
+	return m_fpga_time;
+}
+
+void HighspeedLinkNotification::set_fpga_time(FPGATime const& value)
+{
+	m_fpga_time = value;
+}
+
+std::ostream& operator<<(std::ostream& os, HighspeedLinkNotification const& event)
+{
+	std::stringstream ss;
+	os << "HighspeedLinkNotification(" << event.m_value << ", " << event.m_fpga_time << ")";
+	return os;
+}
+
+bool HighspeedLinkNotification::operator==(HighspeedLinkNotification const& other) const
+{
+	return (m_value == other.m_value) && (m_fpga_time == other.m_fpga_time);
+}
+
+bool HighspeedLinkNotification::operator!=(HighspeedLinkNotification const& other) const
+{
+	return !(*this == other);
+}
+
+template <class Archive>
+void HighspeedLinkNotification::serialize(Archive& ar, std::uint32_t const)
+{
+	ar(CEREAL_NVP(m_value));
+	ar(CEREAL_NVP(m_fpga_time));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(HighspeedLinkNotification)
+
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<1>, 0)
@@ -282,3 +329,4 @@ CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChip, 0)
 CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChip, 0)
 CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChipEvent, 0)
 CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChipEvent, 0)
+CEREAL_CLASS_VERSION(fisch::vx::HighspeedLinkNotification, 0)

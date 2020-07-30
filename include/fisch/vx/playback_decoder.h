@@ -98,6 +98,7 @@ public:
 	typedef typename ToResponseQueueTuple<detail::decode_message_types>::type response_queue_type;
 	typedef std::vector<SpikeFromChipEvent> spike_queue_type;
 	typedef std::vector<MADCSampleFromChipEvent> madc_sample_queue_type;
+	typedef std::vector<HighspeedLinkNotification> highspeed_link_notification_queue_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>
 	    spike_pack_counts_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::MADCSamplePackFromFPGAOnDLS>
@@ -110,6 +111,7 @@ public:
 	 * @param response_queue Reference to response message queue
 	 * @param spike_queue Reference to a spike event message queue
 	 * @param madc_sample_queue Reference to a MADC sample event message queue
+	 * @param highspeed_link_notification_queue Reference to a highspeed link notification queue
 	 * @param spike_pack_counts Reference to a spike pack count array
 	 * @param madc_sample_pack_counts Reference to a MADC sample pack count array
 	 */
@@ -117,6 +119,7 @@ public:
 	    response_queue_type& response_queue,
 	    spike_queue_type& spike_queue,
 	    madc_sample_queue_type& madc_sample_queue,
+	    highspeed_link_notification_queue_type& highspeed_link_notification_queue,
 	    spike_pack_counts_type& spike_pack_counts,
 	    madc_sample_pack_counts_type& madc_sample_pack_counts);
 
@@ -155,11 +158,17 @@ private:
 	void process(hxcomm::vx::UTMessageFromFPGA<
 	             hxcomm::vx::instruction::event_from_fpga::MADCSamplePack<N>> const& message);
 
+	typedef hxcomm::vx::UTMessageFromFPGA<
+	    hxcomm::vx::instruction::from_fpga_system::HighspeedLinkNotification>
+	    ut_message_from_fpga_highspeed_link_notification_type;
+	void process(ut_message_from_fpga_highspeed_link_notification_type const& message);
+
 	ChipTime calculate_chip_time(uint8_t timestamp) const;
 
 	response_queue_type& m_response_queue;
 	spike_queue_type& m_spike_queue;
 	madc_sample_queue_type& m_madc_sample_queue;
+	highspeed_link_notification_queue_type& m_highspeed_link_notification_queue;
 	spike_pack_counts_type& m_spike_pack_counts;
 	madc_sample_pack_counts_type& m_madc_sample_pack_counts;
 

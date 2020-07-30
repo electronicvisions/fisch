@@ -19,14 +19,17 @@ TEST(PlaybackDecoder, JTAG)
 	PlaybackDecoder::response_queue_type response_queue;
 	PlaybackDecoder::spike_queue_type spike_queue;
 	PlaybackDecoder::madc_sample_queue_type madc_sample_queue;
+	PlaybackDecoder::highspeed_link_notification_queue_type highspeed_link_notification_queue;
 	PlaybackDecoder::spike_pack_counts_type spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type madc_sample_pack_counts;
 	boost::hana::for_each(response_queue, [](auto const& q) { EXPECT_EQ(q.size(), 0); });
 	EXPECT_EQ(spike_queue.size(), 0);
 	EXPECT_EQ(madc_sample_queue.size(), 0);
+	EXPECT_EQ(highspeed_link_notification_queue.size(), 0);
 
 	PlaybackDecoder decoder(
-	    response_queue, spike_queue, madc_sample_queue, spike_pack_counts, madc_sample_pack_counts);
+	    response_queue, spike_queue, madc_sample_queue, highspeed_link_notification_queue,
+	    spike_pack_counts, madc_sample_pack_counts);
 
 	decoder(UTMessageFromFPGA<instruction::from_fpga_system::Loopback>());
 	boost::hana::for_each(response_queue, [](auto const& q) { EXPECT_EQ(q.size(), 0); });

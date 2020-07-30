@@ -331,3 +331,71 @@ TEST(SpikeFromChipEvent, CerealizeCoverage)
 	}
 	ASSERT_EQ(obj1, obj2);
 }
+
+TEST(HighspeedLinkNotification, General)
+{
+	using namespace fisch::vx;
+	using namespace halco::hicann_dls::vx;
+
+	EXPECT_NO_THROW(HighspeedLinkNotification());
+	EXPECT_NO_THROW(HighspeedLinkNotification(HighspeedLinkNotification::Value(), FPGATime()));
+
+	HighspeedLinkNotification config;
+	HighspeedLinkNotification other_config = config;
+
+	EXPECT_EQ(other_config, config);
+
+	{
+		HighspeedLinkNotification::Value value(0x12);
+		config.set_value(value);
+		EXPECT_EQ(config.get_value(), value);
+	}
+
+	{
+		FPGATime value(3);
+		config.set_fpga_time(value);
+		EXPECT_EQ(config.get_fpga_time(), value);
+	}
+
+	EXPECT_NE(config, other_config);
+
+	HighspeedLinkNotification config3 = config;
+	EXPECT_EQ(config, config3);
+}
+
+TEST(HighspeedLinkNotification, Ostream)
+{
+	using namespace fisch::vx;
+	using namespace halco::hicann_dls::vx;
+
+	HighspeedLinkNotification obj(HighspeedLinkNotification::Value(12), FPGATime(6));
+
+	std::stringstream stream;
+	stream << obj;
+
+	EXPECT_EQ(stream.str(), "HighspeedLinkNotification(Value(12), FPGATime(6))");
+}
+
+TEST(HighspeedLinkNotification, CerealizeCoverage)
+{
+	using namespace fisch::vx;
+	using namespace halco::hicann_dls::vx;
+
+	HighspeedLinkNotification obj1, obj2;
+
+	obj1.set_value(HighspeedLinkNotification::Value(0x12));
+	obj1.set_fpga_time(FPGATime(3));
+
+	std::ostringstream ostream;
+	{
+		cereal::JSONOutputArchive oa(ostream);
+		oa(obj1);
+	}
+
+	std::istringstream istream(ostream.str());
+	{
+		cereal::JSONInputArchive ia(istream);
+		ia(obj2);
+	}
+	ASSERT_EQ(obj1, obj2);
+}

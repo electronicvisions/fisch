@@ -12,11 +12,13 @@ PlaybackDecoder::PlaybackDecoder(
     response_queue_type& response_queue,
     spike_queue_type& spike_queue,
     madc_sample_queue_type& madc_sample_queue,
+    highspeed_link_notification_queue_type& highspeed_link_notification_queue,
     spike_pack_counts_type& spike_pack_counts,
     madc_sample_pack_counts_type& madc_sample_pack_counts) :
     m_response_queue(response_queue),
     m_spike_queue(spike_queue),
     m_madc_sample_queue(madc_sample_queue),
+    m_highspeed_link_notification_queue(highspeed_link_notification_queue),
     m_spike_pack_counts(spike_pack_counts),
     m_madc_sample_pack_counts(madc_sample_pack_counts),
     m_time_current(0)
@@ -100,6 +102,14 @@ void PlaybackDecoder::process(
 		    m_time_current));
 	}
 	m_madc_sample_pack_counts[halco::hicann_dls::vx::MADCSamplePackFromFPGAOnDLS(N)]++;
+}
+
+void PlaybackDecoder::process(ut_message_from_fpga_highspeed_link_notification_type const& message)
+{
+	m_highspeed_link_notification_queue.push_back(HighspeedLinkNotification(
+	    HighspeedLinkNotification::Value(
+	        static_cast<HighspeedLinkNotification::Value::value_type>(message.decode())),
+	    m_time_current));
 }
 
 ChipTime PlaybackDecoder::calculate_chip_time(uint8_t const timestamp) const

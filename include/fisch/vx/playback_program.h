@@ -35,6 +35,7 @@ public:
 
 	typedef std::vector<SpikeFromChipEvent> spike_from_chip_events_type;
 	typedef std::vector<MADCSampleFromChipEvent> madc_sample_from_chip_events_type;
+	typedef std::vector<HighspeedLinkNotification> highspeed_link_notifications_type;
 
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>
 	    spike_pack_counts_type GENPYBIND(opaque(false));
@@ -68,6 +69,13 @@ public:
 	 */
 	GENPYBIND(getter_for(madc_samples))
 	madc_sample_from_chip_events_type const& get_madc_samples() const;
+
+	/**
+	 * Get vector of time-annotated highspeed-link notifications.
+	 * @return Vector of notifications
+	 */
+	GENPYBIND(getter_for(highspeed_link_notifications))
+	highspeed_link_notifications_type const& get_highspeed_link_notifications() const;
 
 	/**
 	 * Check that result data to all tickets is available.
@@ -139,6 +147,8 @@ private:
 	PlaybackDecoder::response_queue_type m_receive_queue;
 	PlaybackDecoder::spike_queue_type m_spike_response_queue;
 	PlaybackDecoder::madc_sample_queue_type m_madc_sample_response_queue;
+	PlaybackDecoder::highspeed_link_notification_queue_type
+	    m_highspeed_link_notification_response_queue;
 	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
 
