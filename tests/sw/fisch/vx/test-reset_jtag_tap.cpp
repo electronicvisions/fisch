@@ -29,7 +29,7 @@ TEST(ResetJTAGTap, EncodeWrite)
 	auto messages = obj.encode_write(typename ResetJTAGTap::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Init>>(messages.at(0));
+	auto message = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Init>>(messages.at(0));
 	EXPECT_EQ(message, UTMessageToFPGA<instruction::to_fpga_jtag::Init>());
 }
 

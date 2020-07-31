@@ -29,7 +29,7 @@ TEST(NullPayloadReadable, EncodeRead)
 	auto messages = obj.encode_read(typename NullPayloadReadable::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<UTMessageToFPGA<instruction::system::Loopback>>(messages.at(0));
+	auto message = std::get<UTMessageToFPGA<instruction::system::Loopback>>(messages.at(0));
 	EXPECT_EQ(message.decode(), instruction::system::Loopback::tick);
 }
 

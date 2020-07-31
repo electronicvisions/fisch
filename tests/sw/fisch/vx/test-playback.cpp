@@ -430,7 +430,7 @@ TEST(PlaybackProgramBuilder, WaitUntil)
 	    UTMessageToFPGA<timing::WaitUntil>(timing::WaitUntil::Payload(0x123));
 	EXPECT_EQ(
 	    expected_to_fpga_message,
-	    boost::get<decltype(expected_to_fpga_message)>(program_to_fpga_messages.at(0)));
+	    std::get<decltype(expected_to_fpga_message)>(program_to_fpga_messages.at(0)));
 }
 
 TEST(PlaybackProgram, CerealizeCoverage)

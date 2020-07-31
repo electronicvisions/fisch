@@ -31,7 +31,7 @@ TEST(Barrier, EncodeWrite)
 	auto messages = obj.encode_write(typename Barrier::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
-	auto message = boost::get<UTMessageToFPGA<instruction::timing::Barrier>>(messages.at(0));
+	auto message = std::get<UTMessageToFPGA<instruction::timing::Barrier>>(messages.at(0));
 	EXPECT_EQ(static_cast<uintmax_t>(message.decode()), obj.get());
 }
 

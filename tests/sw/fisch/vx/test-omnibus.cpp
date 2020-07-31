@@ -45,7 +45,7 @@ TEST(Omnibus, EncodeRead)
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message_addr =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(
 	    message_addr, UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	                      instruction::omnibus_to_fpga::Address::Payload(coord, true)));
@@ -65,12 +65,12 @@ TEST(Omnibus, EncodeWrite)
 
 	EXPECT_EQ(messages.size(), 2);
 	auto message_addr =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(
 	    message_addr, UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	                      instruction::omnibus_to_fpga::Address::Payload(coord, false, 0)));
 	auto message_data =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
 	    message_data, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
 	                      instruction::omnibus_to_fpga::Data::Payload(obj.get().value())));

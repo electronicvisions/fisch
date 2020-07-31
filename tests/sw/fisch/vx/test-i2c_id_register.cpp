@@ -49,24 +49,24 @@ TEST(I2CIdRegister, EncodeRead)
 	        i2c_eeprom_base_address | i2c_over_omnibus_repeat_start, true));
 
 	auto message_addr_1 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(message_addr_1, addr_write);
 	auto message_data_1 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
 	    message_data_1, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
 	                        instruction::omnibus_to_fpga::Data::Payload(0xfc)));
 	auto message_addr_2 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
 	EXPECT_EQ(message_addr_2, repeat_start_addr);
 	auto message_addr_3 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(3));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(3));
 	EXPECT_EQ(message_addr_3, addr);
 	auto message_addr_4 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(4));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(4));
 	EXPECT_EQ(message_addr_4, addr);
 	auto message_addr_5 =
-	    boost::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(5));
+	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(5));
 	EXPECT_EQ(message_addr_5, stop_addr);
 }
 

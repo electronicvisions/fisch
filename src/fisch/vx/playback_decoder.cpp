@@ -29,7 +29,7 @@ PlaybackDecoder::PlaybackDecoder(
 void PlaybackDecoder::operator()(ut_message_from_fpga_variant_type const& message)
 {
 	m_time_current = FPGATime(m_time_current + 1);
-	boost::apply_visitor([this](auto m) { process(m); }, message);
+	std::visit([this](auto m) { process(m); }, message);
 }
 
 void PlaybackDecoder::clear()

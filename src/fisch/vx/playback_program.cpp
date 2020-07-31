@@ -13,7 +13,7 @@
 #include <sstream>
 #include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/for_each.hpp>
-#include <cereal/types/boost_variant.hpp>
+#include <cereal/types/variant.hpp>
 #include <cereal/types/vector.hpp>
 
 namespace cereal {
@@ -142,7 +142,9 @@ bool PlaybackProgram::run_ok() const
 		   << "; total: " << m_instructions.size() << "). Printing additional context:"
 		   << "\n";
 		for (auto i = min_instruction; i <= error.get_value().value(); i++) {
-			ss << "Instruction(" << i << "): " << m_instructions.at(i) << "\n";
+			ss << "Instruction(" << i << "): ";
+			std::visit([&ss](auto const& ins) { ss << ins; }, m_instructions.at(i));
+			ss << "\n";
 		}
 		FISCH_LOG_ERROR(logger, ss.str());
 		return false;
@@ -168,7 +170,7 @@ std::ostream& operator<<(std::ostream& os, PlaybackProgram const& program)
 		if (it != messages.cbegin()) {
 			os << std::endl;
 		}
-		boost::apply_visitor([&os](auto m) { os << m; }, *it);
+		std::visit([&os](auto m) { os << m; }, *it);
 	}
 	return os;
 }

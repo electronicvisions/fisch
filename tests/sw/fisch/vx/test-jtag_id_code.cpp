@@ -19,10 +19,9 @@ TEST(JTAGIdCode, EncodeRead)
 	auto messages = obj.encode_read(typename JTAGIdCode::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 2);
-	auto message_ins = boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
+	auto message_ins = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
 	EXPECT_EQ(message_ins.decode(), instruction::to_fpga_jtag::Ins::IDCODE);
-	auto message_data =
-	    boost::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
+	auto message_data = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Data>>(messages.at(1));
 	EXPECT_EQ(message_data.decode().get_payload(), 0);
 	EXPECT_EQ(message_data.decode().get_keep_response(), true);
 	EXPECT_EQ(message_data.decode().get_num_bits(), sizeof(uint32_t) * CHAR_BIT);
