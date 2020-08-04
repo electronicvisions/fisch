@@ -128,6 +128,8 @@ public:
 	bool operator!=(PlaybackProgram const& other) const;
 
 private:
+	friend class ReinitStackEntry;
+
 	friend class PlaybackProgramBuilder;
 
 	template <typename T>

@@ -4,5 +4,6 @@
 #include "fisch/vx/omnibus_data.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
+#include "fisch/vx/reinit_stack_entry.h"
 #include "fisch/vx/run.h"
 #include "fisch/vx/run_time_info.h"

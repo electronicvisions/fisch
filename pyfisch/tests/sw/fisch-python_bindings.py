@@ -9,7 +9,6 @@ import random
 # This is on module level as many unittest frameworks will ignore main
 random.seed(1234)
 
-
 def get_all_classes(m):
     ret = dict()
     for name, obj in inspect.getmembers(m):
@@ -22,7 +21,7 @@ def get_all_classes(m):
 
 classes = get_all_classes(pyfisch_vx)
 
-ignored_classes = []
+ignored_classes = [pyfisch_vx.ReinitStackEntry]
 
 class PyBindings(unittest.TestCase):
     def instantiate_with_guessed_constructor(self, obj):
