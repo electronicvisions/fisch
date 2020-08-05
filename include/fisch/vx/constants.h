@@ -22,5 +22,8 @@ constexpr size_t dac_value_max = 0xfff;
 /** Minimal xboard DAC channel value. */
 constexpr size_t dac_value_min = 0;
 
+/** Memory size on FPGA in instructions for playback execution. */
+constexpr size_t playback_memory_size_to_fpga = 128768;
+
 } // namespace vx
 } // namespace fisch

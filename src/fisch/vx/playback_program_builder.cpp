@@ -1,5 +1,7 @@
 #include "fisch/vx/playback_program_builder.h"
 
+#include "fisch/common/logger.h"
+#include "fisch/vx/constants.h"
 #include "fisch/vx/container.h"
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/playback_program.h"
@@ -104,6 +106,13 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 
 std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
+	if (size_to_fpga() > playback_memory_size_to_fpga) {
+		auto logger = log4cxx::Logger::getLogger("fisch.PlaybackProgramBuilder");
+		FISCH_LOG_WARN(
+		    logger, "PlaybackProgram instruction size ("
+		                << size_to_fpga() << ") larger than playback memory size on FPGA ("
+		                << playback_memory_size_to_fpga << ") -> no timing guarantees possible.");
+	}
 	std::shared_ptr<PlaybackProgram> ret(m_program);
 	m_program = std::make_shared<PlaybackProgram>();
 	return ret;
