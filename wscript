@@ -61,7 +61,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/sw/fisch/vx/*.cpp'),
-        target = 'fisch_swtests_vx',
+        target = 'fisch_swtest_vx',
         use = ['fisch_vx'],
     )
 
@@ -78,7 +78,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_hwtests_vx',
+        target = 'fisch_hwtest_vx',
         use = ['fisch_vx', 'fisch_hwtest_vx_inc', 'BOOST4FISCHTOOLS'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE
@@ -87,7 +87,7 @@ def build(bld):
     bld(
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_simtests_vx',
+        target = 'fisch_simtest_vx',
         use = ['fisch_vx', 'fisch_simtest_vx_inc', 'BOOST4FISCHTOOLS'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = not bld.env.DLSvx_SIM_AVAILABLE,

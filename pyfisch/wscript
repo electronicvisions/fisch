@@ -39,7 +39,7 @@ def build(bld):
     )
 
     bld(
-        target='pyfisch_swtests_vx',
+        target='pyfisch_swtest_vx',
         tests=bld.path.ant_glob('tests/sw/*.py'),
         features='use pytest',
         use='pyfisch_vx',
