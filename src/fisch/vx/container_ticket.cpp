@@ -77,7 +77,8 @@ private:
 
 	typename MessageIterator::difference_type distance_to(DecodeIterator const other) const
 	{
-		return std::distance(it, other.it) / ContainerT::decode_ut_message_count;
+		return std::distance(it, other.it) /
+		       typename MessageIterator::difference_type(ContainerT::decode_ut_message_count);
 	}
 
 	ContainerT& dereference() const
@@ -104,8 +105,6 @@ std::vector<ContainerT> ContainerTicket<ContainerT>::get() const
 		if (!valid()) {
 			throw std::runtime_error("Data not available.");
 		}
-
-		std::vector<ContainerT> containers;
 
 		auto const& queue =
 		    std::get<detail::decode_message_types_index<ContainerT>>(m_pbp->m_receive_queue);
