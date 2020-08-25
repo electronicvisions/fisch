@@ -3,6 +3,7 @@
 #include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/for_each.hpp>
 
+#include "fisch/common/logger.h"
 #include "hate/math.h"
 #include "hxcomm/vx/utmessage.h"
 
@@ -110,6 +111,13 @@ void PlaybackDecoder::process(ut_message_from_fpga_highspeed_link_notification_t
 	    HighspeedLinkNotification::Value(
 	        static_cast<HighspeedLinkNotification::Value::value_type>(message.decode())),
 	    m_time_current));
+}
+
+void PlaybackDecoder::process(ut_message_from_fpga_timeout_notification_type const& /*message*/)
+{
+	// ignore for now
+	auto logger = log4cxx::Logger::getLogger("fisch.PlaybackDecoder.process()");
+	FISCH_LOG_TRACE(logger, "Timeout notification ignored");
 }
 
 ChipTime PlaybackDecoder::calculate_chip_time(uint8_t const timestamp) const

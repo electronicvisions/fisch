@@ -162,6 +162,10 @@ private:
 	    hxcomm::vx::instruction::from_fpga_system::HighspeedLinkNotification>
 	    ut_message_from_fpga_highspeed_link_notification_type;
 	void process(ut_message_from_fpga_highspeed_link_notification_type const& message);
+	typedef hxcomm::vx::UTMessageFromFPGA<
+	    hxcomm::vx::instruction::from_fpga_system::TimeoutNotification>
+	    ut_message_from_fpga_timeout_notification_type;
+	void process(ut_message_from_fpga_timeout_notification_type const& message);
 
 	ChipTime calculate_chip_time(uint8_t timestamp) const;
 
