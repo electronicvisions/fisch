@@ -132,7 +132,8 @@ TEST(Omnibus, ByteEnables)
 		// generate random address in top-PPU Synram
 		std::mt19937 rng(std::random_device{}());
 		std::uniform_int_distribution<uint32_t> d(
-		    0, SynapseQuadColumnOnDLS::size * (SynapseRowOnSynram::size + 2 /* switch rows */) *
+		    0, 256 /* SynapseQuadColumnOnDLS::size */ *
+		           (256 /* SynapseRowOnSynram::size */ + 2 /* switch rows */) *
 		           2 /* weights + addresses */);
 		OmnibusAddress address(synram_synapse_top_base_address + d(rng));
 
