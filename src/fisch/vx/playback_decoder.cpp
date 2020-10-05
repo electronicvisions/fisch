@@ -117,9 +117,10 @@ void PlaybackDecoder::process(ut_message_from_fpga_timeout_notification_type con
 {
 	// ignore for now
 	auto logger = log4cxx::Logger::getLogger("fisch.PlaybackDecoder.process()");
-	FISCH_LOG_WARN(
-	    logger, "Timeout notification at " << m_time_current << " ignored: instruction("
-	                                       << static_cast<uint32_t>(message.decode()) << ")");
+	FISCH_LOG_ERROR(
+	    logger, "Playback instruction timeout notification at "
+	                << m_time_current << " ignored: instruction("
+	                << static_cast<uint32_t>(message.decode()) << ")");
 }
 
 ChipTime PlaybackDecoder::calculate_chip_time(uint8_t const timestamp) const
