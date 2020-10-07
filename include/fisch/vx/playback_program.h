@@ -78,10 +78,16 @@ public:
 	highspeed_link_notifications_type const& get_highspeed_link_notifications() const;
 
 	/**
+	 * Check if we did not receive fatal error notifications from the FPGA.
+	 * @return Boolean value (true if ok)
+	 */
+	bool run_ok() const;
+
+	/**
 	 * Check that result data to all tickets is available.
 	 * @return Boolean value
 	 */
-	bool valid() const;
+	bool tickets_valid() const;
 
 	/**
 	 * Print instruction UT messages to ostream.
@@ -151,6 +157,7 @@ private:
 	    m_highspeed_link_notification_response_queue;
 	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
+	PlaybackDecoder::timeout_notification_queue_type m_timeout_notification_response_queue;
 
 	PlaybackDecoder m_decoder;
 	std::array<size_t, std::tuple_size<decltype(m_receive_queue)>::value> m_queue_expected_size;

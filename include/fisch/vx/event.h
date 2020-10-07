@@ -442,4 +442,70 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
+/**
+ * Notification from the FPGA indicating a playback instruction timeout.
+ */
+class GENPYBIND(visible) TimeoutNotification
+{
+public:
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::BaseType<Value, uint32_t>
+	{
+		constexpr explicit Value(value_type const val = 0) : base_t(val) {}
+	};
+
+	/**
+	 * Construct Playback instruction timeout notification from a value and an
+	 * FPGA time.
+	 * @param value Value to store
+	 * @param fpga_time FPGATime time annotation
+	 */
+	explicit TimeoutNotification(
+	    Value const& value = Value(), FPGATime const& fpga_time = FPGATime()) :
+	    m_value(value), m_fpga_time(fpga_time)
+	{}
+
+	/**
+	 * Get value data.
+	 * @return Value data
+	 */
+	GENPYBIND(getter_for(value))
+	Value get_value() const;
+
+	/**
+	 * Get value data.
+	 * @param value Value data
+	 */
+	GENPYBIND(setter_for(value))
+	void set_value(Value const& value);
+
+	/**
+	 * Get FPGA time annotation.
+	 * @return FPGATime time annotation
+	 */
+	GENPYBIND(getter_for(fpga_time))
+	FPGATime get_fpga_time() const;
+
+	/**
+	 * Set FPGA time annotation.
+	 * @param value FPGATime time annotation
+	 */
+	GENPYBIND(setter_for(fpga_time))
+	void set_fpga_time(FPGATime const& value);
+
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, TimeoutNotification const& event);
+
+	bool operator==(TimeoutNotification const& other) const;
+	bool operator!=(TimeoutNotification const& other) const;
+
+private:
+	Value m_value;
+	FPGATime m_fpga_time;
+
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t const version);
+};
+
 } // namespace fisch::vx

@@ -1,10 +1,7 @@
 #include "fisch/vx/playback_program.h"
 
-#include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/for_each.hpp>
-#include <cereal/types/boost_variant.hpp>
-#include <cereal/types/vector.hpp>
 #include "fisch/cerealization.h"
+#include "fisch/common/logger.h"
 #include "fisch/vx/container.h"
 #include "fisch/vx/container_ticket.h"
 #include "halco/common/cerealization_geometry.h"
@@ -12,6 +9,12 @@
 #include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/common/cerealization_utmessage.h"
 #include "hxcomm/vx/utmessage.h"
+#include <algorithm>
+#include <sstream>
+#include <boost/hana/ext/std/tuple.hpp>
+#include <boost/hana/for_each.hpp>
+#include <cereal/types/boost_variant.hpp>
+#include <cereal/types/vector.hpp>
 
 namespace cereal {
 
@@ -54,13 +57,15 @@ PlaybackProgram::PlaybackProgram() :
     m_highspeed_link_notification_response_queue(),
     m_spike_pack_counts(),
     m_madc_sample_pack_counts(),
+    m_timeout_notification_response_queue(),
     m_decoder(
         m_receive_queue,
         m_spike_response_queue,
         m_madc_sample_response_queue,
         m_highspeed_link_notification_response_queue,
         m_spike_pack_counts,
-        m_madc_sample_pack_counts),
+        m_madc_sample_pack_counts,
+        m_timeout_notification_response_queue),
     m_queue_expected_size()
 {
 	m_queue_expected_size.fill(0);
@@ -118,7 +123,34 @@ PlaybackProgram::get_highspeed_link_notifications() const
 	return m_highspeed_link_notification_response_queue;
 }
 
-bool PlaybackProgram::valid() const
+bool PlaybackProgram::run_ok() const
+{
+	// Sophisticated logic to check if we encountered an error.
+	auto logger = log4cxx::Logger::getLogger("fisch.PlaybackProgram.run_ok()");
+	if (!m_timeout_notification_response_queue.empty()) {
+		// reporting first fatal error as we do not expect more than one
+		if (m_timeout_notification_response_queue.size() > 1) {
+			FISCH_LOG_ERROR(
+			    logger, "Program execution illegally triggered multiple error conditions.")
+		}
+		auto const error = m_timeout_notification_response_queue.front();
+		auto const num_context = 10;
+		auto const min_instruction = std::max(0u, error.get_value() - num_context);
+		std::stringstream ss;
+		ss << "Program execution triggered a Playback instruction timeout notification at "
+		   << error.get_fpga_time() << ", instruction(" << error.get_value().value()
+		   << "; total: " << m_instructions.size() << "). Printing additional context:"
+		   << "\n";
+		for (auto i = min_instruction; i <= error.get_value().value(); i++) {
+			ss << "Instruction(" << i << "): " << m_instructions.at(i) << "\n";
+		}
+		FISCH_LOG_ERROR(logger, ss.str());
+		return false;
+	}
+	return true;
+}
+
+bool PlaybackProgram::tickets_valid() const
 {
 	size_t i = 0;
 	bool valid = true;
@@ -171,6 +203,7 @@ bool PlaybackProgram::operator==(PlaybackProgram const& other) const
 	           other.m_highspeed_link_notification_response_queue &&
 	       m_spike_pack_counts == other.m_spike_pack_counts &&
 	       m_madc_sample_pack_counts == other.m_madc_sample_pack_counts &&
+	       m_timeout_notification_response_queue == other.m_timeout_notification_response_queue &&
 	       m_queue_expected_size == other.m_queue_expected_size;
 }
 
@@ -190,6 +223,7 @@ void PlaybackProgram::serialize(Archive& ar, std::uint32_t const)
 	ar(CEREAL_NVP(m_spike_pack_counts));
 	ar(CEREAL_NVP(m_madc_sample_pack_counts));
 	ar(CEREAL_NVP(m_queue_expected_size));
+	ar(CEREAL_NVP(m_timeout_notification_response_queue));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)

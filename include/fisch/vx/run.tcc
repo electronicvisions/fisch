@@ -16,7 +16,11 @@ RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& 
 	for (auto const& message : responses) {
 		program->push_from_fpga_message(message);
 	}
-	if (!program->valid()) {
+	if (!program->run_ok()) {
+		throw std::runtime_error("FPGA sent error notification(s). Please check"
+			" for previous error messages.");
+	}
+	if (!program->tickets_valid()) {
 		throw std::runtime_error("Not all response data to PlaybackProgram valid.");
 	}
 	return {connection_time_info, std::chrono::nanoseconds(timer.get_ns())};

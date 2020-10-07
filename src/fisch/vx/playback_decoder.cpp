@@ -3,7 +3,6 @@
 #include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/for_each.hpp>
 
-#include "fisch/common/logger.h"
 #include "hate/math.h"
 #include "hxcomm/vx/utmessage.h"
 
@@ -15,13 +14,15 @@ PlaybackDecoder::PlaybackDecoder(
     madc_sample_queue_type& madc_sample_queue,
     highspeed_link_notification_queue_type& highspeed_link_notification_queue,
     spike_pack_counts_type& spike_pack_counts,
-    madc_sample_pack_counts_type& madc_sample_pack_counts) :
+    madc_sample_pack_counts_type& madc_sample_pack_counts,
+    timeout_notification_queue_type& timeout_notification_queue) :
     m_response_queue(response_queue),
     m_spike_queue(spike_queue),
     m_madc_sample_queue(madc_sample_queue),
     m_highspeed_link_notification_queue(highspeed_link_notification_queue),
     m_spike_pack_counts(spike_pack_counts),
     m_madc_sample_pack_counts(madc_sample_pack_counts),
+    m_timeout_notification_queue(timeout_notification_queue),
     m_time_current(0)
 {}
 
@@ -115,12 +116,10 @@ void PlaybackDecoder::process(ut_message_from_fpga_highspeed_link_notification_t
 
 void PlaybackDecoder::process(ut_message_from_fpga_timeout_notification_type const& message)
 {
-	// ignore for now
-	auto logger = log4cxx::Logger::getLogger("fisch.PlaybackDecoder.process()");
-	FISCH_LOG_ERROR(
-	    logger, "Playback instruction timeout notification at "
-	                << m_time_current << " ignored: instruction("
-	                << static_cast<uint32_t>(message.decode()) << ")");
+	m_timeout_notification_queue.push_back(TimeoutNotification(
+	    TimeoutNotification::Value(
+	        static_cast<TimeoutNotification::Value::value_type>(message.decode())),
+	    m_time_current));
 }
 
 ChipTime PlaybackDecoder::calculate_chip_time(uint8_t const timestamp) const

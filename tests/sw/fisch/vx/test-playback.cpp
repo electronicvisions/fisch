@@ -198,7 +198,7 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 
 	program->push_from_fpga_message(from_fpga_message);
 
-	EXPECT_TRUE(program->valid());
+	EXPECT_TRUE(program->tickets_valid());
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
 	auto result = ticket.get();
@@ -240,13 +240,13 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 	program->push_from_fpga_message(from_fpga_message_1);
 	EXPECT_FALSE(ticket.valid());
 	EXPECT_THROW(ticket.get(), std::runtime_error);
-	EXPECT_FALSE(program->valid());
+	EXPECT_FALSE(program->tickets_valid());
 
 	// enough messages
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>
 	    from_fpga_message_2(hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(0x87654321));
 	program->push_from_fpga_message(from_fpga_message_2);
-	EXPECT_TRUE(program->valid());
+	EXPECT_TRUE(program->tickets_valid());
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
 	auto result = ticket.get();
@@ -283,7 +283,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 	EXPECT_FALSE(tickets.at(1).valid());
 	EXPECT_NO_THROW(tickets.at(0).get());
 	EXPECT_THROW(tickets.at(1).get(), std::runtime_error);
-	EXPECT_FALSE(program->valid());
+	EXPECT_FALSE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
 		EXPECT_EQ(result_1.size(), 1);
@@ -298,7 +298,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 		EXPECT_TRUE(ticket.valid());
 		EXPECT_NO_THROW(ticket.get());
 	}
-	EXPECT_TRUE(program->valid());
+	EXPECT_TRUE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
 		auto result_2 = tickets.at(1).get();
@@ -344,7 +344,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	EXPECT_NO_THROW(tickets.at(0).get());
 	EXPECT_FALSE(tickets.at(1).valid());
 	EXPECT_THROW(tickets.at(1).get(), std::runtime_error);
-	EXPECT_FALSE(program->valid());
+	EXPECT_FALSE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
 		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
@@ -359,7 +359,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	EXPECT_NO_THROW(tickets.at(0).get());
 	EXPECT_FALSE(tickets.at(1).valid());
 	EXPECT_THROW(tickets.at(1).get(), std::runtime_error);
-	EXPECT_FALSE(program->valid());
+	EXPECT_FALSE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
 		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
@@ -374,7 +374,7 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 		EXPECT_TRUE(ticket.valid());
 		EXPECT_NO_THROW(ticket.get());
 	}
-	EXPECT_TRUE(program->valid());
+	EXPECT_TRUE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
 		auto result_2 = tickets.at(1).get();

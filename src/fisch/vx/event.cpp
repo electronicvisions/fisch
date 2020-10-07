@@ -320,6 +320,53 @@ void HighspeedLinkNotification::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(HighspeedLinkNotification)
 
+
+TimeoutNotification::Value TimeoutNotification::get_value() const
+{
+	return m_value;
+}
+
+void TimeoutNotification::set_value(Value const& value)
+{
+	m_value = value;
+}
+
+FPGATime TimeoutNotification::get_fpga_time() const
+{
+	return m_fpga_time;
+}
+
+void TimeoutNotification::set_fpga_time(FPGATime const& value)
+{
+	m_fpga_time = value;
+}
+
+std::ostream& operator<<(std::ostream& os, TimeoutNotification const& event)
+{
+	std::stringstream ss;
+	os << "TimeoutNotification(" << event.m_value << ", " << event.m_fpga_time << ")";
+	return os;
+}
+
+bool TimeoutNotification::operator==(TimeoutNotification const& other) const
+{
+	return (m_value == other.m_value) && (m_fpga_time == other.m_fpga_time);
+}
+
+bool TimeoutNotification::operator!=(TimeoutNotification const& other) const
+{
+	return !(*this == other);
+}
+
+template <class Archive>
+void TimeoutNotification::serialize(Archive& ar, std::uint32_t const)
+{
+	ar(CEREAL_NVP(m_value));
+	ar(CEREAL_NVP(m_fpga_time));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(TimeoutNotification)
+
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<1>, 0)
@@ -330,3 +377,4 @@ CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChip, 0)
 CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChipEvent, 0)
 CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChipEvent, 0)
 CEREAL_CLASS_VERSION(fisch::vx::HighspeedLinkNotification, 0)
+CEREAL_CLASS_VERSION(fisch::vx::TimeoutNotification, 0)

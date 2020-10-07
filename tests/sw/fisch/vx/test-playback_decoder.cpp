@@ -22,6 +22,7 @@ TEST(PlaybackDecoder, JTAG)
 	PlaybackDecoder::highspeed_link_notification_queue_type highspeed_link_notification_queue;
 	PlaybackDecoder::spike_pack_counts_type spike_pack_counts;
 	PlaybackDecoder::madc_sample_pack_counts_type madc_sample_pack_counts;
+	PlaybackDecoder::timeout_notification_queue_type timeout_notification_queue;
 	boost::hana::for_each(response_queue, [](auto const& q) { EXPECT_EQ(q.size(), 0); });
 	EXPECT_EQ(spike_queue.size(), 0);
 	EXPECT_EQ(madc_sample_queue.size(), 0);
@@ -29,7 +30,7 @@ TEST(PlaybackDecoder, JTAG)
 
 	PlaybackDecoder decoder(
 	    response_queue, spike_queue, madc_sample_queue, highspeed_link_notification_queue,
-	    spike_pack_counts, madc_sample_pack_counts);
+	    spike_pack_counts, madc_sample_pack_counts, timeout_notification_queue);
 
 	decoder(UTMessageFromFPGA<instruction::from_fpga_system::Loopback>());
 	boost::hana::for_each(response_queue, [](auto const& q) { EXPECT_EQ(q.size(), 0); });

@@ -103,6 +103,7 @@ public:
 	    spike_pack_counts_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::MADCSamplePackFromFPGAOnDLS>
 	    madc_sample_pack_counts_type;
+	typedef std::vector<TimeoutNotification> timeout_notification_queue_type;
 
 	typedef hxcomm::vx::UTMessageFromFPGAVariant ut_message_from_fpga_variant_type;
 
@@ -121,7 +122,8 @@ public:
 	    madc_sample_queue_type& madc_sample_queue,
 	    highspeed_link_notification_queue_type& highspeed_link_notification_queue,
 	    spike_pack_counts_type& spike_pack_counts,
-	    madc_sample_pack_counts_type& madc_sample_pack_counts);
+	    madc_sample_pack_counts_type& madc_sample_pack_counts,
+	    timeout_notification_queue_type& timeout_notification_queue);
 
 	/**
 	 * Process a message.
@@ -175,6 +177,7 @@ private:
 	highspeed_link_notification_queue_type& m_highspeed_link_notification_queue;
 	spike_pack_counts_type& m_spike_pack_counts;
 	madc_sample_pack_counts_type& m_madc_sample_pack_counts;
+	timeout_notification_queue_type& m_timeout_notification_queue;
 
 	FPGATime m_time_current;
 };
