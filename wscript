@@ -9,7 +9,9 @@ def depends(dep):
     dep('hxcomm')
     dep('code-format')
     dep('logger')
-    dep.recurse('pyfisch')
+
+    if getattr(dep.options, 'with_fisch_python_bindings', True):
+        dep.recurse('pyfisch')
 
 
 def options(opt):
@@ -18,12 +20,15 @@ def options(opt):
     opt.load('test_base')
     opt.load("doxygen")
     opt.recurse('pyfisch')
-    opt.add_option("--fisch-loglevel",
-                   choices=["trace", "debug", "info",
-                            "warning", "error", "fatal"],
-                   default="warning",
-                   help="Maximal loglevel to compile in.")
 
+    hopts = opt.add_option_group('fisch options')
+    hopts.add_option("--fisch-loglevel",
+                     choices=["trace", "debug", "info",
+                              "warning", "error", "fatal"],
+                     default="warning",
+                     help="Maximal loglevel to compile in.")
+    hopts.add_withoption('fisch-python-bindings', default=True,
+                         help='Toggle the generation and build of fisch python bindings')
 
 def configure(cfg):
     cfg.load('compiler_cxx')
@@ -31,7 +36,10 @@ def configure(cfg):
     cfg.load('test_base')
     cfg.load("doxygen")
     cfg.check_boost(lib='program_options', uselib_store='BOOST4FISCHTOOLS')
-    cfg.recurse('pyfisch')
+
+    if getattr(cfg.options, 'with_fisch_python_bindings', True):
+        cfg.recurse('pyfisch')
+
     cfg.define(
         "FISCH_LOG_THRESHOLD",
         {'trace':   0,
@@ -94,7 +102,8 @@ def build(bld):
         test_timeout = 500
     )
 
-    bld.recurse('pyfisch')
+    if getattr(bld.options, 'with_fisch_python_bindings', True):
+        bld.recurse('pyfisch')
 
     bld(
         features = 'doxygen',
