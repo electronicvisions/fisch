@@ -35,7 +35,7 @@ extern "C"
 
 #if !defined(FISCH_LOG_THRESHOLD) || FISCH_LOG_THRESHOLD <= 3
 #define FISCH_LOG_WARN(logger, message)                                                            \
-	LOG4CXX_WARN(logger, message)                                                                  \
+	LOG4CXX_WARN(logger, message);                                                                 \
 	FISCH_LOG_SYSLOG(LOG_WARNING, message)
 #else
 #define FISCH_LOG_WARN(logger, message) FISCH_LOG_SYSLOG(LOG_WARNING, message)
@@ -43,7 +43,7 @@ extern "C"
 
 #if !defined(FISCH_LOG_THRESHOLD) || FISCH_LOG_THRESHOLD <= 4
 #define FISCH_LOG_ERROR(logger, message)                                                           \
-	LOG4CXX_ERROR(logger, message)                                                                 \
+	LOG4CXX_ERROR(logger, message);                                                                \
 	FISCH_LOG_SYSLOG(LOG_ERR, message)
 #else
 #define FISCH_LOG_ERROR(logger, message) FISCH_LOG_SYSLOG(LOG_ERR, message)
@@ -51,7 +51,7 @@ extern "C"
 
 #if !defined(FISCH_LOG_THRESHOLD) || FISCH_LOG_THRESHOLD <= 5
 #define FISCH_LOG_FATAL(logger, message)                                                           \
-	LOG4CXX_FATAL(logger, message)                                                                 \
+	LOG4CXX_FATAL(logger, message);                                                                \
 	FISCH_LOG_SYSLOG(LOG_CRIT, message)
 #else
 #define FISCH_LOG_FATAL(logger, message) FISCH_LOG_SYSLOG(LOG_CRIT, message)
