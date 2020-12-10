@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fisch/vx/constants.h"
 #include "halco/common/geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
@@ -19,6 +20,7 @@ struct I2CINA219RwRegisterOnBoard;
 struct I2CTCA9554RoRegisterOnBoard;
 struct I2CTCA9554RwRegisterOnBoard;
 struct I2CAD5252RwRegisterOnBoard;
+struct I2CDAC6573RwRegisterOnBoard;
 } // namespace halco::hicann_dls::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
@@ -378,6 +380,53 @@ private:
 };
 
 
+struct GENPYBIND(inline_base("*")) I2CDAC6573RwRegisterValue
+    : public halco::common::detail::RantWrapper<
+          I2CDAC6573RwRegisterValue,
+          uint_fast16_t,
+          fisch::vx::dac6573_value_max,
+          fisch::vx::dac_value_min>
+{
+	constexpr explicit I2CDAC6573RwRegisterValue(uintmax_t const val = 0)
+	    GENPYBIND(implicit_conversion) :
+	    rant_t(val)
+	{}
+};
+
+/**
+ * Container for accessing a read-write register of a DAC6573
+ */
+class GENPYBIND(inline_base("*")) I2CDAC6573RwRegister
+    : public I2CRwRegister<
+          I2CDAC6573RwRegister,
+          I2CDAC6573RwRegisterValue,
+          halco::hicann_dls::vx::I2CDAC6573RwRegisterOnBoard>
+{
+public:
+	/**
+	 * Construct an instance with a default value.
+	 */
+	explicit I2CDAC6573RwRegister() : I2CRwRegister() {}
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Value to construct instance with
+	 */
+	explicit I2CDAC6573RwRegister(Value value) : I2CRwRegister(value) {}
+
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
+	    coordinate_type const& coord) const GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
+
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
+	    get_base_address(coordinate_type const&);
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t);
+};
+
 } // namespace fisch::vx
 
 namespace std {
@@ -388,5 +437,6 @@ HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CINA219RwRegisterValue)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RoRegisterValue)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RwRegisterValue)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CAD5252RwRegisterValue)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CDAC6573RwRegisterValue)
 
 } // namespace std
