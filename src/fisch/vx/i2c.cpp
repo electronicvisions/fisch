@@ -259,21 +259,52 @@ void I2CTCA9554RwRegister::serialize(Archive& ar, std::uint32_t)
 	ar(cereal::base_class<I2CRoRegister<I2CTCA9554RwRegister, Value, coordinate_type>>(this));
 }
 
+
+uint8_t I2CAD5252RwRegister::get_register_address(coordinate_type const& coord)
+{
+	constexpr static std::array<uint8_t, 2> register_on_channel{
+	    halco::hicann_dls::vx::I2CAD5252RwRegisterOnAD5252Channel::rdac_volatile_prefix,
+	    halco::hicann_dls::vx::I2CAD5252RwRegisterOnAD5252Channel::eemem_persistent_prefix};
+	constexpr static std::array<uint8_t, 2> channel_on_da5252{0x01, 0x03};
+
+	return register_on_channel.at(coord.toI2CAD5252RwRegisterOnAD5252Channel()) +
+	       channel_on_da5252.at(coord.toAD5252ChannelOnAD5252());
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CAD5252RwRegister::get_base_address(
+    coordinate_type const& coord)
+{
+	// The AD5252 on the ultra96 have addresses 0x2d, 0x2e, 0x2f in this order. 0x2c is omitted.
+	return halco::hicann_dls::vx::OmnibusAddress(
+	    i2c_ad5252_base_address + coord.toAD5252ChannelOnBoard().toAD5252OnBoard() + 1);
+}
+
+template <class Archive>
+void I2CAD5252RwRegister::serialize(Archive& ar, std::uint32_t)
+{
+	ar(CEREAL_NVP(m_data));
+}
+
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
 
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9554RwRegister)
+EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CAD5252RwRegister)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RwRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CAD5252RwRegister)
 
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::I2CIdRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RoRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RwRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RoRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RwRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CAD5252RwRegister, 0)
