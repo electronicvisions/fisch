@@ -16,6 +16,8 @@ namespace halco::hicann_dls::vx {
 struct I2CIdRegisterOnBoard;
 struct I2CINA219RoRegisterOnBoard;
 struct I2CINA219RwRegisterOnBoard;
+struct I2CTCA9554RoRegisterOnBoard;
+struct I2CTCA9554RwRegisterOnBoard;
 } // namespace halco::hicann_dls::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
@@ -246,12 +248,100 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-} // namespace fisch::vx
+
+struct GENPYBIND(inline_base("*")) I2CTCA9554RoRegisterValue
+    : public halco::common::detail::RantWrapper<
+          I2CTCA9554RoRegisterValue,
+          uint_fast16_t,
+          std::numeric_limits<uint8_t>::max(),
+          std::numeric_limits<uint8_t>::min()>
+{
+	constexpr explicit I2CTCA9554RoRegisterValue(uintmax_t const val = 0)
+	    GENPYBIND(implicit_conversion) :
+	    rant_t(val)
+	{}
+};
+
+/**
+ * Container for accessing a read-only I2C register on the TCA9554 IO Expander device.
+ */
+class GENPYBIND(inline_base("*")) I2CTCA9554RoRegister
+    : public I2CRoRegister<
+          I2CTCA9554RoRegister,
+          I2CTCA9554RoRegisterValue,
+          halco::hicann_dls::vx::I2CTCA9554RoRegisterOnBoard>
+{
+public:
+	/**
+	 * Construct an instance with a default value.
+	 */
+	explicit I2CTCA9554RoRegister() : I2CRoRegister() {}
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Value to construct instance with
+	 */
+	explicit I2CTCA9554RoRegister(Value value) : I2CRoRegister(value) {}
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
+	    get_base_address(coordinate_type const&);
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t);
+};
+
+
+struct GENPYBIND(inline_base("*")) I2CTCA9554RwRegisterValue
+    : public halco::common::detail::RantWrapper<
+          I2CTCA9554RwRegisterValue,
+          uint_fast16_t,
+          std::numeric_limits<uint8_t>::max(),
+          std::numeric_limits<uint8_t>::min()>
+{
+	constexpr explicit I2CTCA9554RwRegisterValue(uintmax_t const val = 0)
+	    GENPYBIND(implicit_conversion) :
+	    rant_t(val)
+	{}
+};
+
+/**
+ * Container for accessing a read-write I2C register on the TCA9554 IO Expander device.
+ */
+class GENPYBIND(inline_base("*")) I2CTCA9554RwRegister
+    : public I2CRwRegister<
+          I2CTCA9554RwRegister,
+          I2CTCA9554RwRegisterValue,
+          halco::hicann_dls::vx::I2CTCA9554RwRegisterOnBoard>
+{
+public:
+	/**
+	 * Construct an instance with a default value.
+	 */
+	explicit I2CTCA9554RwRegister() : I2CRwRegister() {}
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Value to construct instance with
+	 */
+	explicit I2CTCA9554RwRegister(Value value) : I2CRwRegister(value) {}
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
+	    get_base_address(coordinate_type const&);
+
+private:
+	friend class cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t);
+};
+
+} // namespace fisch::vx`
 
 namespace std {
 
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CIdRegisterValue)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CINA219RoRegisterValue)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CINA219RwRegisterValue)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RoRegisterValue)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RwRegisterValue)
 
 } // namespace std

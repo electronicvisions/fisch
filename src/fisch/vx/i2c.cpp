@@ -220,14 +220,57 @@ void I2CINA219RwRegister::serialize(Archive& ar, std::uint32_t)
 }
 
 
+uint8_t I2CTCA9554RoRegister::get_register_address(coordinate_type const& coord)
+{
+	// The RO register(s) starts at 0 and is the only one.
+	return static_cast<uint8_t>(coord.toI2CTCA9554RoRegisterOnTCA9554());
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CTCA9554RoRegister::get_base_address(
+    coordinate_type const& coord)
+{
+	return halco::hicann_dls::vx::OmnibusAddress(
+	    i2c_tca9554_base_address + coord.toTCA9554OnBoard());
+}
+
+template <class Archive>
+void I2CTCA9554RoRegister::serialize(Archive& ar, std::uint32_t)
+{
+	ar(cereal::base_class<I2CRoRegister<I2CTCA9554RoRegister, Value, coordinate_type>>(this));
+}
+
+
+uint8_t I2CTCA9554RwRegister::get_register_address(coordinate_type const& coord)
+{
+	// The RW registers start at 1 and are indexed sequentially
+	return static_cast<uint8_t>(coord.toI2CTCA9554RwRegisterOnTCA9554() + 1);
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CTCA9554RwRegister::get_base_address(
+    coordinate_type const& coord)
+{
+	return halco::hicann_dls::vx::OmnibusAddress(
+	    i2c_tca9554_base_address + coord.toTCA9554OnBoard());
+}
+
+template <class Archive>
+void I2CTCA9554RwRegister::serialize(Archive& ar, std::uint32_t)
+{
+	ar(cereal::base_class<I2CRoRegister<I2CTCA9554RwRegister, Value, coordinate_type>>(this));
+}
+
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
+EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
 
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CINA219RwRegister)
+EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9554RwRegister)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RoRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RwRegister)
 
 } // namespace fisch::vx
 

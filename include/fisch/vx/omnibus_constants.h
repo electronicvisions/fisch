@@ -20,6 +20,9 @@ constexpr halco::hicann_dls::vx::OmnibusAddress i2c_eeprom_base_address{i2c_over
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_ina219_base_address{i2c_over_omnibus_mask +
                                                                         0x40};
 
+constexpr halco::hicann_dls::vx::OmnibusAddress i2c_tca9554_base_address{i2c_over_omnibus_mask +
+                                                                         0x38};
+
 constexpr OmnibusData spi_over_omnibus_stop_bit{0x8000'0000};
 
 /**
