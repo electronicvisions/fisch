@@ -4,30 +4,15 @@
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
+#include "test-macros.h"
 
-TEST(I2CINA219RwRegister, General)
-{
-	using namespace fisch::vx;
+using namespace fisch::vx;
 
-	EXPECT_NO_THROW(I2CINA219RwRegister());
-
-	I2CINA219RwRegister default_config;
-	EXPECT_EQ(default_config.get(), I2CINA219RwRegister::Value());
-
-	I2CINA219RwRegister::Value value(0x1234);
-	I2CINA219RwRegister value_config;
-	value_config.set(value);
-	EXPECT_EQ(value_config.get(), value);
-
-	I2CINA219RwRegister other_config = value_config;
-
-	EXPECT_EQ(other_config, value_config);
-	EXPECT_NE(default_config, value_config);
-}
+FISCH_TEST_NUMBER_REGISTER_GENERAL(I2CINA219RwRegister, 0, 0x1234)
+FISCH_TEST_NUMBER_REGISTER_CEREAL(I2CINA219RwRegister, 0x1234)
 
 TEST(I2CINA219RwRegister, EncodeRead)
 {
-	using namespace fisch::vx;
 	using namespace hxcomm::vx;
 
 	typename I2CINA219RwRegister::coordinate_type coord(
@@ -39,10 +24,10 @@ TEST(I2CINA219RwRegister, EncodeRead)
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	    instruction::omnibus_to_fpga::Address::Payload((i2c_ina219_base_address + 2), false));
 
-	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	auto addr_read = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	    instruction::omnibus_to_fpga::Address::Payload((i2c_ina219_base_address + 2), true));
 
-	auto stop_addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
+	auto addr_read_stop = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
 	    instruction::omnibus_to_fpga::Address::Payload(
 	        (i2c_ina219_base_address + 2) | i2c_over_omnibus_stop, true));
 
@@ -56,15 +41,14 @@ TEST(I2CINA219RwRegister, EncodeRead)
 	                        instruction::omnibus_to_fpga::Data::Payload(0x5)));
 	auto message_addr_2 =
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
-	EXPECT_EQ(message_addr_2, addr);
+	EXPECT_EQ(message_addr_2, addr_read);
 	auto message_addr_3 =
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(3));
-	EXPECT_EQ(message_addr_3, stop_addr);
+	EXPECT_EQ(message_addr_3, addr_read_stop);
 }
 
 TEST(I2CINA219RwRegister, EncodeWrite)
 {
-	using namespace fisch::vx;
 	using namespace hxcomm::vx;
 
 	typename I2CINA219RwRegister::coordinate_type coord(
@@ -109,8 +93,6 @@ TEST(I2CINA219RwRegister, EncodeWrite)
 
 TEST(I2CINA219RwRegister, Ostream)
 {
-	using namespace fisch::vx;
-
 	I2CINA219RwRegister obj;
 	obj.set(I2CINA219RwRegister::Value(13));
 
@@ -118,25 +100,4 @@ TEST(I2CINA219RwRegister, Ostream)
 	stream << obj;
 
 	EXPECT_EQ(stream.str(), "I2CINA219RwRegister(0d13 0xd 0b0000000000001101)");
-}
-
-TEST(I2CINA219RwRegister, CerealizeCoverage)
-{
-	using namespace fisch::vx;
-
-	I2CINA219RwRegister obj1, obj2;
-	obj1.set(I2CINA219RwRegister::Value(0x1234));
-
-	std::ostringstream ostream;
-	{
-		cereal::JSONOutputArchive oa(ostream);
-		oa(obj1);
-	}
-
-	std::istringstream istream(ostream.str());
-	{
-		cereal::JSONInputArchive ia(istream);
-		ia(obj2);
-	}
-	ASSERT_EQ(obj1, obj2);
 }
