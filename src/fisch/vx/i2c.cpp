@@ -285,6 +285,83 @@ void I2CAD5252RwRegister::serialize(Archive& ar, std::uint32_t)
 	ar(CEREAL_NVP(m_data));
 }
 
+
+std::array<hxcomm::vx::UTMessageToFPGAVariant, I2CDAC6573RwRegister::encode_write_ut_message_count>
+I2CDAC6573RwRegister::encode_write(I2CDAC6573RwRegister::coordinate_type const& coord) const
+    GENPYBIND(hidden)
+{
+	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
+
+	// The hw-register only uses the 10 MSB out of 16 bits in the register. We need to shift the
+	// data 6 bits to the left to align it properly accross the two I2C bytes.
+	const int sizeof_data = I2CDAC6573RwRegister::register_size_bytes;
+
+	std::array<uint8_t, sizeof_data> data;
+	uint16_t shifted_data = m_data << 6;
+
+	for (int i = 0; i < sizeof_data; i++) {
+		data[i] = 0xFF & (shifted_data >> (sizeof_data - (i + 1)) * CHAR_BIT);
+	}
+
+	// The following is simply I2CRwRegister::encode_write in the special case of 2 data-bytes.
+	auto register_addr = I2CDAC6573RwRegister::get_register_address(coord);
+	halco::hicann_dls::vx::OmnibusAddress base_addr = I2CDAC6573RwRegister::get_base_address(coord);
+
+	auto enc_write_register = Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr);
+	ret[0] = enc_write_register[0];
+	ret[1] = enc_write_register[1];
+
+	auto enc_write_data = Omnibus(Omnibus::Value(data[0])).encode_write(base_addr);
+	ret[2] = enc_write_data[0];
+	ret[3] = enc_write_data[1];
+
+	auto enc_write_stop =
+	    Omnibus(Omnibus::Value(data[1]))
+	        .encode_write(halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop));
+	ret[4] = enc_write_stop[0];
+	ret[5] = enc_write_stop[1];
+
+	return ret;
+}
+
+void I2CDAC6573RwRegister::decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden)
+{
+	Value::value_type value = 0;
+	for (size_t i = 0; i < messages.size(); ++i) {
+		Omnibus word;
+		word.decode({messages.begin() + i, messages.begin() + i});
+
+		// Check for I2C ack
+		if (word.get().value() & (1ul << 31)) {
+			throw std::runtime_error("I2C ack missing, data invalid.");
+		}
+
+		value |= (word.get() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
+	}
+
+	// The hw-register only uses the 10 MSB out of 16 bits.
+	m_data = Value(value >> 6);
+}
+
+uint8_t I2CDAC6573RwRegister::get_register_address(coordinate_type const& coord)
+{
+	return halco::hicann_dls::vx::I2CDAC6573RwRegisterOnBoard::register_base_addr +
+	       (coord.toDAC6573ChannelOnDAC6573() << 1);
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CDAC6573RwRegister::get_base_address(
+    coordinate_type const& coord)
+{
+	return halco::hicann_dls::vx::OmnibusAddress(
+	    i2c_dac6573_base_address + coord.toDAC6573OnBoard());
+}
+
+template <class Archive>
+void I2CDAC6573RwRegister::serialize(Archive& ar, std::uint32_t)
+{
+	ar(CEREAL_NVP(m_data));
+}
+
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
@@ -292,6 +369,7 @@ EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9554RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CAD5252RwRegister)
+EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CDAC6573RwRegister)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
@@ -299,6 +377,7 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CAD5252RwRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CDAC6573RwRegister)
 
 } // namespace fisch::vx
 
@@ -308,3 +387,4 @@ CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RoRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CAD5252RwRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CDAC6573RwRegister, 0)
