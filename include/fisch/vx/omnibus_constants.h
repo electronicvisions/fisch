@@ -4,13 +4,20 @@
 
 namespace fisch::vx {
 
+// cf. omnibus_top bus splits
 constexpr halco::hicann_dls::vx::OmnibusAddress fpga_omnibus_mask{0x8000'0000};
-constexpr halco::hicann_dls::vx::OmnibusAddress ut_omnibus_mask{0x0400'0000 | fpga_omnibus_mask};
-constexpr halco::hicann_dls::vx::OmnibusAddress phy_omnibus_mask{0x0200'0000 | ut_omnibus_mask};
-constexpr halco::hicann_dls::vx::OmnibusAddress spi_over_omnibus_mask{0x0100'0000 |
-                                                                      phy_omnibus_mask};
-constexpr halco::hicann_dls::vx::OmnibusAddress i2c_over_omnibus_mask{0x0780'0000 |
-                                                                      fpga_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress external_ppu_memory_base_address{
+    0x0000'0000 | fpga_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress executor_omnibus_mask{
+    0x0800'0000 | external_ppu_memory_base_address};
+constexpr halco::hicann_dls::vx::OmnibusAddress ut_omnibus_mask{
+    0x0000'4000 | executor_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress phy_omnibus_mask{0x0000'2000 | ut_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress spi_over_omnibus_mask{
+    0x0000'1000 | phy_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress i2c_over_omnibus_mask{
+    0x0000'0800 | spi_over_omnibus_mask};
+
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_prescaler_base_address{i2c_over_omnibus_mask +
                                                                            0x200};
 

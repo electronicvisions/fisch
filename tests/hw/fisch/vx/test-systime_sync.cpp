@@ -4,6 +4,7 @@
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/jtag.h"
 #include "fisch/vx/omnibus.h"
+#include "fisch/vx/omnibus_constants.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/reset.h"
@@ -35,15 +36,14 @@ TEST(SystimeSync, TimeAnnotation)
 	// configure FPGA-side PHYs
 	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
 		Omnibus config(OmnibusData(0x0020'4040));
-		OmnibusAddress coord(0x8600'0000 + i);
+		OmnibusAddress coord{phy_omnibus_mask + i};
 		builder.write(coord, config);
 	}
 
 	// enable FPGA-side PHYs
 	{
 		Omnibus config(OmnibusData(0xff));
-		OmnibusAddress coord(0x8400'0000);
-		builder.write(coord, config);
+		builder.write(ut_omnibus_mask, config);
 	}
 
 	// configure Chip-side PHYs
