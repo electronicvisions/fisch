@@ -168,6 +168,12 @@ public:
 	 */
 	size_t size_to_fpga() const;
 
+	/**
+	 * Get number of UT messages from FPGA.
+	 * @return Size
+	 */
+	size_t size_from_fpga() const;
+
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
 };

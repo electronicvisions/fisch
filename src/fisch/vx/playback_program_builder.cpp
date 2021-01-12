@@ -225,6 +225,15 @@ size_t PlaybackProgramBuilder::size_to_fpga() const
 	return m_program->m_instructions.size();
 }
 
+size_t PlaybackProgramBuilder::size_from_fpga() const
+{
+	size_t size = 0;
+	for (auto const s : m_program->m_queue_expected_size) {
+		size += s;
+	}
+	return size;
+}
+
 bool PlaybackProgramBuilder::is_write_only() const
 {
 	return std::all_of(
