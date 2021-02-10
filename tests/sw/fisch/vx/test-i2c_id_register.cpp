@@ -44,10 +44,6 @@ TEST(I2CIdRegister, EncodeRead)
 	    instruction::omnibus_to_fpga::Address::Payload(
 	        i2c_eeprom_base_address | i2c_over_omnibus_stop, true));
 
-	auto repeat_start_addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
-	    instruction::omnibus_to_fpga::Address::Payload(
-	        i2c_eeprom_base_address | i2c_over_omnibus_repeat_start, true));
-
 	auto message_addr_1 =
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(0));
 	EXPECT_EQ(message_addr_1, addr_write);
@@ -58,7 +54,7 @@ TEST(I2CIdRegister, EncodeRead)
 	                        instruction::omnibus_to_fpga::Data::Payload(0xfc)));
 	auto message_addr_2 =
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(2));
-	EXPECT_EQ(message_addr_2, repeat_start_addr);
+	EXPECT_EQ(message_addr_2, addr);
 	auto message_addr_3 =
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Address>>(messages.at(3));
 	EXPECT_EQ(message_addr_3, addr);
