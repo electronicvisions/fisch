@@ -8,9 +8,7 @@
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/run.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-
-
-#include "connection.h"
+#include "hxcomm/vx/connection_from_env.h"
 
 using namespace halco::hicann_dls::vx;
 using namespace fisch::vx;
@@ -26,7 +24,7 @@ TEST(I2CIdRegister, DISABLED_Readout)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	auto connection = generate_test_connection();
+	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program);
 
 	EXPECT_TRUE(ticket.valid());

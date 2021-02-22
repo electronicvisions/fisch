@@ -11,8 +11,7 @@
 #include "fisch/vx/timer.h"
 #include "halco/common/iter_all.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-
-#include "connection.h"
+#include "hxcomm/vx/connection_from_env.h"
 
 using namespace halco::common;
 using namespace halco::hicann_dls::vx;
@@ -117,7 +116,7 @@ TEST(SpikePack1ToChip, Loopback)
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(1000)));
 	auto program = builder.done();
 
-	auto connection = generate_test_connection();
+	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program);
 
 	auto spikes = program->get_spikes();

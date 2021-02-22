@@ -10,8 +10,7 @@
 #include "fisch/vx/run.h"
 #include "fisch/vx/timer.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-
-#include "connection.h"
+#include "hxcomm/vx/connection_from_env.h"
 
 using namespace halco::hicann_dls::vx;
 using namespace fisch::vx;
@@ -68,7 +67,7 @@ TEST(PlaybackProgram, Rerun)
 	auto read_program = std::get<0>(program_n_ticket);
 	auto read_ticket = std::get<1>(program_n_ticket);
 
-	auto connection = generate_test_connection();
+	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program_write_1);
 	run(connection, read_program);
 	EXPECT_EQ(read_ticket.get().at(0), config_1);
@@ -138,7 +137,7 @@ TEST(PlaybackProgramBuilder, MergeBack)
 
 	auto program = builder.done();
 
-	auto connection = generate_test_connection();
+	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program);
 
 	EXPECT_TRUE(ticket_1.valid());

@@ -12,8 +12,7 @@
 #include "fisch/vx/timer.h"
 #include "halco/common/iter_all.h"
 #include "halco/hicann-dls/vx/coordinates.h"
-
-#include "connection.h"
+#include "hxcomm/vx/connection_from_env.h"
 
 using namespace halco::common;
 using namespace halco::hicann_dls::vx;
@@ -85,7 +84,7 @@ TEST(SystimeSync, TimeAnnotation)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	auto program = builder.done();
 
-	auto connection = generate_test_connection();
+	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program);
 
 	EXPECT_TRUE(ticket.valid());

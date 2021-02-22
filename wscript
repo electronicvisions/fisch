@@ -74,32 +74,13 @@ def build(bld):
     )
 
     bld(
-        target = 'fisch_hwtest_vx_inc',
-        export_includes = 'tests/hw/fisch/vx/connection_hw/',
-    )
-
-    bld(
-        target = 'fisch_simtest_vx_inc',
-        export_includes = 'tests/hw/fisch/vx/connection_sim/',
-    )
-
-    bld(
         features = 'cxx cxxprogram gtest',
         source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_hwtest_vx',
-        use = ['fisch_vx', 'fisch_hwtest_vx_inc', 'BOOST4FISCHTOOLS'],
+        target = 'fisch_hwsimtest_vx',
+        use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE
-    )
-
-    bld(
-        features = 'cxx cxxprogram gtest',
-        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_simtest_vx',
-        use = ['fisch_vx', 'fisch_simtest_vx_inc', 'BOOST4FISCHTOOLS'],
-        test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = not bld.env.DLSvx_SIM_AVAILABLE,
-        test_timeout = 1000
+        skip_run = not (bld.env.DLSvx_HARDWARE_AVAILABLE or bld.env.DLSvx_SIM_AVAILABLE),
+        test_timeout = 1000 if bld.env.DLSvx_SIM_AVAILABLE else 30
     )
 
     if getattr(bld.options, 'with_fisch_python_bindings', True):

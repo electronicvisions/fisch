@@ -1,3 +1,4 @@
+#include <variant>
 #include <gtest/gtest.h>
 
 #include "fisch/vx/barrier.h"
@@ -9,9 +10,8 @@
 #include "fisch/vx/run.h"
 #include "halco/hicann-dls/vx/barrier.h"
 #include "halco/hicann-dls/vx/i2c.h"
+#include "hxcomm/vx/connection_from_env.h"
 #include "hxcomm/vx/simconnection.h"
-
-#include "connection.h"
 
 using namespace halco::hicann_dls::vx;
 using namespace fisch::vx;
@@ -31,8 +31,8 @@ TEST(I2CINA219RwRegister, Rw)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	auto connection = generate_test_connection();
-	if constexpr (std::is_same_v<decltype(connection), hxcomm::vx::SimConnection>) {
+	auto connection = hxcomm::vx::get_connection_from_env();
+	if (std::holds_alternative<hxcomm::vx::SimConnection>(connection)) {
 		GTEST_SKIP() << "INA219 Register write read test only works in hardware.";
 	}
 	run(connection, program);
