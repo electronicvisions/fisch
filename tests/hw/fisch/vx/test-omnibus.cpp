@@ -26,7 +26,7 @@ constexpr uint32_t synram_synapse_top_base_address{synram_synacc_top_base_addres
 
 
 template <typename Connection>
-bool is_HXv2(Connection& connection)
+size_t get_hx_revision(Connection& connection)
 {
 	PlaybackProgramBuilder builder;
 
@@ -47,13 +47,13 @@ bool is_HXv2(Connection& connection)
 		run(connection, program);
 	}
 	auto const jtag_id = jtag_id_ticket.get().at(0).get();
-	if (jtag_id == 0x048580AF) {
-		return false;
-	} else if (jtag_id == 0x248580AF) {
-		return true;
-	} else {
-		throw std::runtime_error("Unknown JTAGID found.");
+	auto const hx_revision = jtag_id >> 28; // bits 28-31 represent the chip revision
+
+	if (hx_revision > 3) {
+		throw std::runtime_error("Unknown HX revision found.");
 	}
+
+	return hx_revision;
 }
 
 
@@ -61,116 +61,119 @@ TEST(Omnibus, ByteEnables)
 {
 	auto connection = hxcomm::vx::get_connection_from_env();
 
-	if (is_HXv2(connection)) {
-		PlaybackProgramBuilder builder;
-
-		// ------ start of setup chip ------
-		builder.write(ResetChipOnDLS(), ResetChip(true));
-		builder.write(TimerOnDLS(), Timer());
-		builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
-		builder.write(ResetChipOnDLS(), ResetChip(false));
-		builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
-
-		builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
-		builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
-
-		// configure PLL, without, events are corrupted by MADC events or broken L2
-		// configure ADPLLs
-		for (auto coord : iter_all<ADPLLOnDLS>()) {
-			JTAGPLLRegister reg0(JTAGPLLRegister::Value(0x2a20a902));
-			JTAGPLLRegister reg1(JTAGPLLRegister::Value(0xc0cbf200));
-
-			builder.write(JTAGPLLRegisterOnDLS(coord * 2), reg0);
-			builder.write(JTAGPLLRegisterOnDLS(coord * 2 + 1), reg1);
+	{
+		auto const hx_revision = get_hx_revision(connection);
+		if (hx_revision < 2) {
+			GTEST_SKIP() << "Test not supported on revision " << hx_revision;
 		}
+	}
 
-		// configure PLLClockOutputBlock
-		{
-			JTAGPLLRegister reg(JTAGPLLRegister::Value(0x918d8181));
-			builder.write(JTAGPLLRegisterOnDLS(4), reg);
-		}
+	PlaybackProgramBuilder builder;
 
-		// wait until PLL reconfiguration and Omnibus is up
-		builder.write(TimerOnDLS(), Timer());
-		builder.write(
-		    WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100 * fpga_clock_cycles_per_us)));
+	// ------ start of setup chip ------
+	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(TimerOnDLS(), Timer());
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
+	builder.write(ResetChipOnDLS(), ResetChip(false));
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
-		// configure FPGA-side PHYs
-		for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
-			Omnibus config(OmnibusData(0x0020'4040));
-			OmnibusAddress coord(0x8600'0000 + i);
-			builder.write(coord, config);
-		}
+	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
+	builder.write(ResetJTAGTapOnDLS(), ResetJTAGTap());
 
-		// enable FPGA-side PHYs
-		{
-			Omnibus config(OmnibusData(0xff));
-			OmnibusAddress coord(0x8400'0000);
-			builder.write(coord, config);
-		}
+	// configure PLL, without, events are corrupted by MADC events or broken L2
+	// configure ADPLLs
+	for (auto coord : iter_all<ADPLLOnDLS>()) {
+		JTAGPLLRegister reg0(JTAGPLLRegister::Value(0x2a20a902));
+		JTAGPLLRegister reg1(JTAGPLLRegister::Value(0xc0cbf200));
 
-		// configure Chip-side PHYs
-		for (auto coord : iter_all<JTAGPhyRegisterOnDLS>()) {
-			JTAGPhyRegister config(JTAGPhyRegister::Value(0x0020'4000));
-			builder.write(coord, config);
-		}
+		builder.write(JTAGPLLRegisterOnDLS(coord * 2), reg0);
+		builder.write(JTAGPLLRegisterOnDLS(coord * 2 + 1), reg1);
+	}
 
-		// enable Chip-side PHYs
-		{
-			OmnibusChipOverJTAG config(OmnibusData(0xff));
-			OmnibusChipOverJTAGAddress coord(0x0004'0000);
-			builder.write(coord, config);
-		}
+	// configure PLLClockOutputBlock
+	{
+		JTAGPLLRegister reg(JTAGPLLRegister::Value(0x918d8181));
+		builder.write(JTAGPLLRegisterOnDLS(4), reg);
+	}
 
-		// wait until highspeed is up
-		builder.write(TimerOnDLS(), Timer());
-		builder.write(
-		    WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
-		// ------ end of setup chip ------
+	// wait until PLL reconfiguration and Omnibus is up
+	builder.write(TimerOnDLS(), Timer());
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100 * fpga_clock_cycles_per_us)));
 
-		// generate random address in top-PPU Synram
-		std::mt19937 rng(std::random_device{}());
-		std::uniform_int_distribution<uint32_t> d(
-		    0, 64 /* SynapseQuadColumnOnDLS::size */ *
-		           (256 /* SynapseRowOnSynram::size */ + 2 /* switch rows */) *
-		           2 /* weights + addresses */);
-		OmnibusAddress address(synram_synapse_top_base_address + d(rng));
+	// configure FPGA-side PHYs
+	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
+		Omnibus config(OmnibusData(0x0020'4040));
+		OmnibusAddress coord(0x8600'0000 + i);
+		builder.write(coord, config);
+	}
 
-		Omnibus initial(OmnibusData(0x12345678));
-		builder.write(address, initial);
+	// enable FPGA-side PHYs
+	{
+		Omnibus config(OmnibusData(0xff));
+		OmnibusAddress coord(0x8400'0000);
+		builder.write(coord, config);
+	}
 
-		auto ticket_initial = builder.read(address);
+	// configure Chip-side PHYs
+	for (auto coord : iter_all<JTAGPhyRegisterOnDLS>()) {
+		JTAGPhyRegister config(JTAGPhyRegister::Value(0x0020'4000));
+		builder.write(coord, config);
+	}
 
-		std::vector<ContainerTicket<Omnibus>> tickets;
+	// enable Chip-side PHYs
+	{
+		OmnibusChipOverJTAG config(OmnibusData(0xff));
+		OmnibusChipOverJTAGAddress coord(0x0004'0000);
+		builder.write(coord, config);
+	}
 
-		for (size_t i = 0; i < std::tuple_size<Omnibus::ByteEnables>::value; ++i) {
-			Omnibus::ByteEnables byte_enables;
-			byte_enables.fill(false);
+	// wait until highspeed is up
+	builder.write(TimerOnDLS(), Timer());
+	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
+	// ------ end of setup chip ------
 
-			byte_enables.at(EntryOnQuad(i)) = true;
+	// generate random address in top-PPU Synram
+	std::mt19937 rng(std::random_device{}());
+	std::uniform_int_distribution<uint32_t> d(
+	    0, 64 /* SynapseQuadColumnOnDLS::size */ *
+	           (256 /* SynapseRowOnSynram::size */ + 2 /* switch rows */) *
+	           2 /* weights + addresses */);
+	OmnibusAddress address(synram_synapse_top_base_address + d(rng));
 
-			Omnibus only_one_byte(OmnibusData(0x87654321), byte_enables);
-			builder.write(address, only_one_byte);
-			tickets.push_back(builder.read(address));
-		}
+	Omnibus initial(OmnibusData(0x12345678));
+	builder.write(address, initial);
 
-		builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
-		auto program = builder.done();
+	auto ticket_initial = builder.read(address);
 
-		run(connection, program);
+	std::vector<ContainerTicket<Omnibus>> tickets;
 
-		EXPECT_TRUE(ticket_initial.valid());
-		EXPECT_EQ(ticket_initial.get().at(0).get(), OmnibusData(0x12345678));
+	for (size_t i = 0; i < std::tuple_size<Omnibus::ByteEnables>::value; ++i) {
+		Omnibus::ByteEnables byte_enables;
+		byte_enables.fill(false);
 
-		std::vector<OmnibusData> expectations;
-		expectations.push_back(OmnibusData(0x12345621));
-		expectations.push_back(OmnibusData(0x12344321));
-		expectations.push_back(OmnibusData(0x12654321));
-		expectations.push_back(OmnibusData(0x87654321));
+		byte_enables.at(EntryOnQuad(i)) = true;
 
-		for (size_t i = 0; i < tickets.size(); ++i) {
-			EXPECT_TRUE(tickets.at(i).valid());
-			EXPECT_EQ(tickets.at(i).get().at(0).get(), expectations.at(i));
-		}
+		Omnibus only_one_byte(OmnibusData(0x87654321), byte_enables);
+		builder.write(address, only_one_byte);
+		tickets.push_back(builder.read(address));
+	}
+
+	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
+	auto program = builder.done();
+
+	run(connection, program);
+
+	EXPECT_TRUE(ticket_initial.valid());
+	EXPECT_EQ(ticket_initial.get().at(0).get(), OmnibusData(0x12345678));
+
+	std::vector<OmnibusData> expectations;
+	expectations.push_back(OmnibusData(0x12345621));
+	expectations.push_back(OmnibusData(0x12344321));
+	expectations.push_back(OmnibusData(0x12654321));
+	expectations.push_back(OmnibusData(0x87654321));
+
+	for (size_t i = 0; i < tickets.size(); ++i) {
+		EXPECT_TRUE(tickets.at(i).valid());
+		EXPECT_EQ(tickets.at(i).get().at(0).get(), expectations.at(i));
 	}
 }
