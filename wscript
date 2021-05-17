@@ -87,13 +87,13 @@ def build(bld):
         bld.recurse('pyfisch')
 
     bld(
+        target = 'doxygen_fisch',
         features = 'doxygen',
-        name = 'fisch_documentation',
         doxyfile = bld.root.make_node(join(get_toplevel_path(), "code-format" ,"doxyfile")),
+        doxy_inputs = 'include/fisch',
         install_path = 'doc/fisch',
         pars = {
             "PROJECT_NAME": "\"FPGA Instruction Set Compiler for HICANN\"",
-            "INPUT": join(get_toplevel_path(), "fisch", "include"),
             "PREDEFINED": "GENPYBIND()= GENPYBIND_TAG_FISCH_VX=",
             "INCLUDE_PATH": join(get_toplevel_path(), "fisch", "include"),
             "OUTPUT_DIRECTORY": join(get_toplevel_path(), "build", "fisch", "doc")
