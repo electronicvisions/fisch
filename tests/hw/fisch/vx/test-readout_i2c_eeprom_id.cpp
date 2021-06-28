@@ -9,13 +9,24 @@
 #include "fisch/vx/run.h"
 #include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/vx/connection_from_env.h"
+#include "hxcomm/vx/target.h"
 
 using namespace halco::hicann_dls::vx;
 using namespace fisch::vx;
 
-// Disabled due to missing hardware support (Issue #3645)
-TEST(I2CIdRegister, DISABLED_Readout)
+TEST(I2CIdRegister, Readout)
 {
+	auto connection = hxcomm::vx::get_connection_from_env();
+
+	if (std::visit(
+	        [](auto& conn) {
+		        auto const supported_targets = std::set(conn.supported_targets);
+		        return !supported_targets.contains(hxcomm::vx::Target::hardware);
+	        },
+	        connection)) {
+		GTEST_SKIP() << "Connection does not support execution on hardware.";
+	}
+
 	PlaybackProgramBuilder builder;
 
 	builder.write(i2c_prescaler_base_address, Omnibus(Omnibus::Value(313)));
@@ -24,7 +35,6 @@ TEST(I2CIdRegister, DISABLED_Readout)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
 	run(connection, program);
 
 	EXPECT_TRUE(ticket.valid());
