@@ -1,7 +1,6 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/systime.h"
-#include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -60,30 +59,4 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-
-/** Systime type for FPGA executor times. */
-struct GENPYBIND(inline_base("*")) FPGATime
-    : public halco::common::detail::RantWrapper<FPGATime, uint64_t, 0x7ffffffffff, 0>
-{
-	constexpr explicit FPGATime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-	    rant_t(value)
-	{}
-};
-
-/** Systime type for chip annotated times. */
-struct GENPYBIND(inline_base("*")) ChipTime
-    : public halco::common::detail::RantWrapper<ChipTime, uint64_t, 0x7ffffffffff, 0>
-{
-	constexpr explicit ChipTime(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-	    rant_t(value)
-	{}
-};
-
 } // namespace fisch::vx
-
-namespace std {
-
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::FPGATime)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::ChipTime)
-
-} // namespace std

@@ -1,6 +1,7 @@
 #include "fisch/vx/container_ticket.h"
 
 #include "fisch/vx/container.h"
+#include "fisch/vx/fpga_time.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/traits.h"
 #include "hate/type_list.h"

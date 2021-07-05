@@ -1,6 +1,7 @@
 #pragma once
+#include "fisch/vx/chip_time.h"
+#include "fisch/vx/fpga_time.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/systime.h"
 #include "fisch/vx/word_access/type/event.h"
 #include "hate/join.h"
 #include "hxcomm/vx/utmessage_fwd.h"

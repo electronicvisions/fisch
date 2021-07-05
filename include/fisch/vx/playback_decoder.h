@@ -3,10 +3,11 @@
 
 #include "hxcomm/vx/utmessage.h"
 
+#include "fisch/vx/chip_time.h"
 #include "fisch/vx/decode_message_types.h"
 #include "fisch/vx/event.h"
+#include "fisch/vx/fpga_time.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/systime.h"
 #include "halco/common/typed_array.h"
 #include "halco/hicann-dls/vx/event.h"
 #include "hate/type_list.h"
