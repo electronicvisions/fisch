@@ -1,5 +1,6 @@
 #include "fisch/vx/reinit_stack_entry.h"
 
+#include "fisch/vx/detail/playback_program_impl.h"
 #include "hxcomm/vx/reinit_stack_entry.h"
 #include <algorithm>
 #include <stdexcept>
@@ -17,9 +18,10 @@ void ReinitStackEntry::set(std::shared_ptr<PlaybackProgram> const& pbmem, bool e
 		throw std::runtime_error("Unexpected access to moved-from object.");
 	}
 	assert(pbmem);
+	assert(pbmem->m_impl);
 	if (std::any_of(
-	        pbmem->m_queue_expected_size.begin(), pbmem->m_queue_expected_size.end(),
-	        [](auto const& a) { return a > 0; })) {
+	        pbmem->m_impl->m_queue_expected_size.begin(),
+	        pbmem->m_impl->m_queue_expected_size.end(), [](auto const& a) { return a > 0; })) {
 		throw std::runtime_error(
 		    "Reinit stack entry can only be set to write-only playback programs.");
 	}

@@ -1,8 +1,10 @@
 #pragma once
 #include "fisch/vx/event.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/playback_decoder.h"
+#include "halco/common/typed_array.h"
+#include "halco/hicann-dls/vx/event.h"
 #include "hxcomm/vx/utmessage_fwd.h"
+#include <memory>
 #include <unordered_set>
 #include <variant>
 
@@ -24,6 +26,10 @@ class ContainerTicket;
 
 #define PLAYBACK_CONTAINER(Name, Type) class Name;
 #include "fisch/vx/container.def"
+
+namespace detail {
+struct PlaybackProgramImpl;
+} // namespace detail
 
 /** Playback program. */
 class GENPYBIND(visible, holder_type("std::shared_ptr<fisch::vx::PlaybackProgram>")) PlaybackProgram
@@ -137,26 +143,7 @@ private:
 	template <typename T>
 	friend class ContainerTicket;
 
-#define LAST_PLAYBACK_CONTAINER(Name, Type) std::shared_ptr<detail::ContainerTicketStorage<Type>>
-#define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
-	mutable std::unordered_set<std::variant<
-#include "fisch/vx/container.def"
-	    >>
-	    m_tickets;
-
-	std::vector<to_fpga_message_type> m_instructions;
-
-	PlaybackDecoder::response_queue_type m_receive_queue;
-	PlaybackDecoder::spike_queue_type m_spike_response_queue;
-	PlaybackDecoder::madc_sample_queue_type m_madc_sample_response_queue;
-	PlaybackDecoder::highspeed_link_notification_queue_type
-	    m_highspeed_link_notification_response_queue;
-	PlaybackDecoder::spike_pack_counts_type m_spike_pack_counts;
-	PlaybackDecoder::madc_sample_pack_counts_type m_madc_sample_pack_counts;
-	PlaybackDecoder::timeout_notification_queue_type m_timeout_notification_response_queue;
-
-	PlaybackDecoder m_decoder;
-	std::array<size_t, std::tuple_size<decltype(m_receive_queue)>::value> m_queue_expected_size;
+	std::unique_ptr<detail::PlaybackProgramImpl> m_impl;
 
 	friend class cereal::access;
 	template <typename Archive>

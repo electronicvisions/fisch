@@ -2,6 +2,7 @@
 
 #include "fisch/vx/container.h"
 #include "fisch/vx/decode_message_types.h"
+#include "fisch/vx/detail/playback_program_impl.h"
 #include "fisch/vx/fpga_time.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/traits.h"
@@ -94,8 +95,9 @@ std::vector<ContainerT> ContainerTicket<ContainerT>::get() const
 			throw std::runtime_error("Unexpected access to moved-from object.");
 		}
 		assert(m_storage->m_pbp);
+		assert(m_storage->m_pbp->m_impl);
 		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
-		    m_storage->m_pbp->m_receive_queue);
+		    m_storage->m_pbp->m_impl->m_receive_queue);
 
 		auto const begin_it = queue.get_messages().cbegin() + m_storage->m_pos;
 		typedef detail::DecodeIterator<ContainerT, std::remove_cv_t<decltype(begin_it)>> Iterator;
@@ -115,8 +117,9 @@ bool ContainerTicket<ContainerT>::valid() const
 			throw std::runtime_error("Unexpected access to moved-from object.");
 		}
 		assert(m_storage->m_pbp);
+		assert(m_storage->m_pbp->m_impl);
 		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
-		    m_storage->m_pbp->m_receive_queue);
+		    m_storage->m_pbp->m_impl->m_receive_queue);
 		return (
 		    queue.size() >=
 		    (m_storage->m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
@@ -136,8 +139,9 @@ FPGATime ContainerTicket<ContainerT>::fpga_time() const
 			throw std::runtime_error("Unexpected access to moved-from object.");
 		}
 		assert(m_storage->m_pbp);
+		assert(m_storage->m_pbp->m_impl);
 		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
-		    m_storage->m_pbp->m_receive_queue);
+		    m_storage->m_pbp->m_impl->m_receive_queue);
 		return *(
 		    queue.get_times().cbegin() + m_storage->m_pos +
 		    m_container_count * ContainerT::decode_ut_message_count - 1);
