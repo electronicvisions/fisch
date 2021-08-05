@@ -86,19 +86,20 @@ def build(bld):
     if getattr(bld.options, 'with_fisch_python_bindings', True):
         bld.recurse('pyfisch')
 
-    bld(
-        target = 'doxygen_fisch',
-        features = 'doxygen',
-        doxyfile = bld.root.make_node(join(get_toplevel_path(), "code-format" ,"doxyfile")),
-        doxy_inputs = 'include/fisch',
-        install_path = 'doc/fisch',
-        pars = {
-            "PROJECT_NAME": "\"FPGA Instruction Set Compiler for HICANN\"",
-            "PREDEFINED": "GENPYBIND()= GENPYBIND_TAG_FISCH_VX=",
-            "INCLUDE_PATH": join(get_toplevel_path(), "fisch", "include"),
-            "OUTPUT_DIRECTORY": join(get_toplevel_path(), "build", "fisch", "doc")
-        },
-    )
+    if bld.env.DOXYGEN:
+        bld(
+            target = 'doxygen_fisch',
+            features = 'doxygen',
+            doxyfile = bld.root.make_node(join(get_toplevel_path(), "code-format" ,"doxyfile")),
+            doxy_inputs = 'include/fisch',
+            install_path = 'doc/fisch',
+            pars = {
+                "PROJECT_NAME": "\"FPGA Instruction Set Compiler for HICANN\"",
+                "PREDEFINED": "GENPYBIND()= GENPYBIND_TAG_FISCH_VX=",
+                "INCLUDE_PATH": join(get_toplevel_path(), "fisch", "include"),
+                "OUTPUT_DIRECTORY": join(get_toplevel_path(), "build", "fisch", "doc")
+            },
+        )
 
     # Create test summary (to stdout and XML file)
     bld.add_post_fun(summary)
