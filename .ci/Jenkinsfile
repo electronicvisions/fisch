@@ -2,6 +2,7 @@
 
 Map<String, Object> pipelineOptions = [
 		projects: ["fisch"],
+		moduleOptions: [modules: ["ppu-toolchain"]],
 		container: [app: "dls-core"],
 		notificationChannel: "#dls-software"
 ]
