@@ -113,8 +113,8 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 		                << size_to_fpga() << ") larger than playback memory size on FPGA ("
 		                << playback_memory_size_to_fpga << ") -> no timing guarantees possible.");
 	}
-	std::shared_ptr<PlaybackProgram> ret(m_program);
-	m_program = std::make_shared<PlaybackProgram>();
+	auto ret = std::make_shared<PlaybackProgram>();
+	std::swap(ret, m_program);
 	return ret;
 }
 
