@@ -10,6 +10,18 @@ class PlaybackProgramBuilder;
 class PlaybackProgram;
 struct FPGATime;
 
+namespace detail {
+
+template <typename ContainerT>
+struct ContainerTicketStorage
+{
+	typedef ContainerT container_type;
+	size_t m_pos;
+	std::shared_ptr<PlaybackProgram const> m_pbp;
+};
+
+} // namespace detail
+
 /**
  * Read-ticket for multiple containers.
  * @tparam ContainerT Container type of corresponding data
@@ -40,18 +52,20 @@ public:
 	 */
 	FPGATime fpga_time() const;
 
-	ContainerTicket(ContainerTicket const& other);
+	ContainerTicket(ContainerTicket const& other) = default;
 	ContainerTicket& operator=(ContainerTicket const& other) = default;
-	~ContainerTicket();
+	ContainerTicket(ContainerTicket&& other) = default;
+	ContainerTicket& operator=(ContainerTicket&& other) = default;
 
 private:
-	ContainerTicket(size_t container_count, size_t pos, std::shared_ptr<PlaybackProgram const> pbp);
+	ContainerTicket(
+	    size_t container_count,
+	    std::shared_ptr<detail::ContainerTicketStorage<ContainerT>> storage);
 
 	friend class PlaybackProgramBuilder;
 
 	size_t m_container_count;
-	size_t m_pos;
-	std::shared_ptr<PlaybackProgram const> m_pbp;
+	std::shared_ptr<detail::ContainerTicketStorage<ContainerT>> m_storage;
 };
 
 #ifdef __GENPYBIND__

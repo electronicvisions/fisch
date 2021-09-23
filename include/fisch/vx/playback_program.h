@@ -1,5 +1,4 @@
 #pragma once
-#include <mutex>
 #include <unordered_set>
 #include <variant>
 
@@ -16,6 +15,11 @@ class access;
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
+
+namespace detail {
+template <typename ContainerT>
+class ContainerTicketStorage;
+} // namespace detail
 
 template <typename ContainerT>
 class ContainerTicket;
@@ -135,20 +139,12 @@ private:
 	template <typename T>
 	friend class ContainerTicket;
 
-	template <typename U>
-	void register_ticket(U* const ticket) const;
-
-	template <typename U>
-	void deregister_ticket(U* const ticket) const;
-
-#define LAST_PLAYBACK_CONTAINER(Name, Type) ContainerTicket<Type>*
+#define LAST_PLAYBACK_CONTAINER(Name, Type) std::shared_ptr<detail::ContainerTicketStorage<Type>>
 #define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
 	mutable std::unordered_set<std::variant<
 #include "fisch/vx/container.def"
 	    >>
 	    m_tickets;
-
-	mutable std::mutex m_tickets_mutex;
 
 	std::vector<to_fpga_message_type> m_instructions;
 

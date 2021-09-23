@@ -12,26 +12,9 @@ namespace fisch::vx {
 
 template <class ContainerT>
 ContainerTicket<ContainerT>::ContainerTicket(
-    size_t container_count, size_t pos, std::shared_ptr<fisch::vx::PlaybackProgram const> pbp) :
-    m_container_count(container_count),
-    m_pos(pos),
-    m_pbp(pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-ContainerTicket<ContainerT>::ContainerTicket(ContainerTicket const& other) :
-    m_container_count(other.m_container_count), m_pos(other.m_pos), m_pbp(other.m_pbp)
-{
-	m_pbp->register_ticket(this);
-}
-
-template <class ContainerT>
-ContainerTicket<ContainerT>::~ContainerTicket()
-{
-	m_pbp->deregister_ticket(this);
-}
+    size_t container_count, std::shared_ptr<detail::ContainerTicketStorage<ContainerT>> storage) :
+    m_container_count(container_count), m_storage(std::move(storage))
+{}
 
 namespace detail {
 
@@ -106,10 +89,14 @@ std::vector<ContainerT> ContainerTicket<ContainerT>::get() const
 			throw std::runtime_error("Data not available.");
 		}
 
-		auto const& queue =
-		    std::get<detail::decode_message_types_index<ContainerT>>(m_pbp->m_receive_queue);
+		if (!m_storage) {
+			throw std::runtime_error("Unexpected access to moved-from object.");
+		}
+		assert(m_storage->m_pbp);
+		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
+		    m_storage->m_pbp->m_receive_queue);
 
-		auto const begin_it = queue.get_messages().cbegin() + m_pos;
+		auto const begin_it = queue.get_messages().cbegin() + m_storage->m_pos;
 		typedef detail::DecodeIterator<ContainerT, std::remove_cv_t<decltype(begin_it)>> Iterator;
 		return std::vector<ContainerT>(
 		    Iterator(begin_it),
@@ -123,10 +110,15 @@ template <class ContainerT>
 bool ContainerTicket<ContainerT>::valid() const
 {
 	if constexpr (IsReadable<ContainerT>::value) {
-		auto const& queue =
-		    std::get<detail::decode_message_types_index<ContainerT>>(m_pbp->m_receive_queue);
+		if (!m_storage) {
+			throw std::runtime_error("Unexpected access to moved-from object.");
+		}
+		assert(m_storage->m_pbp);
+		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
+		    m_storage->m_pbp->m_receive_queue);
 		return (
-		    queue.size() >= (m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
+		    queue.size() >=
+		    (m_storage->m_pos + (m_container_count * ContainerT::decode_ut_message_count)));
 	} else {
 		throw std::logic_error("Container not readable.");
 	}
@@ -139,10 +131,14 @@ FPGATime ContainerTicket<ContainerT>::fpga_time() const
 		if (!valid()) {
 			throw std::runtime_error("Data not available.");
 		}
-		auto const& queue =
-		    std::get<detail::decode_message_types_index<ContainerT>>(m_pbp->m_receive_queue);
+		if (!m_storage) {
+			throw std::runtime_error("Unexpected access to moved-from object.");
+		}
+		assert(m_storage->m_pbp);
+		auto const& queue = std::get<detail::decode_message_types_index<ContainerT>>(
+		    m_storage->m_pbp->m_receive_queue);
 		return *(
-		    queue.get_times().cbegin() + m_pos +
+		    queue.get_times().cbegin() + m_storage->m_pos +
 		    m_container_count * ContainerT::decode_ut_message_count - 1);
 	} else {
 		throw std::logic_error("Container not readable.");

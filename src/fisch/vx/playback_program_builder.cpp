@@ -75,7 +75,10 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
 		size_t const pos = queue_expected_size;
 		queue_expected_size += ContainerT::decode_ut_message_count;
-		return ContainerTicket<ContainerT>(1, pos, m_program);
+		auto ticket_storage =
+		    std::make_shared<detail::ContainerTicketStorage<ContainerT>>(pos, m_program);
+		m_program->m_tickets.insert(ticket_storage);
+		return ContainerTicket<ContainerT>(1, std::move(ticket_storage));
 	}
 }
 
@@ -90,7 +93,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		ss << "Coordinates [" << hate::join_string(coords, ", ") << "] can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
-		for (auto const coord : coords) {
+		for (auto const& coord : coords) {
 			auto const messages = ContainerT::encode_read(coord);
 			m_program->m_instructions.insert(
 			    m_program->m_instructions.end(), messages.cbegin(), messages.cend());
@@ -100,7 +103,10 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
 		size_t const pos = queue_expected_size;
 		queue_expected_size += coords.size() * ContainerT::decode_ut_message_count;
-		return ContainerTicket<ContainerT>(coords.size(), pos, m_program);
+		auto ticket_storage =
+		    std::make_shared<detail::ContainerTicketStorage<ContainerT>>(pos, m_program);
+		m_program->m_tickets.insert(ticket_storage);
+		return ContainerTicket<ContainerT>(coords.size(), std::move(ticket_storage));
 	}
 }
 
@@ -135,7 +141,8 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	// change program in tickets of other builder
 	// update position in response queues in tickets of other builder
 	auto ticket_changer = [this](auto const& ticket_ptr) {
-		typedef hate::remove_all_qualifiers_t<decltype(ticket_ptr)> ticket_type;
+		typedef
+		    typename hate::remove_all_qualifiers_t<decltype(ticket_ptr)>::element_type ticket_type;
 		typedef typename ticket_type::container_type container_type;
 		if constexpr (IsReadable<container_type>::value) {
 			// translation of response queue position
@@ -178,7 +185,8 @@ void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 
 	// update position in response queues in tickets of this builder
 	auto ticket_changer = [this, other](auto const& ticket_ptr) {
-		typedef hate::remove_all_qualifiers_t<decltype(ticket_ptr)> ticket_type;
+		typedef
+		    typename hate::remove_all_qualifiers_t<decltype(ticket_ptr)>::element_type ticket_type;
 		typedef typename ticket_type::container_type container_type;
 		if constexpr (IsReadable<container_type>::value) {
 			// translation of response queue position

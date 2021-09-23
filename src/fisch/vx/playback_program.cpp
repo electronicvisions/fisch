@@ -49,7 +49,6 @@ namespace fisch::vx {
 
 PlaybackProgram::PlaybackProgram() :
     m_tickets(),
-    m_tickets_mutex(),
     m_instructions(),
     m_receive_queue(),
     m_spike_response_queue(),
@@ -73,28 +72,6 @@ PlaybackProgram::PlaybackProgram() :
 
 PlaybackProgram::~PlaybackProgram()
 {}
-
-template <typename U>
-void PlaybackProgram::register_ticket(U* const ticket) const
-{
-	std::lock_guard<std::mutex> lock(m_tickets_mutex);
-	assert((m_tickets.find(ticket) == m_tickets.cend()) && "ticket can't be registered twice.");
-	m_tickets.insert(ticket);
-}
-
-template <typename U>
-void PlaybackProgram::deregister_ticket(U* const ticket) const
-{
-	std::lock_guard<std::mutex> lock(m_tickets_mutex);
-	auto const it = m_tickets.find(ticket);
-	assert((it != m_tickets.cend()) && "unknown ticket can't be deregistered.");
-	m_tickets.erase(it);
-}
-
-#define PLAYBACK_CONTAINER(Name, Type)                                                             \
-	template void PlaybackProgram::register_ticket(ContainerTicket<Type>* ticket) const;           \
-	template void PlaybackProgram::deregister_ticket(ContainerTicket<Type>* ticket) const;
-#include "fisch/vx/container.def"
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
 {
