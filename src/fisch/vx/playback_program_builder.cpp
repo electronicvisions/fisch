@@ -73,7 +73,7 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 
 		size_t& queue_expected_size =
 		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
-		size_t pos = queue_expected_size;
+		size_t const pos = queue_expected_size;
 		queue_expected_size += ContainerT::decode_ut_message_count;
 		return ContainerTicket<ContainerT>(1, pos, m_program);
 	}
@@ -98,7 +98,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 
 		size_t& queue_expected_size =
 		    m_program->m_queue_expected_size.at(detail::decode_message_types_index<ContainerT>);
-		size_t pos = queue_expected_size;
+		size_t const pos = queue_expected_size;
 		queue_expected_size += coords.size() * ContainerT::decode_ut_message_count;
 		return ContainerTicket<ContainerT>(coords.size(), pos, m_program);
 	}
