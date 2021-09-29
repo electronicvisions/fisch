@@ -83,6 +83,21 @@ def build(bld):
         test_timeout = 1000 if bld.env.DLSvx_SIM_AVAILABLE else 30
     )
 
+    # like fisch_hwsimtest_vx but not for sim backend (because of 2x test time
+    # otherwise); the defines enforces a local quiggeldy if no remote quiggeldy
+    # is available => tests quiggeldy wrapping locally
+    bld(
+        features = 'cxx cxxprogram gtest',
+        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
+        target = 'fisch_qghwsimtest_vx',
+        use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
+        defines = ['FISCH_TEST_LOCAL_QUIGGELDY'],
+        test_main = 'tests/hw/fisch/vx/main.cpp',
+        skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE,
+        depends_on = ["quiggeldy"],
+        test_timeout = 30
+    )
+
     if getattr(bld.options, 'with_fisch_python_bindings', True):
         bld.recurse('pyfisch')
 
