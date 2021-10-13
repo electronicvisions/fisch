@@ -70,7 +70,7 @@ TEST(OmnibusChipOverJTAG, EncodeWrite)
 	using namespace hxcomm::vx;
 
 	OmnibusChipOverJTAG obj;
-	obj.set(OmnibusData(12));
+	obj.set(OmnibusChipOverJTAG::Value(12));
 
 	typename OmnibusChipOverJTAG::coordinate_type coord(3);
 	auto messages = obj.encode_write(coord);
@@ -117,7 +117,7 @@ TEST(OmnibusChipOverJTAG, Ostream)
 {
 	using namespace fisch::vx;
 
-	OmnibusChipOverJTAG obj(OmnibusData(13));
+	OmnibusChipOverJTAG obj(OmnibusChipOverJTAG::Value(13));
 
 	std::stringstream stream;
 	stream << obj;

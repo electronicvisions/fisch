@@ -139,7 +139,7 @@ TEST(PlaybackProgramBuilder, WriteMultiple)
 {
 	PlaybackProgramBuilder builder;
 	std::vector<OmnibusAddress> addresses{OmnibusAddress(0), OmnibusAddress(1)};
-	std::vector<Omnibus> words{Omnibus(OmnibusData(0)), Omnibus(OmnibusData(1))};
+	std::vector<Omnibus> words{Omnibus(Omnibus::Value(0)), Omnibus(Omnibus::Value(1))};
 
 	auto const ref_addresses = addresses;
 	auto const ref_words = words;
@@ -151,8 +151,8 @@ TEST(PlaybackProgramBuilder, WriteMultiple)
 	EXPECT_THROW(builder.write(addresses, words), std::runtime_error);
 
 	// too much words
-	words.push_back(Omnibus(OmnibusData(2)));
-	words.push_back(Omnibus(OmnibusData(3)));
+	words.push_back(Omnibus(Omnibus::Value(2)));
+	words.push_back(Omnibus(Omnibus::Value(3)));
 	EXPECT_THROW(builder.write(addresses, words), std::runtime_error);
 
 	auto program = builder.done();

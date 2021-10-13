@@ -6,7 +6,6 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/omnibus_data.h"
 
 namespace cereal {
 class access;

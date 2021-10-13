@@ -33,7 +33,7 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 
 	OmnibusChipOverJTAG config;
 	// random data
-	config.set(OmnibusData(10));
+	config.set(OmnibusChipOverJTAG::Value(10));
 
 	// Omnibus address of SystimeSyncBase
 	OmnibusChipOverJTAGAddress addr(0x0);

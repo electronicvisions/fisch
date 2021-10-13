@@ -56,11 +56,11 @@ TEST(PlaybackProgram, Rerun)
 	auto address = OmnibusChipOverJTAGAddress(0x0);
 
 	OmnibusChipOverJTAG config_1;
-	config_1.set(OmnibusData(0x1));
+	config_1.set(OmnibusChipOverJTAG::Value(0x1));
 	auto program_write_1 = get_write_program(address, config_1);
 
 	OmnibusChipOverJTAG config_2;
-	config_2.set(OmnibusData(0x2));
+	config_2.set(OmnibusChipOverJTAG::Value(0x2));
 	auto program_write_2 = get_write_program(address, config_2);
 
 	auto program_n_ticket = get_read_program(address);
@@ -99,14 +99,14 @@ TEST(PlaybackProgramBuilder, MergeBack)
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(22 * fpga_clock_cycles_per_us)));
 
 	OmnibusChipOverJTAG config_1;
-	config_1.set(OmnibusData(0x1));
+	config_1.set(OmnibusChipOverJTAG::Value(0x1));
 	builder.write(address, config_1);
 
 	auto ticket_1 = builder.read(address);
 	auto vector_ticket_1 = builder.read(vector_address);
 
 	OmnibusChipOverJTAG config_2;
-	config_2.set(OmnibusData(0x2));
+	config_2.set(OmnibusChipOverJTAG::Value(0x2));
 	builder.write(address, config_2);
 
 	PlaybackProgramBuilder other;
@@ -122,7 +122,7 @@ TEST(PlaybackProgramBuilder, MergeBack)
 	}
 
 	OmnibusChipOverJTAG config_3;
-	config_3.set(OmnibusData(0x3));
+	config_3.set(OmnibusChipOverJTAG::Value(0x3));
 	other.write(address, config_3);
 
 	builder.merge_back(other);

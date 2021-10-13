@@ -35,14 +35,14 @@ TEST(SystimeSync, TimeAnnotation)
 
 	// configure FPGA-side PHYs
 	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
-		Omnibus config(OmnibusData(0x0020'4040));
+		Omnibus config(Omnibus::Value(0x0020'4040));
 		OmnibusAddress coord{phy_omnibus_mask + i};
 		builder.write(coord, config);
 	}
 
 	// enable FPGA-side PHYs
 	{
-		Omnibus config(OmnibusData(0xff));
+		Omnibus config(Omnibus::Value(0xff));
 		builder.write(ut_omnibus_mask, config);
 	}
 
@@ -57,7 +57,7 @@ TEST(SystimeSync, TimeAnnotation)
 
 	// enable Chip-side PHYs
 	{
-		OmnibusChipOverJTAG config(OmnibusData(0xff));
+		OmnibusChipOverJTAG config(OmnibusChipOverJTAG::Value(0xff));
 		OmnibusChipOverJTAGAddress coord(0x0004'0000);
 		builder.write(coord, config);
 	}
@@ -72,7 +72,7 @@ TEST(SystimeSync, TimeAnnotation)
 
 	OmnibusChipOverJTAG config;
 	// random data
-	config.set(OmnibusData(10));
+	config.set(OmnibusChipOverJTAG::Value(10));
 
 	// Omnibus address of first PPU memory word of top PPU
 	OmnibusChipOverJTAGAddress addr(0x0);

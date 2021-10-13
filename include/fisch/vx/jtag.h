@@ -6,7 +6,6 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/omnibus_data.h"
 
 namespace cereal {
 class access;
@@ -115,7 +114,14 @@ class GENPYBIND(visible) OmnibusChipOverJTAG
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusChipOverJTAGAddress coordinate_type;
-	typedef OmnibusData Value;
+
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::BaseType<Value, uint32_t>
+	{
+		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
+		    base_t(value)
+		{}
+	};
 
 	/**
 	 * Construct an instance with a word value.
@@ -335,5 +341,6 @@ HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGIdCode::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPLLRegister::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGClockScaler::Value)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPhyRegister::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::OmnibusChipOverJTAG::Value)
 
 } // namespace std

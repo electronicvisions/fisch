@@ -103,14 +103,14 @@ TEST(Omnibus, ByteEnables)
 
 	// configure FPGA-side PHYs
 	for (auto i : iter_all<PhyConfigFPGAOnDLS>()) {
-		Omnibus config(OmnibusData(0x0020'4040));
+		Omnibus config(Omnibus::Value(0x0020'4040));
 		OmnibusAddress coord{phy_omnibus_mask + i};
 		builder.write(coord, config);
 	}
 
 	// enable FPGA-side PHYs
 	{
-		Omnibus config(OmnibusData(0xff));
+		Omnibus config(Omnibus::Value(0xff));
 		builder.write(ut_omnibus_mask, config);
 	}
 
@@ -122,7 +122,7 @@ TEST(Omnibus, ByteEnables)
 
 	// enable Chip-side PHYs
 	{
-		OmnibusChipOverJTAG config(OmnibusData(0xff));
+		OmnibusChipOverJTAG config(OmnibusChipOverJTAG::Value(0xff));
 		OmnibusChipOverJTAGAddress coord(0x0004'0000);
 		builder.write(coord, config);
 	}
@@ -132,9 +132,9 @@ TEST(Omnibus, ByteEnables)
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
 
 	// configure synram
-	builder.write(OmnibusAddress(0x0200'0000), Omnibus(OmnibusData(8 << 4 | 8)));
-	builder.write(OmnibusAddress(0x0200'0001), Omnibus(OmnibusData(3 << 8 | 3)));
-	builder.write(OmnibusAddress(0x0200'0002), Omnibus(OmnibusData(4)));
+	builder.write(OmnibusAddress(0x0200'0000), Omnibus(Omnibus::Value(8 << 4 | 8)));
+	builder.write(OmnibusAddress(0x0200'0001), Omnibus(Omnibus::Value(3 << 8 | 3)));
+	builder.write(OmnibusAddress(0x0200'0002), Omnibus(Omnibus::Value(4)));
 	// ------ end of setup chip ------
 
 	// generate random address in top-PPU Synram
@@ -145,7 +145,7 @@ TEST(Omnibus, ByteEnables)
 	           2 /* weights + addresses */);
 	OmnibusAddress address(synram_synapse_top_base_address + d(rng));
 
-	Omnibus initial(OmnibusData(0x12345678));
+	Omnibus initial(Omnibus::Value(0x12345678));
 	builder.write(address, initial);
 
 	auto ticket_initial = builder.read(address);
@@ -158,7 +158,7 @@ TEST(Omnibus, ByteEnables)
 
 		byte_enables.at(EntryOnQuad(i)) = true;
 
-		Omnibus only_one_byte(OmnibusData(0x87654321), byte_enables);
+		Omnibus only_one_byte(Omnibus::Value(0x87654321), byte_enables);
 		builder.write(address, only_one_byte);
 		tickets.push_back(builder.read(address));
 	}
@@ -169,13 +169,13 @@ TEST(Omnibus, ByteEnables)
 	run(connection, program);
 
 	EXPECT_TRUE(ticket_initial.valid());
-	EXPECT_EQ(ticket_initial.get().at(0).get(), OmnibusData(0x12345678));
+	EXPECT_EQ(ticket_initial.get().at(0).get(), Omnibus::Value(0x12345678));
 
-	std::vector<OmnibusData> expectations;
-	expectations.push_back(OmnibusData(0x12345621));
-	expectations.push_back(OmnibusData(0x12344321));
-	expectations.push_back(OmnibusData(0x12654321));
-	expectations.push_back(OmnibusData(0x87654321));
+	std::vector<Omnibus::Value> expectations;
+	expectations.push_back(Omnibus::Value(0x12345621));
+	expectations.push_back(Omnibus::Value(0x12344321));
+	expectations.push_back(Omnibus::Value(0x12654321));
+	expectations.push_back(Omnibus::Value(0x87654321));
 
 	for (size_t i = 0; i < tickets.size(); ++i) {
 		EXPECT_TRUE(tickets.at(i).valid());

@@ -5,7 +5,6 @@
 
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
-#include "fisch/vx/omnibus_data.h"
 
 namespace cereal {
 class access;
@@ -25,8 +24,16 @@ class GENPYBIND(visible) Omnibus
 {
 public:
 	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
-	typedef OmnibusData Value GENPYBIND(opaque(false));
-	typedef std::array<bool, sizeof(OmnibusData::value_type)> ByteEnables;
+
+	struct GENPYBIND(inline_base("*")) Value
+	    : public halco::common::detail::BaseType<Value, uint32_t>
+	{
+		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
+		    base_t(value)
+		{}
+	};
+
+	typedef std::array<bool, sizeof(Value::value_type)> ByteEnables;
 
 	/**
 	 * Default constructor.
@@ -132,3 +139,7 @@ private:
 };
 
 } // namespace fisch::vx
+
+namespace std {
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Omnibus::Value)
+} // namespace std
