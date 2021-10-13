@@ -130,6 +130,11 @@ TEST(Omnibus, ByteEnables)
 	// wait until highspeed is up
 	builder.write(TimerOnDLS(), Timer());
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
+
+	// configure synram
+	builder.write(OmnibusAddress(0x0200'0000), Omnibus(OmnibusData(8 << 4 | 8)));
+	builder.write(OmnibusAddress(0x0200'0001), Omnibus(OmnibusData(3 << 8 | 3)));
+	builder.write(OmnibusAddress(0x0200'0002), Omnibus(OmnibusData(4)));
 	// ------ end of setup chip ------
 
 	// generate random address in top-PPU Synram
