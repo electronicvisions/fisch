@@ -92,11 +92,11 @@ void I2CRoRegister<Derived, ValueType, CoordinateType>::decode(
 		word.decode({messages.begin() + i, messages.begin() + i});
 
 		// Check for I2C ack
-		if (word.get().value() & (1ul << 31)) {
+		if (word.get().word.value() & (1ul << 31)) {
 			throw std::runtime_error("I2C ack missing, data invalid.");
 		}
 
-		value |= (word.get() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
+		value |= (word.get().word.value() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
 	}
 
 	m_data = Value(value);
@@ -332,11 +332,11 @@ void I2CDAC6573RwRegister::decode(UTMessageFromFPGARangeOmnibus const& messages)
 		word.decode({messages.begin() + i, messages.begin() + i});
 
 		// Check for I2C ack
-		if (word.get().value() & (1ul << 31)) {
+		if (word.get().word.value() & (1ul << 31)) {
 			throw std::runtime_error("I2C ack missing, data invalid.");
 		}
 
-		value |= (word.get() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
+		value |= (word.get().word.value() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
 	}
 
 	// The hw-register only uses the 10 MSB out of 16 bits.

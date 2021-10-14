@@ -15,17 +15,17 @@ TEST(Omnibus, General)
 	Omnibus default_config;
 	EXPECT_EQ(default_config.get(), Omnibus::Value());
 
-	Omnibus::Value value(0x12345678);
-	Omnibus::ByteEnables byte_enables = {true};
-	Omnibus value_config(value, byte_enables);
+	Omnibus::Value::Word word(0x12345678);
+	Omnibus::Value::ByteEnables byte_enables = {true};
+	Omnibus::Value value(word, byte_enables);
+	Omnibus value_config(value);
 	EXPECT_EQ(value_config.get(), value);
 
-	Omnibus::Value other_value(0x87654321);
-	Omnibus::ByteEnables other_byte_enables = {false};
+	Omnibus::Value::Word other_word(0x87654321);
+	Omnibus::Value::ByteEnables other_byte_enables = {false};
+	Omnibus::Value other_value(other_word, other_byte_enables);
 	value_config.set(other_value);
 	EXPECT_EQ(value_config.get(), other_value);
-	value_config.set_byte_enables(other_byte_enables);
-	EXPECT_EQ(value_config.get_byte_enables(), other_byte_enables);
 
 	Omnibus other_config = value_config;
 
@@ -57,8 +57,7 @@ TEST(Omnibus, EncodeWrite)
 	using namespace hxcomm::vx;
 
 	Omnibus obj;
-	obj.set(Omnibus::Value(12));
-	obj.set_byte_enables({false});
+	obj.set(Omnibus::Value(12, {false}));
 
 	Omnibus::coordinate_type coord(3);
 	auto messages = obj.encode_write(coord);
@@ -73,7 +72,7 @@ TEST(Omnibus, EncodeWrite)
 	    std::get<UTMessageToFPGA<instruction::omnibus_to_fpga::Data>>(messages.at(1));
 	EXPECT_EQ(
 	    message_data, UTMessageToFPGA<instruction::omnibus_to_fpga::Data>(
-	                      instruction::omnibus_to_fpga::Data::Payload(obj.get().value())));
+	                      instruction::omnibus_to_fpga::Data::Payload(obj.get().word.value())));
 }
 
 TEST(Omnibus, Decode)
@@ -87,8 +86,7 @@ TEST(Omnibus, Decode)
 	    instruction::omnibus_from_fpga::Data::Payload(0x123));
 
 	obj.decode({&message, &message + 1});
-	EXPECT_EQ(obj.get(), 0x123);
-	EXPECT_EQ(obj.get_byte_enables(), Omnibus::ByteEnables({true, true, true, true}));
+	EXPECT_EQ(obj.get(), Omnibus::Value(0x123));
 }
 
 TEST(Omnibus, Ostream)

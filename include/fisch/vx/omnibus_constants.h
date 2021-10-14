@@ -36,7 +36,7 @@ constexpr halco::hicann_dls::vx::OmnibusAddress i2c_ad5252_base_address{i2c_over
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_dac6573_base_address{i2c_over_omnibus_mask +
                                                                          0x4c};
 
-constexpr Omnibus::Value spi_over_omnibus_stop_bit{0x8000'0000};
+constexpr Omnibus::Value::Word spi_over_omnibus_stop_bit{0x8000'0000};
 
 /**
  * General Information about the I2C Omnibus interface
@@ -54,11 +54,11 @@ constexpr Omnibus::Value spi_over_omnibus_stop_bit{0x8000'0000};
  * Add this to the I2C address to force a repeat start condition before the address byte of the next
  * message.
  */
-constexpr Omnibus::Value i2c_over_omnibus_repeat_start{0x100};
+constexpr Omnibus::Value::Word i2c_over_omnibus_repeat_start{0x100};
 
 /**
  * Add this to the I2C address to force a stop after the data byte of the next message.
  */
-constexpr Omnibus::Value i2c_over_omnibus_stop{0x80};
+constexpr Omnibus::Value::Word i2c_over_omnibus_stop{0x80};
 
 } // namespace fisch::vx

@@ -152,13 +152,13 @@ TEST(Omnibus, ByteEnables)
 
 	std::vector<ContainerTicket<Omnibus>> tickets;
 
-	for (size_t i = 0; i < std::tuple_size<Omnibus::ByteEnables>::value; ++i) {
-		Omnibus::ByteEnables byte_enables;
+	for (size_t i = 0; i < std::tuple_size<Omnibus::Value::ByteEnables>::value; ++i) {
+		Omnibus::Value::ByteEnables byte_enables;
 		byte_enables.fill(false);
 
 		byte_enables.at(EntryOnQuad(i)) = true;
 
-		Omnibus only_one_byte(Omnibus::Value(0x87654321), byte_enables);
+		Omnibus only_one_byte(Omnibus::Value(0x87654321, byte_enables));
 		builder.write(address, only_one_byte);
 		tickets.push_back(builder.read(address));
 	}

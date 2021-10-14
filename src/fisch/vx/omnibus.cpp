@@ -13,47 +13,68 @@
 
 namespace fisch::vx {
 
-Omnibus::Omnibus() : m_data(), m_byte_enables({true, true, true, true}) {}
-Omnibus::Omnibus(Value const value) : m_data(value), m_byte_enables({true, true, true, true}) {}
-Omnibus::Omnibus(Value const value, ByteEnables const byte_enables) :
-    m_data(value), m_byte_enables(byte_enables)
-{}
+std::ostream& operator<<(std::ostream& os, Omnibus::Value const& value)
+{
+	std::stringstream ss_d;
+	ss_d << "0d" << std::dec << value.word.value();
+	std::stringstream ss_x;
+	ss_x << "0x" << std::hex << value.word.value();
+	hate::bitset<sizeof(typename Omnibus::Value::Value::value_type) * CHAR_BIT> bits(
+	    value.word.value());
+	os << "Value(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
+	   << ", byte_enables: " << hate::join_string(value.byte_enables, "") << ")";
+	return os;
+}
 
-Omnibus::Value Omnibus::get() const
+bool Omnibus::Value::operator==(Omnibus::Value const& other) const
+{
+	return (word == other.word) && (byte_enables == other.byte_enables);
+}
+
+bool Omnibus::Value::operator!=(Omnibus::Value const& other) const
+{
+	return !(*this == other);
+}
+
+template <class Archive>
+void Omnibus::Value::serialize(Archive& ar, std::uint32_t const)
+{
+	ar(CEREAL_NVP(word));
+	ar(CEREAL_NVP(byte_enables));
+}
+
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus::Value)
+
+
+Omnibus::Omnibus() : m_data() {}
+Omnibus::Omnibus(Value const& value) : m_data(value) {}
+
+Omnibus::Value const& Omnibus::get() const
 {
 	return m_data;
 }
 
-void Omnibus::set(Value const value)
+void Omnibus::set(Value const& value)
 {
 	m_data = value;
-}
-
-Omnibus::ByteEnables const& Omnibus::get_byte_enables() const
-{
-	return m_byte_enables;
-}
-
-void Omnibus::set_byte_enables(ByteEnables const& value)
-{
-	m_byte_enables = value;
 }
 
 std::ostream& operator<<(std::ostream& os, Omnibus const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_data.word.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<sizeof(typename Omnibus::Value::value_type) * CHAR_BIT> bits(word.m_data.value());
+	ss_x << "0x" << std::hex << word.m_data.word.value();
+	hate::bitset<sizeof(typename Omnibus::Value::Value::value_type) * CHAR_BIT> bits(
+	    word.m_data.word.value());
 	os << "Omnibus(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
-	   << ", byte_enables: " << hate::join_string(word.m_byte_enables, "") << ")";
+	   << ", byte_enables: " << hate::join_string(word.m_data.byte_enables, "") << ")";
 	return os;
 }
 
 bool Omnibus::operator==(Omnibus const& other) const
 {
-	return (m_data == other.m_data) && (m_byte_enables == other.m_byte_enables);
+	return (m_data == other.m_data);
 }
 
 bool Omnibus::operator!=(Omnibus const& other) const
@@ -80,30 +101,29 @@ Omnibus::encode_write(coordinate_type const& coord) const
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
-	hate::bitset<std::tuple_size<ByteEnables>::value> byte_enables;
+	hate::bitset<std::tuple_size<Value::ByteEnables>::value> byte_enables;
 	for (size_t i = 0; i < byte_enables.size; ++i) {
-		byte_enables.set(i, m_byte_enables.at(i));
+		byte_enables.set(i, m_data.byte_enables.at(i));
 	}
 
 	ret[0] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), false, byte_enables));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.word.value()));
 
 	return ret;
 }
 
 void Omnibus::decode(UTMessageFromFPGARangeOmnibus const& messages)
 {
-	m_data = Value(static_cast<uint32_t>(messages[0].decode()));
-	m_byte_enables = {true, true, true, true};
+	m_data.word = Value::Word(static_cast<uint32_t>(messages[0].decode()));
+	m_data.byte_enables = {true, true, true, true};
 }
 
 template <class Archive>
 void Omnibus::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_data));
-	ar(CEREAL_NVP(m_byte_enables));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
@@ -145,5 +165,6 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PollingOmnibusBlock)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 0)
+CEREAL_CLASS_VERSION(fisch::vx::Omnibus::Value, 0)
+CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 1)
 CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 0)

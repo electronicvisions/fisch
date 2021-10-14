@@ -25,15 +25,61 @@ class GENPYBIND(visible) Omnibus
 public:
 	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
 
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::BaseType<Value, uint32_t>
+	struct Value
 	{
-		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
-		    base_t(value)
-		{}
-	};
+		struct GENPYBIND(inline_base("*")) Word
+		    : public halco::common::detail::BaseType<Word, uint32_t>
+		{
+			constexpr explicit Word(value_type const value = 0) GENPYBIND(implicit_conversion) :
+			    base_t(value)
+			{}
+		};
 
-	typedef std::array<bool, sizeof(Value::value_type)> ByteEnables;
+		typedef Word::value_type value_type;
+
+		typedef std::array<bool, sizeof(Word::value_type)> ByteEnables;
+
+		Word word;
+		ByteEnables byte_enables;
+
+		/**
+		 * Default constructor.
+		 */
+		constexpr explicit Value() : word(), byte_enables({true, true, true, true}) {}
+
+		/**
+		 * Construct an instance with a word value.
+		 * @param value Word value to construct instance with
+		 */
+		constexpr explicit Value(Word::value_type const value) :
+		    word(value), byte_enables({true, true, true, true})
+		{}
+
+		/**
+		 * Construct an instance with a word value and byte enables.
+		 * @param value Word value to construct instance with
+		 * @param byte_enables Byte enables to construct instance with
+		 */
+		constexpr explicit Value(Word::value_type const value, ByteEnables const& byte_enables) :
+		    word(value), byte_enables(byte_enables)
+		{}
+
+		constexpr operator Word::value_type() const
+		{
+			return word;
+		}
+
+		bool operator==(Value const& other) const;
+		bool operator!=(Value const& other) const;
+
+		GENPYBIND(stringstream)
+		friend std::ostream& operator<<(std::ostream& os, Value const& value);
+
+	private:
+		friend class cereal::access;
+		template <typename Archive>
+		void serialize(Archive& ar, std::uint32_t const version);
+	};
 
 	/**
 	 * Default constructor.
@@ -41,41 +87,22 @@ public:
 	explicit Omnibus();
 
 	/**
-	 * Construct an instance with a word value.
-	 * @param value Word value to construct instance with
+	 * Construct an instance with a value.
+	 * @param value Value to construct instance with
 	 */
-	explicit Omnibus(Value value);
-
-	/**
-	 * Construct an instance with a word value and byte enables.
-	 * @param value Word value to construct instance with
-	 * @param byte_enables Byte enables to construct instance with
-	 */
-	explicit Omnibus(Value value, ByteEnables byte_enables);
+	explicit Omnibus(Value const& value);
 
 	/**
 	 * Get value.
 	 * @return Word value
 	 */
-	Value get() const;
+	Value const& get() const;
 
 	/**
 	 * Set value.
 	 * @param value Word value to set
 	 */
-	void set(Value value);
-
-	/**
-	 * Get byte enables.
-	 * @return ByteEnables value
-	 */
-	ByteEnables const& get_byte_enables() const;
-
-	/**
-	 * Set byte enables.
-	 * @param value ByteEnables value
-	 */
-	void set_byte_enables(ByteEnables const& value);
+	void set(Value const& value);
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, Omnibus const& word);
@@ -95,7 +122,6 @@ public:
 
 private:
 	Value m_data;
-	ByteEnables m_byte_enables;
 
 	friend class cereal::access;
 	template <class Archive>
@@ -141,5 +167,5 @@ private:
 } // namespace fisch::vx
 
 namespace std {
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Omnibus::Value)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Omnibus::Value::Word)
 } // namespace std

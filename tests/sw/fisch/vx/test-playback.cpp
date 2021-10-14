@@ -203,7 +203,8 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 	EXPECT_NO_THROW(ticket.get());
 	auto result = ticket.get();
 	EXPECT_EQ(result.size(), 1);
-	EXPECT_EQ(result.at(0).get(), static_cast<uint32_t>(from_fpga_message.decode()));
+	EXPECT_EQ(
+	    result.at(0).get(), Omnibus::Value(static_cast<uint32_t>(from_fpga_message.decode())));
 }
 
 TEST(PlaybackProgramBuilder, ReadMultiple)
@@ -251,8 +252,10 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 	EXPECT_NO_THROW(ticket.get());
 	auto result = ticket.get();
 	EXPECT_EQ(result.size(), addresses.size());
-	EXPECT_EQ(result.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
-	EXPECT_EQ(result.at(1).get(), static_cast<uint32_t>(from_fpga_message_2.decode()));
+	EXPECT_EQ(
+	    result.at(0).get(), Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
+	EXPECT_EQ(
+	    result.at(1).get(), Omnibus::Value(static_cast<uint32_t>(from_fpga_message_2.decode())));
 }
 
 TEST(PlaybackProgramBuilder, ReadMultipleTickets)
@@ -287,7 +290,9 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 	{
 		auto result_1 = tickets.at(0).get();
 		EXPECT_EQ(result_1.size(), 1);
-		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
+		EXPECT_EQ(
+		    result_1.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
 	}
 
 	// both tickets valid
@@ -304,8 +309,12 @@ TEST(PlaybackProgramBuilder, ReadMultipleTickets)
 		auto result_2 = tickets.at(1).get();
 		EXPECT_EQ(result_1.size(), 1);
 		EXPECT_EQ(result_2.size(), 1);
-		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
-		EXPECT_EQ(result_2.at(0).get(), static_cast<uint32_t>(from_fpga_message_2.decode()));
+		EXPECT_EQ(
+		    result_1.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
+		EXPECT_EQ(
+		    result_2.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_2.decode())));
 	}
 }
 
@@ -347,8 +356,12 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	EXPECT_FALSE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
-		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
-		EXPECT_EQ(result_1.at(1).get(), static_cast<uint32_t>(from_fpga_message_2.decode()));
+		EXPECT_EQ(
+		    result_1.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
+		EXPECT_EQ(
+		    result_1.at(1).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_2.decode())));
 	}
 
 	// second ticket still not valid
@@ -362,8 +375,12 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	EXPECT_FALSE(program->tickets_valid());
 	{
 		auto result_1 = tickets.at(0).get();
-		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
-		EXPECT_EQ(result_1.at(1).get(), static_cast<uint32_t>(from_fpga_message_2.decode()));
+		EXPECT_EQ(
+		    result_1.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
+		EXPECT_EQ(
+		    result_1.at(1).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_2.decode())));
 	}
 
 	// both tickets valid
@@ -378,10 +395,18 @@ TEST(PlaybackProgramBuilder, ReadMultipleVectorTickets)
 	{
 		auto result_1 = tickets.at(0).get();
 		auto result_2 = tickets.at(1).get();
-		EXPECT_EQ(result_1.at(0).get(), static_cast<uint32_t>(from_fpga_message_1.decode()));
-		EXPECT_EQ(result_1.at(1).get(), static_cast<uint32_t>(from_fpga_message_2.decode()));
-		EXPECT_EQ(result_2.at(0).get(), static_cast<uint32_t>(from_fpga_message_3.decode()));
-		EXPECT_EQ(result_2.at(1).get(), static_cast<uint32_t>(from_fpga_message_4.decode()));
+		EXPECT_EQ(
+		    result_1.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_1.decode())));
+		EXPECT_EQ(
+		    result_1.at(1).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_2.decode())));
+		EXPECT_EQ(
+		    result_2.at(0).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_3.decode())));
+		EXPECT_EQ(
+		    result_2.at(1).get(),
+		    Omnibus::Value(static_cast<uint32_t>(from_fpga_message_4.decode())));
 	}
 }
 
