@@ -9,13 +9,6 @@
 
 namespace fisch::vx {
 
-Barrier::Value const Barrier::Value::jtag{
-    static_cast<uintmax_t>(hxcomm::vx::instruction::timing::Barrier::jtag)};
-Barrier::Value const Barrier::Value::omnibus{
-    static_cast<uintmax_t>(hxcomm::vx::instruction::timing::Barrier::omnibus)};
-Barrier::Value const Barrier::Value::systime{
-    static_cast<uintmax_t>(hxcomm::vx::instruction::timing::Barrier::systime)};
-
 Barrier::Barrier(Value const value) : m_value(value) {}
 
 Barrier::Value Barrier::get() const

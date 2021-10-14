@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/systime.h"
+#include "fisch/vx/word_access/type/event.h"
 #include "hate/join.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
@@ -21,11 +22,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 /**
  * Spike payload information.
  */
-struct GENPYBIND(inline_base("*")) SpikeLabel
-    : public halco::common::detail::BaseType<SpikeLabel, uint16_t>
-{
-	constexpr explicit SpikeLabel(value_type const val = 0) : base_t(val) {}
-};
+typedef word_access_type::SpikeLabel SpikeLabel GENPYBIND(visible);
 
 
 /**
@@ -42,10 +39,17 @@ public:
 	    halco::hicann_dls::vx::SpikePack3ToChipOnDLS>
 	    spike_pack_to_chip_coordinates;
 
+	typedef hate::type_list<
+	    word_access_type::SpikePack1ToChip,
+	    word_access_type::SpikePack2ToChip,
+	    word_access_type::SpikePack3ToChip>
+	    spike_pack_to_chip_labels;
+
 	typedef
 	    typename hate::index_type_list_by_integer<NumPack - 1, spike_pack_to_chip_coordinates>::type
 	        coordinate_type;
-	typedef std::array<SpikeLabel, NumPack> labels_type;
+	typedef typename hate::index_type_list_by_integer<NumPack - 1, spike_pack_to_chip_labels>::type
+	    labels_type;
 
 	/** Default constructor. */
 	explicit SpikePackToChip();

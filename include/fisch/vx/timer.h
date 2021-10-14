@@ -1,7 +1,8 @@
 #pragma once
+#include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/timer.h"
 #include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
-#include "fisch/vx/genpybind.h"
 
 namespace cereal {
 class access;
@@ -23,12 +24,7 @@ public:
 	typedef halco::hicann_dls::vx::TimerOnDLS coordinate_type;
 
 	/** Value type. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::BaseType<Value, uint32_t>
-	{
-		constexpr explicit Value(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value)
-		{}
-	};
+	typedef word_access_type::Timer Value GENPYBIND(visible);
 
 	/**
 	 * Construct timer with value.
@@ -115,9 +111,3 @@ private:
 };
 
 } // namespace fisch::vx
-
-namespace std {
-
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Timer::Value)
-
-} // namespace std

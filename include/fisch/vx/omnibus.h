@@ -5,6 +5,7 @@
 
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/omnibus.h"
 
 namespace cereal {
 class access;
@@ -25,61 +26,7 @@ class GENPYBIND(visible) Omnibus
 public:
 	typedef halco::hicann_dls::vx::OmnibusAddress coordinate_type;
 
-	struct Value
-	{
-		struct GENPYBIND(inline_base("*")) Word
-		    : public halco::common::detail::BaseType<Word, uint32_t>
-		{
-			constexpr explicit Word(value_type const value = 0) GENPYBIND(implicit_conversion) :
-			    base_t(value)
-			{}
-		};
-
-		typedef Word::value_type value_type;
-
-		typedef std::array<bool, sizeof(Word::value_type)> ByteEnables;
-
-		Word word;
-		ByteEnables byte_enables;
-
-		/**
-		 * Default constructor.
-		 */
-		constexpr explicit Value() : word(), byte_enables({true, true, true, true}) {}
-
-		/**
-		 * Construct an instance with a word value.
-		 * @param value Word value to construct instance with
-		 */
-		constexpr explicit Value(Word::value_type const value) :
-		    word(value), byte_enables({true, true, true, true})
-		{}
-
-		/**
-		 * Construct an instance with a word value and byte enables.
-		 * @param value Word value to construct instance with
-		 * @param byte_enables Byte enables to construct instance with
-		 */
-		constexpr explicit Value(Word::value_type const value, ByteEnables const& byte_enables) :
-		    word(value), byte_enables(byte_enables)
-		{}
-
-		constexpr operator Word::value_type() const
-		{
-			return word;
-		}
-
-		bool operator==(Value const& other) const;
-		bool operator!=(Value const& other) const;
-
-		GENPYBIND(stringstream)
-		friend std::ostream& operator<<(std::ostream& os, Value const& value);
-
-	private:
-		friend class cereal::access;
-		template <typename Archive>
-		void serialize(Archive& ar, std::uint32_t const version);
-	};
+	typedef word_access_type::Omnibus Value GENPYBIND(visible);
 
 	/**
 	 * Default constructor.
@@ -137,7 +84,7 @@ class GENPYBIND(visible) PollingOmnibusBlock
 {
 public:
 	typedef halco::hicann_dls::vx::PollingOmnibusBlockOnFPGA coordinate_type;
-	typedef bool Value;
+	typedef word_access_type::PollingOmnibusBlock Value;
 
 	/**
 	 * Resolve block if value is true (*address & mask == target) or if value is false (*address &
@@ -165,7 +112,3 @@ private:
 };
 
 } // namespace fisch::vx
-
-namespace std {
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::Omnibus::Value::Word)
-} // namespace std

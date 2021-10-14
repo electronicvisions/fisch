@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fisch/vx/constants.h"
+#include "fisch/vx/word_access/type/i2c.h"
 #include "halco/common/geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
@@ -124,17 +125,7 @@ public:
 };
 
 
-struct GENPYBIND(inline_base("*")) I2CIdRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CIdRegisterValue,
-          uint_fast32_t,
-          std::numeric_limits<uint32_t>::max(),
-          std::numeric_limits<uint32_t>::min()>
-{
-	constexpr explicit I2CIdRegisterValue(uintmax_t const val = 0) GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+typedef word_access_type::I2CIdRegister I2CIdRegisterValue GENPYBIND(visible);
 
 /**
  * Container for reading the unique ID of the chip carrier board's EEPROM.
@@ -166,18 +157,7 @@ private:
 };
 
 
-struct GENPYBIND(inline_base("*")) I2CINA219RoRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CINA219RoRegisterValue,
-          uint_fast16_t,
-          std::numeric_limits<uint16_t>::max(),
-          std::numeric_limits<uint16_t>::min()>
-{
-	constexpr explicit I2CINA219RoRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+typedef word_access_type::I2CINA219RoRegister I2CINA219RoRegisterValue GENPYBIND(visible);
 
 /**
  * Container for reading a read-only register of a INA219 voltage/current/power measurement device.
@@ -208,18 +188,8 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-struct GENPYBIND(inline_base("*")) I2CINA219RwRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CINA219RwRegisterValue,
-          uint_fast16_t,
-          std::numeric_limits<uint16_t>::max(),
-          std::numeric_limits<uint16_t>::min()>
-{
-	constexpr explicit I2CINA219RwRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+
+typedef word_access_type::I2CINA219RwRegister I2CINA219RwRegisterValue GENPYBIND(visible);
 
 /**
  * Container for accessing a read-write register of a INA219 voltage/current/power measurement
@@ -252,18 +222,7 @@ private:
 };
 
 
-struct GENPYBIND(inline_base("*")) I2CTCA9554RoRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CTCA9554RoRegisterValue,
-          uint_fast16_t,
-          std::numeric_limits<uint8_t>::max(),
-          std::numeric_limits<uint8_t>::min()>
-{
-	constexpr explicit I2CTCA9554RoRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+typedef word_access_type::I2CTCA9554RoRegister I2CTCA9554RoRegisterValue GENPYBIND(visible);
 
 /**
  * Container for accessing a read-only I2C register on the TCA9554 IO Expander device.
@@ -295,18 +254,7 @@ private:
 };
 
 
-struct GENPYBIND(inline_base("*")) I2CTCA9554RwRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CTCA9554RwRegisterValue,
-          uint_fast16_t,
-          std::numeric_limits<uint8_t>::max(),
-          std::numeric_limits<uint8_t>::min()>
-{
-	constexpr explicit I2CTCA9554RwRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+typedef word_access_type::I2CTCA9554RwRegister I2CTCA9554RwRegisterValue GENPYBIND(visible);
 
 /**
  * Container for accessing a read-write I2C register on the TCA9554 IO Expander device.
@@ -337,18 +285,8 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-struct GENPYBIND(inline_base("*")) I2CAD5252RwRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CAD5252RwRegisterValue,
-          uint_fast16_t,
-          std::numeric_limits<uint8_t>::max(),
-          std::numeric_limits<uint8_t>::min()>
-{
-	constexpr explicit I2CAD5252RwRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+
+typedef word_access_type::I2CAD5252RwRegister I2CAD5252RwRegisterValue GENPYBIND(visible);
 
 /**
  * Container for accessing a read-write register of a AD5252 digital potentiometer channel.
@@ -380,18 +318,7 @@ private:
 };
 
 
-struct GENPYBIND(inline_base("*")) I2CDAC6573RwRegisterValue
-    : public halco::common::detail::RantWrapper<
-          I2CDAC6573RwRegisterValue,
-          uint_fast16_t,
-          fisch::vx::dac6573_value_max,
-          fisch::vx::dac_value_min>
-{
-	constexpr explicit I2CDAC6573RwRegisterValue(uintmax_t const val = 0)
-	    GENPYBIND(implicit_conversion) :
-	    rant_t(val)
-	{}
-};
+typedef word_access_type::I2CDAC6573RwRegister I2CDAC6573RwRegisterValue GENPYBIND(visible);
 
 /**
  * Container for accessing a read-write register of a DAC6573
@@ -428,15 +355,3 @@ private:
 };
 
 } // namespace fisch::vx
-
-namespace std {
-
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CIdRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CINA219RoRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CINA219RwRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RoRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CTCA9554RwRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CAD5252RwRegisterValue)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::I2CDAC6573RwRegisterValue)
-
-} // namespace std

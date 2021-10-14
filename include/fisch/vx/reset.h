@@ -2,6 +2,7 @@
 #include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/reset.h"
 
 namespace cereal {
 class access;
@@ -20,7 +21,7 @@ class GENPYBIND(visible) ResetChip
 {
 public:
 	typedef halco::hicann_dls::vx::ResetChipOnDLS coordinate_type;
-	typedef bool Value;
+	typedef word_access_type::ResetChip Value;
 
 	/**
 	 * Construct reset with boolean value.

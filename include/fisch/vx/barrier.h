@@ -1,10 +1,9 @@
 #pragma once
-
-#include "halco/common/geometry.h"
-#include "hxcomm/vx/utmessage_fwd.h"
-
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/barrier.h"
+#include "halco/common/geometry.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 class access;
@@ -24,17 +23,7 @@ class GENPYBIND(visible) Barrier
 public:
 	typedef halco::hicann_dls::vx::BarrierOnFPGA coordinate_type;
 
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0x7, 0>
-	{
-		constexpr explicit Value(uintmax_t const value = 0x7) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-
-		static const Value jtag;
-		static const Value omnibus;
-		static const Value systime;
-	};
+	typedef word_access_type::Barrier Value GENPYBIND(visible);
 
 	explicit Barrier(Value value = Value());
 

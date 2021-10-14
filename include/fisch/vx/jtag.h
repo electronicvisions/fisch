@@ -6,6 +6,7 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/jtag.h"
 
 namespace cereal {
 class access;
@@ -60,14 +61,7 @@ public:
 	typedef halco::hicann_dls::vx::JTAGClockScalerOnDLS coordinate_type;
 
 	/** Clock-scaler value type. The JTAG clock scales with 1 / (value + 2). */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::
-	          RantWrapper<Value, uint_fast16_t, jtag_clock_scaler_max, jtag_clock_scaler_min>
-	{
-		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-	};
+	typedef word_access_type::JTAGClockScaler Value GENPYBIND(visible);
 
 	/**
 	 * Construct scaler with value.
@@ -115,13 +109,7 @@ class GENPYBIND(visible) OmnibusChipOverJTAG
 public:
 	typedef halco::hicann_dls::vx::OmnibusChipOverJTAGAddress coordinate_type;
 
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::BaseType<Value, uint32_t>
-	{
-		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
-		    base_t(value)
-		{}
-	};
+	typedef word_access_type::OmnibusChipOverJTAG Value GENPYBIND(visible);
 
 	/**
 	 * Construct an instance with a word value.
@@ -175,13 +163,7 @@ public:
 	typedef halco::hicann_dls::vx::JTAGIdCodeOnDLS coordinate_type;
 
 	/** JTAG IDCODE value type. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::BaseType<Value, uint32_t>
-	{
-		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
-		    base_t(value)
-		{}
-	};
+	typedef word_access_type::JTAGIdCode Value GENPYBIND(visible);
 
 	/**
 	 * Construct IDCODE with value.
@@ -234,13 +216,7 @@ public:
 	typedef halco::hicann_dls::vx::JTAGPLLRegisterOnDLS coordinate_type;
 
 	/** PLL register value type. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::BaseType<Value, uint32_t>
-	{
-		constexpr explicit Value(value_type const value = 0) GENPYBIND(implicit_conversion) :
-		    base_t(value)
-		{}
-	};
+	typedef word_access_type::JTAGPLLRegister Value GENPYBIND(visible);
 
 	/**
 	 * Construct register by its value.
@@ -288,13 +264,7 @@ public:
 	typedef halco::hicann_dls::vx::JTAGPhyRegisterOnDLS coordinate_type;
 
 	/** Register value type. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast16_t, 4194303 /* 2^22-1 */, 0>
-	{
-		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-	};
+	typedef word_access_type::JTAGPhyRegister Value GENPYBIND(visible);
 
 	/**
 	 * Construct register with value.
@@ -334,13 +304,3 @@ private:
 };
 
 } // namespace fisch::vx
-
-namespace std {
-
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGIdCode::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPLLRegister::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGClockScaler::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::JTAGPhyRegister::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::OmnibusChipOverJTAG::Value)
-
-} // namespace std

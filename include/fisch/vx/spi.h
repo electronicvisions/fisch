@@ -6,6 +6,7 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/spi.h"
 
 namespace cereal {
 class access;
@@ -28,13 +29,7 @@ public:
 	typedef halco::hicann_dls::vx::SPIShiftRegisterOnBoard coordinate_type;
 
 	/** Shift register value. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0xffffff, 0>
-	{
-		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-	};
+	typedef word_access_type::SPIShiftRegister Value GENPYBIND(visible);
 
 	/**
 	 * Construct an instance with a word value.
@@ -83,14 +78,7 @@ public:
 	typedef halco::hicann_dls::vx::SPIDACDataRegisterOnBoard coordinate_type;
 
 	/** DAC data value. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::
-	          RantWrapper<Value, uint_fast32_t, dac_value_max, dac_value_min>
-	{
-		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-	};
+	typedef word_access_type::SPIDACDataRegister Value GENPYBIND(visible);
 
 	/**
 	 * Construct an instance with a word value.
@@ -139,13 +127,7 @@ public:
 	typedef halco::hicann_dls::vx::SPIDACControlRegisterOnBoard coordinate_type;
 
 	/** DAC control value. */
-	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uint_fast32_t, 0x1fff, 0>
-	{
-		constexpr explicit Value(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
-		    rant_t(value)
-		{}
-	};
+	typedef word_access_type::SPIDACControlRegister Value GENPYBIND(visible);
 
 	/**
 	 * Construct an instance with a word value.
@@ -185,11 +167,3 @@ private:
 };
 
 } // namespace fisch::vx
-
-namespace std {
-
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIShiftRegister::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIDACControlRegister::Value)
-HALCO_GEOMETRY_HASH_CLASS(fisch::vx::SPIDACDataRegister::Value)
-
-} // namespace std

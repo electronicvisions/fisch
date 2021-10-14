@@ -1,50 +1,13 @@
 #include "fisch/vx/omnibus.h"
 
-#include <array>
-#include <cereal/types/array.hpp>
-
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hxcomm/vx/utmessage.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
 
 namespace fisch::vx {
-
-std::ostream& operator<<(std::ostream& os, Omnibus::Value const& value)
-{
-	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << value.word.value();
-	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << value.word.value();
-	hate::bitset<sizeof(typename Omnibus::Value::Value::value_type) * CHAR_BIT> bits(
-	    value.word.value());
-	os << "Value(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
-	   << ", byte_enables: " << hate::join_string(value.byte_enables, "") << ")";
-	return os;
-}
-
-bool Omnibus::Value::operator==(Omnibus::Value const& other) const
-{
-	return (word == other.word) && (byte_enables == other.byte_enables);
-}
-
-bool Omnibus::Value::operator!=(Omnibus::Value const& other) const
-{
-	return !(*this == other);
-}
-
-template <class Archive>
-void Omnibus::Value::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(word));
-	ar(CEREAL_NVP(byte_enables));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus::Value)
-
 
 Omnibus::Omnibus() : m_data() {}
 Omnibus::Omnibus(Value const& value) : m_data(value) {}
@@ -65,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, Omnibus const& word)
 	ss_d << "0d" << std::dec << word.m_data.word.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << word.m_data.word.value();
-	hate::bitset<sizeof(typename Omnibus::Value::Value::value_type) * CHAR_BIT> bits(
+	hate::bitset<sizeof(typename Omnibus::Value::value_type) * CHAR_BIT> bits(
 	    word.m_data.word.value());
 	os << "Omnibus(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
 	   << ", byte_enables: " << hate::join_string(word.m_data.byte_enables, "") << ")";

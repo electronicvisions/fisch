@@ -61,7 +61,7 @@ def build(bld):
     )
 
     bld.shlib(
-        source = bld.path.ant_glob('src/fisch/vx/*.cpp'),
+        source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
         target = 'fisch_vx',
         use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
     )

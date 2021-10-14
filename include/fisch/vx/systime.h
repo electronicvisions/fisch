@@ -1,5 +1,6 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
+#include "fisch/vx/word_access/type/systime.h"
 #include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
@@ -22,7 +23,7 @@ class GENPYBIND(visible) SystimeSync
 {
 public:
 	typedef halco::hicann_dls::vx::SystimeSyncOnFPGA coordinate_type;
-	typedef bool Value;
+	typedef word_access_type::SystimeSync Value;
 
 	explicit SystimeSync(Value do_sync = false);
 
