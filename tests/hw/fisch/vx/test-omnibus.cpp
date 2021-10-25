@@ -93,7 +93,7 @@ TEST(Omnibus, ByteEnables)
 
 	// configure PLLClockOutputBlock
 	{
-		JTAGPLLRegister reg(JTAGPLLRegister::Value(0x918d8181));
+		JTAGPLLRegister reg(JTAGPLLRegister::Value(0x118d8181));
 		builder.write(JTAGPLLRegisterOnDLS(4), reg);
 	}
 
