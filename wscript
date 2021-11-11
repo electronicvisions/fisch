@@ -80,7 +80,7 @@ def build(bld):
         use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
         skip_run = not (bld.env.DLSvx_HARDWARE_AVAILABLE or bld.env.DLSvx_SIM_AVAILABLE),
-        test_timeout = 1000 if bld.env.DLSvx_SIM_AVAILABLE else 30
+        test_timeout = 3600 if bld.env.DLSvx_SIM_AVAILABLE else 30
     )
 
     # like fisch_hwsimtest_vx but not for sim backend (because of 2x test time
