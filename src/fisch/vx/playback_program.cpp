@@ -134,14 +134,15 @@ bool PlaybackProgram::run_ok() const
 			    logger, "Program execution illegally triggered multiple error conditions.")
 		}
 		auto const error = m_timeout_notification_response_queue.front();
-		auto const num_context = 10;
-		auto const min_instruction = std::max(0u, error.get_value() - num_context);
+		auto const error_value = error.get_value().value();
+		auto const num_context = 10u;
+		auto const min_instruction = error_value - std::min(error_value, num_context);
 		std::stringstream ss;
 		ss << "Program execution triggered a Playback instruction timeout notification at "
 		   << error.get_fpga_time() << ", instruction(" << error.get_value().value()
 		   << "; total: " << m_instructions.size() << "). Printing additional context:"
 		   << "\n";
-		for (auto i = min_instruction; i <= error.get_value().value(); i++) {
+		for (auto i = min_instruction; i <= error_value; i++) {
 			ss << "Instruction(" << i << "): ";
 			std::visit([&ss](auto const& ins) { ss << ins; }, m_instructions.at(i));
 			ss << "\n";
