@@ -24,10 +24,9 @@ def build(bld):
         target='pyfisch_vx',
         source='../include/fisch/vx/python_bindings.h',
         genpybind_tags='fisch_vx',
-        features='genpybind cxx cxxshlib pyext pyembed',
+        features='genpybind cxx cxxshlib pyext',
         use=['fisch_vx', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
         install_path='${PREFIX}/lib',
-        linkflags='-Wl,-z,defs',
     )
 
     bld(
