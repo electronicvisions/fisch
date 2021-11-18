@@ -18,14 +18,6 @@ def configure(cfg):
     cfg.load('pytest')
     cfg.load('genpybind')
 
-    cfg.check(
-        compiler='cxx',
-        features='cxx pyembed',
-        uselib_store='PYBIND11FISCH',
-        mandatory=True,
-        header_name='pybind11/pybind11.h',
-    )
-
 
 def build(bld):
     bld(
@@ -33,7 +25,7 @@ def build(bld):
         source='../include/fisch/vx/python_bindings.h',
         genpybind_tags='fisch_vx',
         features='genpybind cxx cxxshlib pyext pyembed',
-        use=['fisch_vx', 'PYBIND11FISCH', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
+        use=['fisch_vx', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
         install_path='${PREFIX}/lib',
         linkflags='-Wl,-z,defs',
     )
