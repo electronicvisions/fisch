@@ -18,6 +18,10 @@ constexpr halco::hicann_dls::vx::OmnibusAddress spi_over_omnibus_mask{
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_over_omnibus_mask{
     0x0000'0800 | spi_over_omnibus_mask};
 
+constexpr halco::hicann_dls::vx::OmnibusAddress external_omnibus_bit_switch{0x0400'0000};
+constexpr halco::hicann_dls::vx::OmnibusAddress external_omnibus_base_address{
+    external_omnibus_bit_switch | executor_omnibus_mask};
+
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_prescaler_base_address{i2c_over_omnibus_mask +
                                                                            0x200};
 
