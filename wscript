@@ -93,7 +93,7 @@ def build(bld):
         use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
         defines = ['FISCH_TEST_LOCAL_QUIGGELDY'],
         test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = not bld.env.DLSvx_HARDWARE_AVAILABLE,
+        skip_run = True,  # Unstable tests, cf. issue #3976
         depends_on = ["quiggeldy"],
         test_timeout = 30
     )
