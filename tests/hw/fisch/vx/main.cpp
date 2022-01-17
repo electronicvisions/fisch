@@ -1,6 +1,6 @@
 #include <string>
 
-#include "hxcomm/common/ensure_local_quiggeldy.h"
+#include "hxcomm/vx/ensure_local_quiggeldy.h"
 #include <chrono>
 #include <boost/program_options.hpp>
 #include <gtest/gtest.h>
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 #ifdef FISCH_TEST_LOCAL_QUIGGELDY
 	// ensure that a local quiggeldy is running; this is a noop if we run
 	// already in quiggeldy environment
-	[[maybe_unused]] hxcomm::EnsureLocalQuiggeldy context;
+	[[maybe_unused]] hxcomm::vx::EnsureLocalQuiggeldy context;
 	using namespace std::literals::chrono_literals;
 	std::this_thread::sleep_for(1s);
 #endif
