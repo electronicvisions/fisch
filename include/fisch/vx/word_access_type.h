@@ -1,0 +1,11 @@
+#pragma once
+#include "fisch/vx/word_access/type/barrier.h"
+#include "fisch/vx/word_access/type/event.h"
+#include "fisch/vx/word_access/type/i2c.h"
+#include "fisch/vx/word_access/type/jtag.h"
+#include "fisch/vx/word_access/type/null_payload_readable.h"
+#include "fisch/vx/word_access/type/omnibus.h"
+#include "fisch/vx/word_access/type/reset.h"
+#include "fisch/vx/word_access/type/spi.h"
+#include "fisch/vx/word_access/type/systime.h"
+#include "fisch/vx/word_access/type/timer.h"
