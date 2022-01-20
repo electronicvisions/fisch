@@ -11,7 +11,7 @@
 	TEST(Type, General)                                                                            \
 	{                                                                                              \
 		Type config;                                                                               \
-		bool const value = !config.get();                                                          \
+		Type::Value const value = Type::Value(!config.get());                                      \
 		config.set(value);                                                                         \
 		EXPECT_EQ(config.get(), value);                                                            \
                                                                                                    \
@@ -33,7 +33,7 @@
 	TEST(Type, Ostream)                                                                            \
 	{                                                                                              \
 		Type obj;                                                                                  \
-		obj.set(true);                                                                             \
+		obj.set(Type::Value(true));                                                                \
                                                                                                    \
 		std::stringstream stream;                                                                  \
 		stream << obj;                                                                             \
@@ -49,7 +49,7 @@
 	TEST(Type, CerializeCoverage)                                                                  \
 	{                                                                                              \
 		Type obj1, obj2;                                                                           \
-		obj1.set(!obj1.get());                                                                     \
+		obj1.set(Type::Value(!obj1.get()));                                                        \
                                                                                                    \
 		std::ostringstream ostream;                                                                \
 		{                                                                                          \

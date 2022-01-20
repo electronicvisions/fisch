@@ -64,7 +64,14 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-typedef bool PollingOmnibusBlock;
+
+struct GENPYBIND(inline_base("*")) PollingOmnibusBlock
+    : public halco::common::detail::BaseType<PollingOmnibusBlock, bool>
+{
+	constexpr explicit PollingOmnibusBlock(bool value = false) GENPYBIND(implicit_conversion) :
+	    base_t(value)
+	{}
+};
 
 } // namespace word_access_type
 } // namespace fisch::vx

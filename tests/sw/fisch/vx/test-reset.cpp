@@ -22,12 +22,12 @@ TEST(ResetChip, EncodeWrite)
 	using namespace fisch::vx;
 	using namespace hxcomm::vx;
 
-	bool value = true;
+	ResetChip::Value value(true);
 	ResetChip obj(value);
 
 	auto messages = obj.encode_write(typename ResetChip::coordinate_type());
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::system::Reset>>(messages.at(0));
-	EXPECT_EQ(message.decode(), value);
+	EXPECT_EQ(message.decode(), value.value());
 }

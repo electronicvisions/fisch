@@ -2,10 +2,11 @@
 
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus_constants.h"
+#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
-#include "hxcomm/vx/utmessage.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
+#include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
@@ -107,7 +108,7 @@ void PollingOmnibusBlock::set(Value const value)
 std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config)
 {
 	std::stringstream ss;
-	ss << "PollingOmnibusBlock(" << std::boolalpha << config.m_value << ")";
+	ss << "PollingOmnibusBlock(" << std::boolalpha << config.m_value.value() << ")";
 	return (os << ss.str());
 }
 
@@ -140,4 +141,4 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PollingOmnibusBlock)
 
 CEREAL_CLASS_VERSION(fisch::vx::Omnibus::Value, 0)
 CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 1)
-CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 0)
+CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 1)

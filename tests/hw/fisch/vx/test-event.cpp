@@ -23,10 +23,10 @@ TEST(SpikePack1ToChip, Loopback)
 {
 	PlaybackProgramBuilder builder;
 
-	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(ResetChipOnDLS(), ResetChip(ResetChip::Value(true)));
 	builder.write(TimerOnDLS(), Timer());
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
-	builder.write(ResetChipOnDLS(), ResetChip(false));
+	builder.write(ResetChipOnDLS(), ResetChip(ResetChip::Value(false)));
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
@@ -82,7 +82,7 @@ TEST(SpikePack1ToChip, Loopback)
 	builder.write(TimerOnDLS(), Timer());
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(80 * fpga_clock_cycles_per_us)));
 
-	builder.write(SystimeSyncOnFPGA(), SystimeSync(true));
+	builder.write(SystimeSyncOnFPGA(), SystimeSync(SystimeSync::Value(true)));
 
 	// wait until systime init is finished
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(85 * fpga_clock_cycles_per_us)));

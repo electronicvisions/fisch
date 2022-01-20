@@ -1,19 +1,20 @@
 #include "fisch/vx/systime.h"
 
 #include "fisch/cerealization.h"
+#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/timing.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
-SystimeSync::SystimeSync(bool const do_sync) : m_do_sync(do_sync) {}
+SystimeSync::SystimeSync(Value const do_sync) : m_do_sync(do_sync) {}
 
-bool SystimeSync::get() const
+SystimeSync::Value SystimeSync::get() const
 {
 	return m_do_sync;
 }
 
-void SystimeSync::set(bool const value)
+void SystimeSync::set(Value const value)
 {
 	m_do_sync = value;
 }
@@ -52,4 +53,4 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SystimeSync)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::SystimeSync, 0)
+CEREAL_CLASS_VERSION(fisch::vx::SystimeSync, 1)

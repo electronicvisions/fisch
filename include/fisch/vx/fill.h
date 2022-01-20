@@ -33,17 +33,15 @@ template <typename T>
 inline T fill_random(std::mt19937& gen)
 {
 	if constexpr (detail::HasValue<T>::value) {
-		if constexpr (detail::IsRangedType<typename T::Value>::value) {
+		if constexpr (std::is_same_v<typename T::Value::value_type, bool>) {
+			std::bernoulli_distribution d;
+			return T(typename T::Value(d(gen)));
+		} else if constexpr (detail::IsRangedType<typename T::Value>::value) {
 			std::uniform_int_distribution<uintmax_t> d(T::Value::min, T::Value::max);
 			return T(typename T::Value(d(gen)));
 		} else {
-			if constexpr (std::is_same_v<typename T::Value, bool>) {
-				std::bernoulli_distribution d;
-				return T(typename T::Value(d(gen)));
-			} else {
-				std::uniform_int_distribution<uintmax_t> d;
-				return T(typename T::Value(d(gen)));
-			}
+			std::uniform_int_distribution<uintmax_t> d;
+			return T(typename T::Value(d(gen)));
 		}
 	} else {
 		return T();

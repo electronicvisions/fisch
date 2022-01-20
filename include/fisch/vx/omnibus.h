@@ -90,7 +90,7 @@ public:
 	 * Resolve block if value is true (*address & mask == target) or if value is false (*address &
 	 * mask != target).
 	 */
-	PollingOmnibusBlock(Value value = true);
+	PollingOmnibusBlock(Value value = Value(true));
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config);

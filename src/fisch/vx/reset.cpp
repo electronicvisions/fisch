@@ -1,19 +1,20 @@
 #include "fisch/vx/reset.h"
 
 #include "fisch/cerealization.h"
+#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/reset.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
-ResetChip::ResetChip(bool const value) : m_value(value) {}
+ResetChip::ResetChip(Value const value) : m_value(value) {}
 
-bool ResetChip::get() const
+ResetChip::Value ResetChip::get() const
 {
 	return m_value;
 }
 
-void ResetChip::set(bool const value)
+void ResetChip::set(Value const value)
 {
 	m_value = value;
 }
@@ -21,7 +22,7 @@ void ResetChip::set(bool const value)
 std::ostream& operator<<(std::ostream& os, ResetChip const& reset)
 {
 	std::stringstream ss;
-	ss << std::boolalpha << reset.m_value;
+	ss << std::boolalpha << reset.m_value.value();
 	os << "ResetChip(" << ss.str() << ")";
 	return os;
 }
@@ -53,4 +54,4 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetChip)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::ResetChip, 0)
+CEREAL_CLASS_VERSION(fisch::vx::ResetChip, 1)

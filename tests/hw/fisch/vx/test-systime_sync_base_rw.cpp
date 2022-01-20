@@ -19,10 +19,10 @@ TEST(OmnibusChipOverJTAG, SystimeSyncBaseWriteRead)
 {
 	PlaybackProgramBuilder builder;
 
-	builder.write(ResetChipOnDLS(), ResetChip(true));
+	builder.write(ResetChipOnDLS(), ResetChip(ResetChip::Value(true)));
 	builder.write(TimerOnDLS(), Timer());
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
-	builder.write(ResetChipOnDLS(), ResetChip(false));
+	builder.write(ResetChipOnDLS(), ResetChip(ResetChip::Value(false)));
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(100)));
 
 	builder.write(JTAGClockScalerOnDLS(), JTAGClockScaler(JTAGClockScaler::Value(3)));
