@@ -5,6 +5,7 @@
 
 #include "fisch/vx/event.h"
 #include "fisch/vx/timer.h"
+#include "fisch/vx/traits.h"
 
 namespace fisch::vx {
 
@@ -16,15 +17,6 @@ struct IsRangedType : public std::false_type
 
 template <typename T>
 struct IsRangedType<T, typename boost::enable_if_has_type<decltype(T::min)>::type>
-    : public std::true_type
-{};
-
-template <typename T, typename = void>
-struct HasValue : public std::false_type
-{};
-
-template <typename T>
-struct HasValue<T, typename boost::enable_if_has_type<typename T::Value>::type>
     : public std::true_type
 {};
 

@@ -92,6 +92,15 @@ struct DecodeMessageTypeList<C, std::void_t<decltype(&C::decode)>>
 	typedef hate::type_list<typename DecodeMessageType<decltype(&C::decode)>::type> type;
 };
 
+template <typename T, typename = void>
+struct HasValue : public std::false_type
+{};
+
+template <typename T>
+struct HasValue<T, typename boost::enable_if_has_type<typename T::Value>::type>
+    : public std::true_type
+{};
+
 } // namespace detail
 
 } // namespace fisch::vx
