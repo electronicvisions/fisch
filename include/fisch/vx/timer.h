@@ -71,7 +71,7 @@ class GENPYBIND(visible) WaitUntil
 public:
 	typedef halco::hicann_dls::vx::WaitUntilOnFPGA coordinate_type;
 
-	typedef Timer::Value Value;
+	typedef word_access_type::WaitUntil Value;
 
 	/**
 	 * Construct timer with value.

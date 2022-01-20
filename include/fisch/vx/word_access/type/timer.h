@@ -10,9 +10,17 @@ struct GENPYBIND(inline_base("*")) Timer : public halco::common::detail::BaseTyp
 	constexpr explicit Timer(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value) {}
 };
 
+struct GENPYBIND(inline_base("*")) WaitUntil
+    : public halco::common::detail::BaseType<WaitUntil, uint32_t>
+{
+	constexpr explicit WaitUntil(uintmax_t value = 0) GENPYBIND(implicit_conversion) : base_t(value)
+	{}
+};
+
 } // namespace word_access_type
 } // namespace fisch::vx
 
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::Timer)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::WaitUntil)
 } // namespace std
