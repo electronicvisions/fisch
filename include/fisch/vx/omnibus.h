@@ -95,6 +95,18 @@ public:
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config);
 
+	/**
+	 * Get value.
+	 * @return Value
+	 */
+	Value get() const;
+
+	/**
+	 * Set value.
+	 * @param value Value to set
+	 */
+	void set(Value value);
+
 	bool operator==(PollingOmnibusBlock const& other) const;
 	bool operator!=(PollingOmnibusBlock const& other) const;
 

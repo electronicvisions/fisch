@@ -94,6 +94,16 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
 
 PollingOmnibusBlock::PollingOmnibusBlock(Value const value) : m_value(value) {}
 
+PollingOmnibusBlock::Value PollingOmnibusBlock::get() const
+{
+	return m_value;
+}
+
+void PollingOmnibusBlock::set(Value const value)
+{
+	m_value = value;
+}
+
 std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config)
 {
 	std::stringstream ss;
