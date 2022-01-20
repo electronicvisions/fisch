@@ -49,6 +49,12 @@ struct GENPYBIND(inline_base("*")) JTAGPhyRegister
 	{}
 };
 
+struct GENPYBIND(visible) ResetJTAGTap
+{
+	bool operator==(ResetJTAGTap const& other) const;
+	bool operator!=(ResetJTAGTap const& other) const;
+};
+
 } // namespace word_access_type
 } // namespace fisch::vx
 
