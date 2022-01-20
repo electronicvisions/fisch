@@ -12,7 +12,7 @@ void test_spike_pack_to_chip_general()
 	typedef SpikePackToChip<NumPack> spike_pack_t;
 
 	EXPECT_NO_THROW(spike_pack_t());
-	EXPECT_NO_THROW(spike_pack_t(typename spike_pack_t::labels_type()));
+	EXPECT_NO_THROW(spike_pack_t(typename spike_pack_t::Value()));
 
 	spike_pack_t config;
 	spike_pack_t other_config = config;
@@ -20,14 +20,14 @@ void test_spike_pack_to_chip_general()
 	EXPECT_EQ(other_config, config);
 
 	{
-		typename spike_pack_t::labels_type labels;
+		typename spike_pack_t::Value labels;
 		size_t i = 0;
 		for (auto& label : labels) {
 			label = SpikeLabel(10 + i);
 			i++;
 		}
-		config.set_labels(labels);
-		EXPECT_EQ(config.get_labels(), labels);
+		config.set(labels);
+		EXPECT_EQ(config.get(), labels);
 	}
 
 	EXPECT_NE(config, other_config);
@@ -52,14 +52,14 @@ void test_spike_pack_to_chip_ostream()
 	typedef SpikePackToChip<NumPack> spike_pack_t;
 
 	spike_pack_t obj;
-	typename spike_pack_t::labels_type labels;
+	typename spike_pack_t::Value labels;
 	{
 		size_t i = 0;
 		for (auto& label : labels) {
 			label = SpikeLabel(10 + i);
 			i++;
 		}
-		obj.set_labels(labels);
+		obj.set(labels);
 	}
 
 	std::stringstream stream;
@@ -95,14 +95,14 @@ void test_spike_pack_to_chip_cereal()
 	typedef SpikePackToChip<NumPack> spike_pack_t;
 
 	spike_pack_t obj1, obj2;
-	typename spike_pack_t::labels_type labels;
+	typename spike_pack_t::Value labels;
 	{
 		size_t i = 0;
 		for (auto& label : labels) {
 			label = SpikeLabel(10 + i);
 			i++;
 		}
-		obj1.set_labels(labels);
+		obj1.set(labels);
 	}
 
 	std::ostringstream ostream;

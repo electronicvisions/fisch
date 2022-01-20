@@ -90,29 +90,29 @@ inline Timer fill_ones()
 
 #define SPIKE_PACK_TO_CHIP(Num)                                                                    \
 	template <>                                                                                    \
-	inline SpikePack##Num##ToChip fill_random(std::mt19937& gen)                                          \
+	inline SpikePack##Num##ToChip fill_random(std::mt19937& gen)                                   \
 	{                                                                                              \
 		SpikePack##Num##ToChip spike_pack;                                                         \
-		auto labels = spike_pack.get_labels();                                                     \
+		auto labels = spike_pack.get();                                                            \
                                                                                                    \
 		for (auto& label : labels) {                                                               \
 			std::uniform_int_distribution<SpikeLabel::value_type> d;                               \
 			label = SpikeLabel(d(gen));                                                            \
 		}                                                                                          \
-		spike_pack.set_labels(labels);                                                             \
+		spike_pack.set(labels);                                                                    \
 		return spike_pack;                                                                         \
 	}                                                                                              \
                                                                                                    \
 	template <>                                                                                    \
-	inline SpikePack##Num##ToChip fill_ones()                                                             \
+	inline SpikePack##Num##ToChip fill_ones()                                                      \
 	{                                                                                              \
 		SpikePack##Num##ToChip spike_pack;                                                         \
-		auto labels = spike_pack.get_labels();                                                     \
+		auto labels = spike_pack.get();                                                            \
                                                                                                    \
 		for (auto& label : labels) {                                                               \
 			label = SpikeLabel(~SpikeLabel::value_type(0));                                        \
 		}                                                                                          \
-		spike_pack.set_labels(labels);                                                             \
+		spike_pack.set(labels);                                                                    \
 		return spike_pack;                                                                         \
 	}
 SPIKE_PACK_TO_CHIP(1)

@@ -109,7 +109,7 @@ TEST(SpikePack1ToChip, Loopback)
 		builder.write(SpikePack1ToChipOnDLS(), spike);
 		builder.write(TimerOnDLS(), Timer());
 		builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(10)));
-		to_fpga_spike_labels.push_back(spike.get_labels().at(0));
+		to_fpga_spike_labels.push_back(spike.get().at(0));
 	}
 
 	builder.write(TimerOnDLS(), Timer());

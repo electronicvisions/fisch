@@ -9,29 +9,29 @@
 namespace fisch::vx {
 
 template <size_t NumPack>
-SpikePackToChip<NumPack>::SpikePackToChip() : m_labels()
+SpikePackToChip<NumPack>::SpikePackToChip() : m_value()
 {}
 
 template <size_t NumPack>
-SpikePackToChip<NumPack>::SpikePackToChip(labels_type const& labels) : m_labels(labels)
+SpikePackToChip<NumPack>::SpikePackToChip(Value const& labels) : m_value(labels)
 {}
 
 template <size_t NumPack>
-typename SpikePackToChip<NumPack>::labels_type SpikePackToChip<NumPack>::get_labels() const
+typename SpikePackToChip<NumPack>::Value const& SpikePackToChip<NumPack>::get() const
 {
-	return m_labels;
+	return m_value;
 }
 
 template <size_t NumPack>
-void SpikePackToChip<NumPack>::set_labels(labels_type const& value)
+void SpikePackToChip<NumPack>::set(Value const& value)
 {
-	m_labels = value;
+	m_value = value;
 }
 
 template <size_t NumPack>
 bool SpikePackToChip<NumPack>::operator==(SpikePackToChip<NumPack> const& other) const
 {
-	return (m_labels == other.m_labels);
+	return (m_value == other.m_value);
 }
 
 template <size_t NumPack>
@@ -48,7 +48,7 @@ SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 {
 	typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload::spikes_type
 	    spikes;
-	std::transform(m_labels.cbegin(), m_labels.cend(), spikes.begin(), [](auto const& label) {
+	std::transform(m_value.cbegin(), m_value.cend(), spikes.begin(), [](auto const& label) {
 		return typename decltype(spikes)::value_type(label.value());
 	});
 
@@ -60,7 +60,7 @@ template <size_t NumPack>
 template <typename Archive>
 void SpikePackToChip<NumPack>::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_labels));
+	ar(CEREAL_NVP(m_value));
 }
 
 template class SpikePackToChip<1>;

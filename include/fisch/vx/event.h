@@ -49,7 +49,7 @@ public:
 	    typename hate::index_type_list_by_integer<NumPack - 1, spike_pack_to_chip_coordinates>::type
 	        coordinate_type;
 	typedef typename hate::index_type_list_by_integer<NumPack - 1, spike_pack_to_chip_labels>::type
-	    labels_type;
+	    Value;
 
 	/** Default constructor. */
 	explicit SpikePackToChip();
@@ -58,28 +58,26 @@ public:
 	 * Construct spike pack with labels.
 	 * @param labels Array of SpikeLabel values to use
 	 */
-	explicit SpikePackToChip(labels_type const& labels);
+	explicit SpikePackToChip(Value const& labels);
 
 	/**
 	 * Get spike labels.
 	 * @return Array of SpikeLabel
 	 */
-	// NOTE: property python wrapping not possible due to inheritance from a templated class.
-	labels_type get_labels() const;
+	Value const& get() const;
 
 	/**
 	 * Set spike labels.
 	 * @param value Array of SpikeLabel to set
 	 */
-	// NOTE: property python wrapping not possible due to inheritance from a templated class.
-	void set_labels(labels_type const& value);
+	void set(Value const& value);
 
 	// NOTE: operator needs to be inlined for python wrapping to work
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, SpikePackToChip const& spike_pack)
 	{
 		std::stringstream ss;
-		os << "SpikePack" << NumPack << "ToChip(" << hate::join_string(spike_pack.m_labels, ", ")
+		os << "SpikePack" << NumPack << "ToChip(" << hate::join_string(spike_pack.m_value, ", ")
 		   << ")";
 		return os;
 	}
@@ -93,7 +91,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 protected:
-	labels_type m_labels;
+	Value m_value;
 
 	friend class cereal::access;
 	template <class Archive>
@@ -107,7 +105,7 @@ class GENPYBIND(inline_base("*")) SpikePack1ToChip : public SpikePackToChip<1>
 {
 public:
 	explicit SpikePack1ToChip() : SpikePackToChip<1>() {}
-	explicit SpikePack1ToChip(labels_type const& labels) : SpikePackToChip<1>(labels) {}
+	explicit SpikePack1ToChip(Value const& labels) : SpikePackToChip<1>(labels) {}
 };
 
 /**
@@ -117,7 +115,7 @@ class GENPYBIND(inline_base("*")) SpikePack2ToChip : public SpikePackToChip<2>
 {
 public:
 	explicit SpikePack2ToChip() : SpikePackToChip<2>() {}
-	explicit SpikePack2ToChip(labels_type const& labels) : SpikePackToChip<2>(labels) {}
+	explicit SpikePack2ToChip(Value const& labels) : SpikePackToChip<2>(labels) {}
 };
 
 /**
@@ -127,7 +125,7 @@ class GENPYBIND(inline_base("*")) SpikePack3ToChip : public SpikePackToChip<3>
 {
 public:
 	explicit SpikePack3ToChip() : SpikePackToChip<3>() {}
-	explicit SpikePack3ToChip(labels_type const& labels) : SpikePackToChip<3>(labels) {}
+	explicit SpikePack3ToChip(Value const& labels) : SpikePackToChip<3>(labels) {}
 };
 
 
