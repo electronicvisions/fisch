@@ -1,4 +1,5 @@
 #pragma once
+#include "fisch/vx/constants.h"
 #include "fisch/vx/genpybind.h"
 #include "halco/common/geometry.h"
 
