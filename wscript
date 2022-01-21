@@ -5,6 +5,7 @@ from waflib.extras.symwaf2ic import get_toplevel_path
 
 
 def depends(dep):
+    dep('hate')
     dep('halco')
     dep('hxcomm')
     dep('code-format')
@@ -12,6 +13,8 @@ def depends(dep):
 
     if getattr(dep.options, 'with_fisch_python_bindings', True):
         dep.recurse('pyfisch')
+
+    dep('libnux')
 
 
 def options(opt):
@@ -58,6 +61,18 @@ def build(bld):
     bld(
         target          = 'fisch_inc',
         export_includes = 'include',
+    )
+
+    bld.stlib(
+        source = [
+            'src/fisch/vx/word_access/type/omnibus.cpp',
+            'src/fisch/vx/word_access/type/jtag.cpp',
+        ],
+        target = 'fisch_ppu_vx',
+        use = ['fisch_inc', 'hate_inc', 'halco_hicann_dls_ppu_vx'],
+        env = bld.all_envs['nux_vx'],
+        linkflags = '-Wl,-z,defs',
+        install_path = '${PREFIX}/lib/ppu',
     )
 
     bld.shlib(
