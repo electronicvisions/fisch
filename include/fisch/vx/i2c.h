@@ -2,7 +2,6 @@
 
 #include "fisch/vx/constants.h"
 #include "fisch/vx/word_access/type/i2c.h"
-#include "halco/common/geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
 #include "hxcomm/vx/utmessage_fwd.h"

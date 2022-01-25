@@ -1,6 +1,5 @@
 #pragma once
 
-#include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/decode.h"

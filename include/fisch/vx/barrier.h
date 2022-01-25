@@ -2,7 +2,6 @@
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/barrier.h"
-#include "halco/common/geometry.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
