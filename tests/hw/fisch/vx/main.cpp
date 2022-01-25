@@ -1,9 +1,12 @@
 #include <string>
 
-#include "hxcomm/vx/ensure_local_quiggeldy.h"
-#include <chrono>
 #include <boost/program_options.hpp>
 #include <gtest/gtest.h>
+#ifdef FISCH_TEST_LOCAL_QUIGGELDY
+#include "hxcomm/vx/ensure_local_quiggeldy.h"
+#include <chrono>
+#include <thread>
+#endif
 
 // logger include directory structure omits prefix
 #include "logging_ctrl.h"
