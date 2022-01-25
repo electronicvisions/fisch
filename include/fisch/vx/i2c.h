@@ -5,7 +5,7 @@
 #include "halco/common/geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
-#include "hxcomm/vx/utmessage.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"

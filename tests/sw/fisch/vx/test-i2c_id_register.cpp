@@ -4,6 +4,7 @@
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
+#include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 
 using namespace fisch::vx;
