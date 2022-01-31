@@ -1,5 +1,6 @@
 #pragma once
 #include "halco/hicann-dls/vx/barrier.h"
+#include "halco/hicann-dls/vx/extoll.h"
 #include "halco/hicann-dls/vx/fpga.h"
 #include "halco/hicann-dls/vx/i2c.h"
 #include "halco/hicann-dls/vx/jtag.h"
