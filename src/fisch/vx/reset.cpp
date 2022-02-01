@@ -2,7 +2,6 @@
 
 #include "fisch/cerealization.h"
 #include "halco/common/cerealization_geometry.h"
-#include "halco/hicann-dls/vx/reset.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {

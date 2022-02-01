@@ -1,6 +1,6 @@
 #pragma once
-#include <stddef.h>
 #include "fisch/vx/genpybind.h"
+#include <stddef.h>
 
 namespace fisch {
 namespace vx GENPYBIND_TAG_FISCH_VX {

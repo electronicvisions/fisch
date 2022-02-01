@@ -1,10 +1,8 @@
 #include "fisch/vx/null_payload_readable.h"
 
-#include <array>
-
 #include "fisch/cerealization.h"
-#include "halco/hicann-dls/vx/fpga.h"
 #include "hxcomm/vx/utmessage.h"
+#include <array>
 
 namespace fisch::vx {
 

@@ -1,7 +1,5 @@
 #include "fisch/vx/spi.h"
 
-#include <array>
-
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
@@ -9,6 +7,7 @@
 #include "halco/hicann-dls/vx/spi.h"
 #include "hate/bitset.h"
 #include "hxcomm/vx/utmessage.h"
+#include <array>
 
 namespace fisch::vx {
 

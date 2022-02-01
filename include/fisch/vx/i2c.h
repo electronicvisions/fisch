@@ -1,13 +1,11 @@
 #pragma once
-
 #include "fisch/vx/constants.h"
+#include "fisch/vx/decode.h"
+#include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/i2c.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
 #include "hxcomm/vx/utmessage_fwd.h"
-
-#include "fisch/vx/decode.h"
-#include "fisch/vx/genpybind.h"
 
 namespace cereal {
 class access;

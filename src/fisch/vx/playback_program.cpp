@@ -2,12 +2,9 @@
 
 #include "fisch/cerealization.h"
 #include "fisch/common/logger.h"
-#include "fisch/vx/container.h"
-#include "fisch/vx/container_ticket.h"
 #include "fisch/vx/fpga_time.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/common/cerealization_typed_array.h"
-#include "halco/hicann-dls/vx/coordinates.h"
 #include "hxcomm/common/cerealization_utmessage.h"
 #include "hxcomm/vx/utmessage.h"
 #include <algorithm>

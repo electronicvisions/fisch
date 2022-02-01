@@ -1,11 +1,10 @@
 #pragma once
-#include <random>
-#include <type_traits>
-#include <boost/utility/enable_if.hpp>
-
 #include "fisch/vx/event.h"
 #include "fisch/vx/timer.h"
 #include "fisch/vx/traits.h"
+#include <random>
+#include <type_traits>
+#include <boost/utility/enable_if.hpp>
 
 namespace fisch::vx {
 

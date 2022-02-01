@@ -1,17 +1,14 @@
 #include "fisch/vx/i2c.h"
 
-#include <array>
-
-#include "halco/hicann-dls/vx/omnibus.h"
-#include "hxcomm/vx/utmessage.h"
-
 #include "fisch/cerealization.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/i2c.h"
-
+#include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
+#include "hxcomm/vx/utmessage.h"
+#include <array>
 
 namespace fisch::vx {
 

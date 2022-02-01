@@ -1,7 +1,7 @@
 #pragma once
+#include "hate/type_list.h"
 #include <type_traits>
 #include <boost/utility/enable_if.hpp>
-#include "hate/type_list.h"
 
 namespace fisch::vx {
 
@@ -70,27 +70,6 @@ struct IsWritable
 
 
 namespace detail {
-
-template <typename F>
-struct DecodeMessageType;
-
-template <typename C, typename M>
-struct DecodeMessageType<void (C::*)(M const&)>
-{
-	typedef typename M::value_type type;
-};
-
-template <typename C, typename = void>
-struct DecodeMessageTypeList
-{
-	typedef hate::type_list<> type;
-};
-
-template <typename C>
-struct DecodeMessageTypeList<C, std::void_t<decltype(&C::decode)>>
-{
-	typedef hate::type_list<typename DecodeMessageType<decltype(&C::decode)>::type> type;
-};
 
 template <typename T, typename = void>
 struct HasValue : public std::false_type

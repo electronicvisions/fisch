@@ -1,8 +1,7 @@
 #pragma once
-#include "hxcomm/vx/utmessage_fwd.h"
-
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/reset.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 class access;

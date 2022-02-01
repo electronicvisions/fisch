@@ -1,9 +1,8 @@
 #pragma once
-#include <chrono>
-#include <ostream>
-
 #include "fisch/vx/genpybind.h"
 #include "hxcomm/common/connection_time_info.h"
+#include <chrono>
+#include <ostream>
 
 #if defined(__GENPYBIND__) || defined(__GENPYBIND_GENERATED__)
 #include <pybind11/chrono.h>

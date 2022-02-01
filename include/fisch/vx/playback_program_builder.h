@@ -1,9 +1,8 @@
 #pragma once
-#include <memory>
-#include <vector>
-
 #include "fisch/vx/container.h"
 #include "fisch/vx/genpybind.h"
+#include <memory>
+#include <vector>
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 

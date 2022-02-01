@@ -1,12 +1,10 @@
 #pragma once
+#include "fisch/vx/event.h"
+#include "fisch/vx/genpybind.h"
+#include "fisch/vx/playback_decoder.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 #include <unordered_set>
 #include <variant>
-
-#include "fisch/vx/genpybind.h"
-#include "hxcomm/vx/utmessage_fwd.h"
-
-#include "fisch/vx/event.h"
-#include "fisch/vx/playback_decoder.h"
 
 namespace cereal {
 class access;

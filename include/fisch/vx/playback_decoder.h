@@ -1,8 +1,4 @@
 #pragma once
-#include <tuple>
-
-#include "hxcomm/vx/utmessage.h"
-
 #include "fisch/vx/chip_time.h"
 #include "fisch/vx/decode_message_types.h"
 #include "fisch/vx/event.h"
@@ -11,6 +7,8 @@
 #include "halco/common/typed_array.h"
 #include "halco/hicann-dls/vx/event.h"
 #include "hate/type_list.h"
+#include "hxcomm/vx/utmessage.h"
+#include <tuple>
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 

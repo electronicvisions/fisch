@@ -1,7 +1,5 @@
-
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/run_time_info.h"
-
 #include "hate/timer.h"
 #include "hate/type_traits.h"
 #include "hxcomm/common/execute_messages.h"

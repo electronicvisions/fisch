@@ -1,10 +1,9 @@
 #include "fisch/vx/playback_decoder.h"
 
-#include <boost/hana/ext/std/tuple.hpp>
-#include <boost/hana/for_each.hpp>
-
 #include "hate/math.h"
 #include "hxcomm/vx/utmessage.h"
+#include <boost/hana/ext/std/tuple.hpp>
+#include <boost/hana/for_each.hpp>
 
 namespace fisch::vx {
 

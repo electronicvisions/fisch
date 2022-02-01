@@ -1,7 +1,6 @@
 #pragma once
 #include "fisch/vx/container.h"
-#include "fisch/vx/traits.h"
-
+#include "fisch/vx/decode.h"
 #include "hate/type_list.h"
 
 namespace fisch::vx {
