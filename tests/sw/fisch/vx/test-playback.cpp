@@ -5,15 +5,19 @@
 #include "fisch/vx/playback_program_builder.h"
 
 #include "fisch/cerealization.h"
+#include "fisch/common/logger.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/traits.h"
 #include "halco/hicann-dls/vx/coordinates.h"
+#include "hate/timer.h"
 #include "hxcomm/vx/utmessage.h"
 
 #include <cereal/types/memory.hpp>
 
 using namespace fisch::vx;
 using namespace halco::hicann_dls::vx;
+
+static auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 
 template <typename ContainerT>
 void test_playback_program_builder_read_api()
@@ -553,4 +557,109 @@ TEST(PlaybackProgramBuilder, CopyBack)
 	EXPECT_NO_THROW(builder.copy_back(other));
 	EXPECT_FALSE(builder.empty());
 	EXPECT_EQ(*(builder.done()), *(other.done()));
+}
+
+TEST(PlaybackProgramBuilder, PerformanceOmnibusRead)
+{
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		std::vector<halco::hicann_dls::vx::OmnibusAddress> addresses;
+		size_t const num = hate::math::pow(2, p);
+		for (size_t i = 0; i < num; ++i) {
+			addresses.push_back(halco::hicann_dls::vx::OmnibusAddress(i));
+		}
+
+		PlaybackProgramBuilder builder;
+		hate::Timer timer;
+		[[maybe_unused]] auto ticket = builder.read(addresses);
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 30.);
+}
+
+TEST(PlaybackProgramBuilder, PerformanceOmnibusWrite)
+{
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		std::vector<halco::hicann_dls::vx::OmnibusAddress> addresses;
+		std::vector<Omnibus> container;
+		size_t const num = hate::math::pow(2, p);
+		for (size_t i = 0; i < num; ++i) {
+			addresses.push_back(halco::hicann_dls::vx::OmnibusAddress(i));
+			container.push_back(Omnibus(Omnibus::Value(i)));
+		}
+
+		PlaybackProgramBuilder builder;
+		hate::Timer timer;
+		builder.write(addresses, container);
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 15.);
+}
+
+TEST(PlaybackProgram, PerformanceOmnibusReadProcessMessages)
+{
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		std::vector<halco::hicann_dls::vx::OmnibusAddress> addresses;
+		std::vector<hxcomm::vx::UTMessageFromFPGAVariant> from_fpga_messages;
+		static_assert(Omnibus::decode_ut_message_count == 1);
+		size_t const num = hate::math::pow(2, p);
+		for (size_t i = 0; i < num; ++i) {
+			addresses.push_back(halco::hicann_dls::vx::OmnibusAddress(i));
+			from_fpga_messages.push_back(
+			    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>(
+			        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(i)));
+		}
+
+		PlaybackProgramBuilder builder;
+		[[maybe_unused]] auto ticket = builder.read(addresses);
+		auto program = builder.done();
+		hate::Timer timer;
+		for (auto const& message : from_fpga_messages) {
+			program->push_from_fpga_message(message);
+		}
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 30.);
+}
+
+TEST(PlaybackProgram, PerformanceOmnibusReadDecode)
+{
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		std::vector<halco::hicann_dls::vx::OmnibusAddress> addresses;
+		std::vector<hxcomm::vx::UTMessageFromFPGAVariant> from_fpga_messages;
+		static_assert(Omnibus::decode_ut_message_count == 1);
+		size_t const num = hate::math::pow(2, p);
+		for (size_t i = 0; i < num; ++i) {
+			addresses.push_back(halco::hicann_dls::vx::OmnibusAddress(i));
+			from_fpga_messages.push_back(
+			    hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>(
+			        hxcomm::vx::instruction::omnibus_from_fpga::Data::Payload(i)));
+		}
+
+		PlaybackProgramBuilder builder;
+		auto ticket = builder.read(addresses);
+		auto program = builder.done();
+		for (auto const& message : from_fpga_messages) {
+			program->push_from_fpga_message(message);
+		}
+		hate::Timer timer;
+		[[maybe_unused]] auto container = ticket.get();
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 30.);
 }
