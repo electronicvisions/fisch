@@ -139,6 +139,5 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PollingOmnibusBlock)
 
 } // namespace fisch::vx
 
-CEREAL_CLASS_VERSION(fisch::vx::Omnibus::Value, 0)
 CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 1)
 CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 1)
