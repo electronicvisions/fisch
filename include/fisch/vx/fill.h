@@ -1,6 +1,5 @@
 #pragma once
 #include "fisch/vx/event.h"
-#include "fisch/vx/timer.h"
 #include "fisch/vx/traits.h"
 #include <random>
 #include <type_traits>
@@ -73,19 +72,6 @@ inline T fill_ones()
 
 
 // specializations
-
-
-template <>
-inline Timer fill_random(std::mt19937&)
-{
-	return Timer();
-}
-
-template <>
-inline Timer fill_ones()
-{
-	return Timer();
-}
 
 #define SPIKE_PACK_TO_CHIP(Num)                                                                    \
 	template <>                                                                                    \

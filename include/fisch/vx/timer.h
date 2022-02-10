@@ -22,26 +22,10 @@ class GENPYBIND(visible) Timer
 public:
 	typedef halco::hicann_dls::vx::TimerOnDLS coordinate_type;
 
-	/** Value type. */
-	typedef word_access_type::Timer Value GENPYBIND(visible);
-
 	/**
-	 * Construct timer with value.
-	 * @param value Value to construct timer with
+	 * Default constructor.
 	 */
-	explicit Timer(Value value = Value());
-
-	/**
-	 * Get timer value.
-	 * @return Value
-	 */
-	Value get() const;
-
-	/**
-	 * Set timer value. Currently only reset to 0 is supported.
-	 * @param value Value to set timer to
-	 */
-	void set(Value value);
+	Timer() = default;
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, Timer const& timer);
@@ -55,8 +39,6 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	Value m_value;
-
 	friend class cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);

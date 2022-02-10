@@ -14,7 +14,7 @@ class StrConversion(unittest.TestCase):
         self.assertEqual(str(fisch.JTAGPLLRegister(12)),
             "JTAGPLLRegister(0d12 0xc 0b00000000000000000000000000001100)")
         self.assertEqual(str(fisch.ResetChip(True)), "ResetChip(true)")
-        self.assertEqual(str(fisch.Timer()), "Timer(0)")
+        self.assertEqual(str(fisch.Timer()), "Timer()")
 
 if __name__ == "__main__":
     unittest.main()

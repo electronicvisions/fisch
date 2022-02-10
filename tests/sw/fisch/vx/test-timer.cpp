@@ -11,19 +11,9 @@ TEST(Timer, General)
 {
 	using namespace fisch::vx;
 
-	EXPECT_EQ(Timer::Value().value(), 0);
-
 	EXPECT_NO_THROW(Timer());
 
 	Timer config;
-	EXPECT_EQ(config.get(), Timer::Value());
-
-	EXPECT_NO_THROW(config.set(Timer::Value(0)));
-	EXPECT_THROW(config.set(Timer::Value(1)), std::runtime_error);
-
-	Timer config2(Timer::Value(0));
-	EXPECT_EQ(config2, config);
-
 	Timer other_config = config;
 
 	EXPECT_EQ(other_config, config);
@@ -52,7 +42,7 @@ TEST(Timer, Ostream)
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "Timer(0)");
+	EXPECT_EQ(stream.str(), "Timer()");
 }
 
 TEST(Timer, CerealizeCoverage)
