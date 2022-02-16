@@ -95,8 +95,8 @@ public:
 	    ut_message_from_fpga_loopback_type;
 
 	typedef typename ToResponseQueueTuple<detail::decode_message_types>::type response_queue_type;
-	typedef std::vector<SpikeFromChipEvent> spike_queue_type;
-	typedef std::vector<MADCSampleFromChipEvent> madc_sample_queue_type;
+	typedef std::vector<SpikeFromChip> spike_queue_type;
+	typedef std::vector<MADCSampleFromChip> madc_sample_queue_type;
 	typedef std::vector<HighspeedLinkNotification> highspeed_link_notification_queue_type;
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>
 	    spike_pack_counts_type;

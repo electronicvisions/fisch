@@ -71,124 +71,124 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikePackToChip<2>)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikePackToChip<3>)
 
 
-SpikeLabel SpikeFromChipEvent::get_label() const
+SpikeLabel SpikeFromChip::get_label() const
 {
 	return m_label;
 }
 
-void SpikeFromChipEvent::set_label(SpikeLabel const& value)
+void SpikeFromChip::set_label(SpikeLabel const& value)
 {
 	m_label = value;
 }
 
-ChipTime SpikeFromChipEvent::get_chip_time() const
+ChipTime SpikeFromChip::get_chip_time() const
 {
 	return m_chip_time;
 }
 
-void SpikeFromChipEvent::set_chip_time(ChipTime const& value)
+void SpikeFromChip::set_chip_time(ChipTime const& value)
 {
 	m_chip_time = value;
 }
 
-FPGATime SpikeFromChipEvent::get_fpga_time() const
+FPGATime SpikeFromChip::get_fpga_time() const
 {
 	return m_fpga_time;
 }
 
-void SpikeFromChipEvent::set_fpga_time(FPGATime const& value)
+void SpikeFromChip::set_fpga_time(FPGATime const& value)
 {
 	m_fpga_time = value;
 }
 
-std::ostream& operator<<(std::ostream& os, SpikeFromChipEvent const& event)
+std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event)
 {
 	std::stringstream ss;
-	os << "SpikeFromChipEvent(" << event.m_label << ", " << event.m_chip_time << ", "
+	os << "SpikeFromChip(" << event.m_label << ", " << event.m_chip_time << ", "
 	   << event.m_fpga_time << ")";
 	return os;
 }
 
-bool SpikeFromChipEvent::operator==(SpikeFromChipEvent const& other) const
+bool SpikeFromChip::operator==(SpikeFromChip const& other) const
 {
 	return (m_label == other.m_label) && (m_chip_time == other.m_chip_time) &&
 	       (m_fpga_time == other.m_fpga_time);
 }
 
-bool SpikeFromChipEvent::operator!=(SpikeFromChipEvent const& other) const
+bool SpikeFromChip::operator!=(SpikeFromChip const& other) const
 {
 	return !(*this == other);
 }
 
 template <class Archive>
-void SpikeFromChipEvent::serialize(Archive& ar, std::uint32_t const)
+void SpikeFromChip::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_label));
 	ar(CEREAL_NVP(m_chip_time));
 	ar(CEREAL_NVP(m_fpga_time));
 }
 
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikeFromChipEvent)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikeFromChip)
 
 
-MADCSampleFromChipEvent::Value MADCSampleFromChipEvent::get_value() const
+MADCSampleFromChip::Value MADCSampleFromChip::get_value() const
 {
 	return m_value;
 }
 
-void MADCSampleFromChipEvent::set_value(Value const& value)
+void MADCSampleFromChip::set_value(Value const& value)
 {
 	m_value = value;
 }
 
-ChipTime MADCSampleFromChipEvent::get_chip_time() const
+ChipTime MADCSampleFromChip::get_chip_time() const
 {
 	return m_chip_time;
 }
 
-void MADCSampleFromChipEvent::set_chip_time(ChipTime const& value)
+void MADCSampleFromChip::set_chip_time(ChipTime const& value)
 {
 	m_chip_time = value;
 }
 
-FPGATime MADCSampleFromChipEvent::get_fpga_time() const
+FPGATime MADCSampleFromChip::get_fpga_time() const
 {
 	return m_fpga_time;
 }
 
-void MADCSampleFromChipEvent::set_fpga_time(FPGATime const& value)
+void MADCSampleFromChip::set_fpga_time(FPGATime const& value)
 {
 	m_fpga_time = value;
 }
 
-std::ostream& operator<<(std::ostream& os, MADCSampleFromChipEvent const& event)
+std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event)
 {
 	std::stringstream ss;
-	os << "MADCSampleFromChipEvent(" << event.m_value << ", " << event.m_chip_time << ", "
+	os << "MADCSampleFromChip(" << event.m_value << ", " << event.m_chip_time << ", "
 	   << event.m_fpga_time << ")";
 	return os;
 }
 
-bool MADCSampleFromChipEvent::operator==(MADCSampleFromChipEvent const& other) const
+bool MADCSampleFromChip::operator==(MADCSampleFromChip const& other) const
 {
 	return (m_value == other.m_value) && (m_chip_time == other.m_chip_time) &&
 	       (m_fpga_time == other.m_fpga_time);
 }
 
-bool MADCSampleFromChipEvent::operator!=(MADCSampleFromChipEvent const& other) const
+bool MADCSampleFromChip::operator!=(MADCSampleFromChip const& other) const
 {
 	return !(*this == other);
 }
 
 template <class Archive>
-void MADCSampleFromChipEvent::serialize(Archive& ar, std::uint32_t const)
+void MADCSampleFromChip::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
 	ar(CEREAL_NVP(m_chip_time));
 	ar(CEREAL_NVP(m_fpga_time));
 }
 
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(MADCSampleFromChipEvent)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(MADCSampleFromChip)
 
 
 HighspeedLinkNotification::Value HighspeedLinkNotification::get_value() const
@@ -289,7 +289,7 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(TimeoutNotification)
 CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<1>, 0)
 CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<2>, 0)
 CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<3>, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChipEvent, 1)
-CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChipEvent, 1)
+CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChip, 1)
+CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChip, 1)
 CEREAL_CLASS_VERSION(fisch::vx::HighspeedLinkNotification, 0)
 CEREAL_CLASS_VERSION(fisch::vx::TimeoutNotification, 0)

@@ -134,7 +134,7 @@ public:
  * Spike from chip event comprised of a SpikeFromChip and FPGATime time annotation.
  * Serves as value type for spikes accessible on a PlaybackProgram.
  */
-class GENPYBIND(visible) SpikeFromChipEvent
+class GENPYBIND(visible) SpikeFromChip
 {
 public:
 	/**
@@ -143,7 +143,7 @@ public:
 	 * @param chip_time ChipTime time annotation
 	 * @param fpga_time FPGATime time annotation
 	 */
-	explicit SpikeFromChipEvent(
+	explicit SpikeFromChip(
 	    SpikeLabel const& label = SpikeLabel(),
 	    ChipTime const& chip_time = ChipTime(),
 	    FPGATime const& fpga_time = FPGATime()) :
@@ -193,10 +193,10 @@ public:
 	void set_fpga_time(FPGATime const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SpikeFromChipEvent const& event);
+	friend std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event);
 
-	bool operator==(SpikeFromChipEvent const& other) const;
-	bool operator!=(SpikeFromChipEvent const& other) const;
+	bool operator==(SpikeFromChip const& other) const;
+	bool operator!=(SpikeFromChip const& other) const;
 
 private:
 	SpikeLabel m_label;
@@ -213,7 +213,7 @@ private:
  * MADC sample from chip event comprised of MADCSampleFromChip data and FPGATime time annotation.
  * Serves as value type for MADC samples accessible on a PlaybackProgram.
  */
-class GENPYBIND(visible) MADCSampleFromChipEvent
+class GENPYBIND(visible) MADCSampleFromChip
 {
 public:
 	/** Sample value. */
@@ -229,7 +229,7 @@ public:
 	 * @param chip_time ChipTime time annotation
 	 * @param fpga_time FPGATime time annotation
 	 */
-	explicit MADCSampleFromChipEvent(
+	explicit MADCSampleFromChip(
 	    Value const& value = Value(),
 	    ChipTime const& chip_time = ChipTime(),
 	    FPGATime const& fpga_time = FPGATime()) :
@@ -279,10 +279,10 @@ public:
 	void set_fpga_time(FPGATime const& value);
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChipEvent const& event);
+	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event);
 
-	bool operator==(MADCSampleFromChipEvent const& other) const;
-	bool operator!=(MADCSampleFromChipEvent const& other) const;
+	bool operator==(MADCSampleFromChip const& other) const;
+	bool operator!=(MADCSampleFromChip const& other) const;
 
 private:
 	Value m_value;

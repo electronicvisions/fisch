@@ -41,8 +41,8 @@ public:
 
 	~PlaybackProgram();
 
-	typedef std::vector<SpikeFromChipEvent> spike_from_chip_events_type;
-	typedef std::vector<MADCSampleFromChipEvent> madc_sample_from_chip_events_type;
+	typedef std::vector<SpikeFromChip> spike_from_chip_events_type;
+	typedef std::vector<MADCSampleFromChip> madc_sample_from_chip_events_type;
 	typedef std::vector<HighspeedLinkNotification> highspeed_link_notifications_type;
 
 	typedef halco::common::typed_array<size_t, halco::hicann_dls::vx::SpikePackFromFPGAOnDLS>

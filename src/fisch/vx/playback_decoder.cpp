@@ -81,7 +81,7 @@ void PlaybackDecoder::process(
 	auto spikes = message.decode().get_spikes();
 	for (auto spike : spikes) {
 		SpikeLabel label(static_cast<uint16_t>(spike.get_spike()));
-		m_spike_queue.push_back(SpikeFromChipEvent(
+		m_spike_queue.push_back(SpikeFromChip(
 		    label, calculate_chip_time(static_cast<uint8_t>(spike.get_timestamp())),
 		    m_time_current));
 	}
@@ -95,9 +95,9 @@ void PlaybackDecoder::process(
 {
 	auto madc_samples = message.decode().get_samples();
 	for (auto madc_sample : madc_samples) {
-		m_madc_sample_queue.push_back(MADCSampleFromChipEvent(
-		    MADCSampleFromChipEvent::Value(
-		        static_cast<MADCSampleFromChipEvent::Value::value_type>(madc_sample.get_value())),
+		m_madc_sample_queue.push_back(MADCSampleFromChip(
+		    MADCSampleFromChip::Value(
+		        static_cast<MADCSampleFromChip::Value::value_type>(madc_sample.get_value())),
 		    calculate_chip_time(static_cast<uint8_t>(madc_sample.get_timestamp())),
 		    m_time_current));
 	}
