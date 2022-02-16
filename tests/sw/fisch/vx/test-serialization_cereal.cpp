@@ -18,8 +18,6 @@ using namespace fisch::vx;
 #define LAST_PLAYBACK_CONTAINER(Name, Type) Type
 typedef ::testing::Types<
     SpikeLabel,
-    SpikeFromChip,
-    MADCSampleFromChip,
     SpikeFromChipEvent,
     MADCSampleFromChipEvent,
 #include "fisch/vx/container.def"

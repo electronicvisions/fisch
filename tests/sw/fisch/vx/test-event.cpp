@@ -126,89 +126,22 @@ TEST(SpikePackToChip, CerealizeCoverage)
 	test_spike_pack_to_chip_cereal<3>();
 }
 
-TEST(SpikeFromChip, General)
+TEST(MADCSampleFromChipEvent, General)
 {
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	EXPECT_NO_THROW(SpikeFromChip());
-	EXPECT_NO_THROW(SpikeFromChip(SpikeLabel(), ChipTime()));
+	EXPECT_NO_THROW(MADCSampleFromChipEvent());
+	EXPECT_NO_THROW(
+	    MADCSampleFromChipEvent(MADCSampleFromChipEvent::Value(), ChipTime(), FPGATime()));
 
-	SpikeFromChip config;
-	SpikeFromChip other_config = config;
+	MADCSampleFromChipEvent config;
+	MADCSampleFromChipEvent other_config = config;
 
 	EXPECT_EQ(other_config, config);
 
 	{
-		SpikeLabel value(12);
-		config.set_label(value);
-		EXPECT_EQ(config.get_label(), value);
-	}
-
-	{
-		ChipTime value(3);
-		config.set_chip_time(value);
-		EXPECT_EQ(config.get_chip_time(), value);
-	}
-
-	EXPECT_NE(config, other_config);
-
-	SpikeFromChip config3 = config;
-	EXPECT_EQ(config, config3);
-}
-
-TEST(SpikeFromChip, Ostream)
-{
-	using namespace fisch::vx;
-	using namespace halco::hicann_dls::vx;
-
-	SpikeFromChip obj(SpikeLabel(12), ChipTime(3));
-
-	std::stringstream stream;
-	stream << obj;
-
-	EXPECT_EQ(stream.str(), "SpikeFromChip(SpikeLabel(12), ChipTime(3))");
-}
-
-TEST(SpikeFromChip, CerealizeCoverage)
-{
-	using namespace fisch::vx;
-	using namespace halco::hicann_dls::vx;
-
-	SpikeFromChip obj1, obj2;
-
-	obj1.set_label(SpikeLabel(12));
-	obj1.set_chip_time(ChipTime(3));
-
-	std::ostringstream ostream;
-	{
-		cereal::JSONOutputArchive oa(ostream);
-		oa(obj1);
-	}
-
-	std::istringstream istream(ostream.str());
-	{
-		cereal::JSONInputArchive ia(istream);
-		ia(obj2);
-	}
-	ASSERT_EQ(obj1, obj2);
-}
-
-TEST(MADCSampleFromChip, General)
-{
-	using namespace fisch::vx;
-	using namespace halco::hicann_dls::vx;
-
-	EXPECT_NO_THROW(MADCSampleFromChip());
-	EXPECT_NO_THROW(MADCSampleFromChip(MADCSampleFromChip::Value(), ChipTime()));
-
-	MADCSampleFromChip config;
-	MADCSampleFromChip other_config = config;
-
-	EXPECT_EQ(other_config, config);
-
-	{
-		MADCSampleFromChip::Value value(5);
+		MADCSampleFromChipEvent::Value value(5);
 		config.set_value(value);
 		EXPECT_EQ(config.get_value(), value);
 	}
@@ -219,34 +152,41 @@ TEST(MADCSampleFromChip, General)
 		EXPECT_EQ(config.get_chip_time(), value);
 	}
 
+	{
+		FPGATime value(3);
+		config.set_fpga_time(value);
+		EXPECT_EQ(config.get_fpga_time(), value);
+	}
+
 	EXPECT_NE(config, other_config);
 
-	MADCSampleFromChip config3 = config;
+	MADCSampleFromChipEvent config3 = config;
 	EXPECT_EQ(config, config3);
 }
 
-TEST(MADCSampleFromChip, Ostream)
+TEST(MADCSampleFromChipEvent, Ostream)
 {
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	MADCSampleFromChip obj(MADCSampleFromChip::Value(5), ChipTime(3));
+	MADCSampleFromChipEvent obj(MADCSampleFromChipEvent::Value(5), ChipTime(3), FPGATime(7));
 
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "MADCSampleFromChip(Value(5), ChipTime(3))");
+	EXPECT_EQ(stream.str(), "MADCSampleFromChipEvent(Value(5), ChipTime(3), FPGATime(7))");
 }
 
-TEST(MADCSampleFromChip, CerealizeCoverage)
+TEST(MADCSampleFromChipEvent, CerealizeCoverage)
 {
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	MADCSampleFromChip obj1, obj2;
+	MADCSampleFromChipEvent obj1, obj2;
 
-	obj1.set_value(MADCSampleFromChip::Value(5));
+	obj1.set_value(MADCSampleFromChipEvent::Value(5));
 	obj1.set_chip_time(ChipTime(3));
+	obj1.set_fpga_time(FPGATime(7));
 
 	std::ostringstream ostream;
 	{
@@ -268,7 +208,7 @@ TEST(SpikeFromChipEvent, General)
 	using namespace halco::hicann_dls::vx;
 
 	EXPECT_NO_THROW(SpikeFromChipEvent());
-	EXPECT_NO_THROW(SpikeFromChipEvent(SpikeFromChip(SpikeLabel(), ChipTime()), FPGATime()));
+	EXPECT_NO_THROW(SpikeFromChipEvent(SpikeLabel(), ChipTime(), FPGATime()));
 
 	SpikeFromChipEvent config;
 	SpikeFromChipEvent other_config = config;
@@ -276,9 +216,15 @@ TEST(SpikeFromChipEvent, General)
 	EXPECT_EQ(other_config, config);
 
 	{
-		SpikeFromChip value(SpikeLabel(12), ChipTime(5));
-		config.set_spike(value);
-		EXPECT_EQ(config.get_spike(), value);
+		SpikeLabel value(12);
+		config.set_label(value);
+		EXPECT_EQ(config.get_label(), value);
+	}
+
+	{
+		ChipTime value(3);
+		config.set_chip_time(value);
+		EXPECT_EQ(config.get_chip_time(), value);
 	}
 
 	{
@@ -298,14 +244,12 @@ TEST(SpikeFromChipEvent, Ostream)
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	SpikeFromChipEvent obj(SpikeFromChip(SpikeLabel(12), ChipTime(3)), FPGATime(6));
+	SpikeFromChipEvent obj(SpikeLabel(12), ChipTime(3), FPGATime(6));
 
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(
-	    stream.str(),
-	    "SpikeFromChipEvent(SpikeFromChip(SpikeLabel(12), ChipTime(3)), FPGATime(6))");
+	EXPECT_EQ(stream.str(), "SpikeFromChipEvent(SpikeLabel(12), ChipTime(3), FPGATime(6))");
 }
 
 TEST(SpikeFromChipEvent, CerealizeCoverage)
@@ -315,7 +259,8 @@ TEST(SpikeFromChipEvent, CerealizeCoverage)
 
 	SpikeFromChipEvent obj1, obj2;
 
-	obj1.set_spike(SpikeFromChip(SpikeLabel(12), ChipTime(6)));
+	obj1.set_label(SpikeLabel(12));
+	obj1.set_chip_time(ChipTime(4));
 	obj1.set_fpga_time(FPGATime(3));
 
 	std::ostringstream ostream;

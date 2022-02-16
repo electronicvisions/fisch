@@ -131,20 +131,24 @@ public:
 
 
 /**
- * Spike from chip comprised of a SpikeLabel and a ChipTime.
+ * Spike from chip event comprised of a SpikeFromChip and FPGATime time annotation.
+ * Serves as value type for spikes accessible on a PlaybackProgram.
  */
-class GENPYBIND(visible) SpikeFromChip
+class GENPYBIND(visible) SpikeFromChipEvent
 {
 public:
-	/** Default constructor. */
-	explicit SpikeFromChip();
-
 	/**
-	 * Construct spike event with label and time.
-	 * @param label SpikeLabel value to use
-	 * @param time ChipTime value to use
+	 * Construct spike from chip event from a label, a Chip time and a FPGA time.
+	 * @param label SpikeLabel data
+	 * @param chip_time ChipTime time annotation
+	 * @param fpga_time FPGATime time annotation
 	 */
-	explicit SpikeFromChip(SpikeLabel const& label, ChipTime const& time);
+	explicit SpikeFromChipEvent(
+	    SpikeLabel const& label = SpikeLabel(),
+	    ChipTime const& chip_time = ChipTime(),
+	    FPGATime const& fpga_time = FPGATime()) :
+	    m_label(label), m_chip_time(chip_time), m_fpga_time(fpga_time)
+	{}
 
 	/**
 	 * Get spike label value.
@@ -174,15 +178,30 @@ public:
 	GENPYBIND(setter_for(chip_time))
 	void set_chip_time(ChipTime const& value);
 
-	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SpikeFromChip const& spike_label);
+	/**
+	 * Get FPGA time annotation.
+	 * @return FPGATime time annotation
+	 */
+	GENPYBIND(getter_for(fpga_time))
+	FPGATime get_fpga_time() const;
 
-	bool operator==(SpikeFromChip const& other) const;
-	bool operator!=(SpikeFromChip const& other) const;
+	/**
+	 * Set FPGA time annotation.
+	 * @param value FPGATime time annotation
+	 */
+	GENPYBIND(setter_for(fpga_time))
+	void set_fpga_time(FPGATime const& value);
+
+	GENPYBIND(stringstream)
+	friend std::ostream& operator<<(std::ostream& os, SpikeFromChipEvent const& event);
+
+	bool operator==(SpikeFromChipEvent const& other) const;
+	bool operator!=(SpikeFromChipEvent const& other) const;
 
 private:
 	SpikeLabel m_label;
 	ChipTime m_chip_time;
+	FPGATime m_fpga_time;
 
 	friend class cereal::access;
 	template <class Archive>
@@ -191,14 +210,12 @@ private:
 
 
 /**
- * MADC sample from chip comprised of a Value and a ChipTime.
+ * MADC sample from chip event comprised of MADCSampleFromChip data and FPGATime time annotation.
+ * Serves as value type for MADC samples accessible on a PlaybackProgram.
  */
-class GENPYBIND(visible) MADCSampleFromChip
+class GENPYBIND(visible) MADCSampleFromChipEvent
 {
 public:
-	/** Default constructor. */
-	explicit MADCSampleFromChip();
-
 	/** Sample value. */
 	struct GENPYBIND(inline_base("*")) Value
 	    : public halco::common::detail::RantWrapper<Value, uintmax_t, 0x3fff, 0>
@@ -207,11 +224,17 @@ public:
 	};
 
 	/**
-	 * Construct MADC sample event with value and time.
-	 * @param value Value value to use
-	 * @param time ChipTime value to use
+	 * Construct MADC sample from chip event from a MADC sample from chip and a FPGA time.
+	 * @param value Sample value
+	 * @param chip_time ChipTime time annotation
+	 * @param fpga_time FPGATime time annotation
 	 */
-	explicit MADCSampleFromChip(Value const& value, ChipTime const& time);
+	explicit MADCSampleFromChipEvent(
+	    Value const& value = Value(),
+	    ChipTime const& chip_time = ChipTime(),
+	    FPGATime const& fpga_time = FPGATime()) :
+	    m_value(value), m_chip_time(chip_time), m_fpga_time(fpga_time)
+	{}
 
 	/**
 	 * Get sample value.
@@ -241,116 +264,6 @@ public:
 	GENPYBIND(setter_for(chip_time))
 	void set_chip_time(ChipTime const& value);
 
-	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& spike_label);
-
-	bool operator==(MADCSampleFromChip const& other) const;
-	bool operator!=(MADCSampleFromChip const& other) const;
-
-private:
-	Value m_value;
-	ChipTime m_chip_time;
-
-	friend class cereal::access;
-	template <class Archive>
-	void serialize(Archive& ar, std::uint32_t const version);
-};
-
-
-/**
- * Spike from chip event comprised of a SpikeFromChip and FPGATime time annotation.
- * Serves as value type for spikes accessible on a PlaybackProgram.
- */
-class GENPYBIND(visible) SpikeFromChipEvent
-{
-public:
-	/**
-	 * Construct spike from chip event from a spike from chip and a FPGA time.
-	 * @param spike SpikeFromChip spike data
-	 * @param fpga_time FPGATime time annotation
-	 */
-	explicit SpikeFromChipEvent(
-	    SpikeFromChip const& spike = SpikeFromChip(), FPGATime const& fpga_time = FPGATime()) :
-	    m_spike(spike),
-	    m_fpga_time(fpga_time)
-	{}
-
-	/**
-	 * Get spike data.
-	 * @return SpikeFromChip spike data
-	 */
-	GENPYBIND(getter_for(spike))
-	SpikeFromChip get_spike() const;
-
-	/**
-	 * Set spike data.
-	 * @param value SpikeFromChip spike data
-	 */
-	GENPYBIND(setter_for(spike))
-	void set_spike(SpikeFromChip const& value);
-
-	/**
-	 * Get FPGA time annotation.
-	 * @return FPGATime time annotation
-	 */
-	GENPYBIND(getter_for(fpga_time))
-	FPGATime get_fpga_time() const;
-
-	/**
-	 * Set FPGA time annotation.
-	 * @param value FPGATime time annotation
-	 */
-	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& value);
-
-	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SpikeFromChipEvent const& event);
-
-	bool operator==(SpikeFromChipEvent const& other) const;
-	bool operator!=(SpikeFromChipEvent const& other) const;
-
-private:
-	SpikeFromChip m_spike;
-	FPGATime m_fpga_time;
-
-	friend class cereal::access;
-	template <class Archive>
-	void serialize(Archive& ar, std::uint32_t const version);
-};
-
-
-/**
- * MADC sample from chip event comprised of MADCSampleFromChip data and FPGATime time annotation.
- * Serves as value type for MADC samples accessible on a PlaybackProgram.
- */
-class GENPYBIND(visible) MADCSampleFromChipEvent
-{
-public:
-	/**
-	 * Construct MADC sample from chip event from a MADC sample from chip and a FPGA time.
-	 * @param sample MADCSampleFromChip sample data
-	 * @param fpga_time FPGATime time annotation
-	 */
-	explicit MADCSampleFromChipEvent(
-	    MADCSampleFromChip const& sample = MADCSampleFromChip(),
-	    FPGATime const& fpga_time = FPGATime()) :
-	    m_sample(sample), m_fpga_time(fpga_time)
-	{}
-
-	/**
-	 * Get sample data.
-	 * @return MADCSampleFromChip sample data
-	 */
-	GENPYBIND(getter_for(sample))
-	MADCSampleFromChip get_sample() const;
-
-	/**
-	 * Get sample data.
-	 * @param value MADCSampleFromChip sample data
-	 */
-	GENPYBIND(setter_for(sample))
-	void set_sample(MADCSampleFromChip const& value);
-
 	/**
 	 * Get FPGA time annotation.
 	 * @return FPGATime time annotation
@@ -372,7 +285,8 @@ public:
 	bool operator!=(MADCSampleFromChipEvent const& other) const;
 
 private:
-	MADCSampleFromChip m_sample;
+	Value m_value;
+	ChipTime m_chip_time;
 	FPGATime m_fpga_time;
 
 	friend class cereal::access;
