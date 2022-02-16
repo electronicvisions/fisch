@@ -126,8 +126,8 @@ TEST(SpikePack1ToChip, Loopback)
 
 	unsigned num_unexpected_spikes = 0;
 	for (auto spike : spikes) {
-		auto it = std::find(
-		    to_fpga_spike_labels.cbegin(), to_fpga_spike_labels.cend(), spike.get_label());
+		auto it =
+		    std::find(to_fpga_spike_labels.cbegin(), to_fpga_spike_labels.cend(), spike.label);
 
 		if (it == to_fpga_spike_labels.cend()) {
 			num_unexpected_spikes++;

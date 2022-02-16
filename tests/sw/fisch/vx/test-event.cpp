@@ -141,20 +141,20 @@ TEST(MADCSampleFromChip, General)
 
 	{
 		MADCSampleFromChip::Value value(5);
-		config.set_value(value);
-		EXPECT_EQ(config.get_value(), value);
+		config.value = value;
+		EXPECT_EQ(config.value, value);
 	}
 
 	{
 		ChipTime value(3);
-		config.set_chip_time(value);
-		EXPECT_EQ(config.get_chip_time(), value);
+		config.chip_time = value;
+		EXPECT_EQ(config.chip_time, value);
 	}
 
 	{
 		FPGATime value(3);
-		config.set_fpga_time(value);
-		EXPECT_EQ(config.get_fpga_time(), value);
+		config.fpga_time = value;
+		EXPECT_EQ(config.fpga_time, value);
 	}
 
 	EXPECT_NE(config, other_config);
@@ -183,9 +183,9 @@ TEST(MADCSampleFromChip, CerealizeCoverage)
 
 	MADCSampleFromChip obj1, obj2;
 
-	obj1.set_value(MADCSampleFromChip::Value(5));
-	obj1.set_chip_time(ChipTime(3));
-	obj1.set_fpga_time(FPGATime(7));
+	obj1.value = MADCSampleFromChip::Value(5);
+	obj1.chip_time = ChipTime(3);
+	obj1.fpga_time = FPGATime(7);
 
 	std::ostringstream ostream;
 	{
@@ -216,20 +216,20 @@ TEST(SpikeFromChip, General)
 
 	{
 		SpikeLabel value(12);
-		config.set_label(value);
-		EXPECT_EQ(config.get_label(), value);
+		config.label = value;
+		EXPECT_EQ(config.label, value);
 	}
 
 	{
 		ChipTime value(3);
-		config.set_chip_time(value);
-		EXPECT_EQ(config.get_chip_time(), value);
+		config.chip_time = value;
+		EXPECT_EQ(config.chip_time, value);
 	}
 
 	{
 		FPGATime value(3);
-		config.set_fpga_time(value);
-		EXPECT_EQ(config.get_fpga_time(), value);
+		config.fpga_time = value;
+		EXPECT_EQ(config.fpga_time, value);
 	}
 
 	EXPECT_NE(config, other_config);
@@ -258,9 +258,9 @@ TEST(SpikeFromChip, CerealizeCoverage)
 
 	SpikeFromChip obj1, obj2;
 
-	obj1.set_label(SpikeLabel(12));
-	obj1.set_chip_time(ChipTime(4));
-	obj1.set_fpga_time(FPGATime(3));
+	obj1.label = SpikeLabel(12);
+	obj1.chip_time = ChipTime(4);
+	obj1.fpga_time = FPGATime(3);
 
 	std::ostringstream ostream;
 	{

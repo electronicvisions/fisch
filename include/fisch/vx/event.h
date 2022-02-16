@@ -147,50 +147,23 @@ public:
 	    SpikeLabel const& label = SpikeLabel(),
 	    ChipTime const& chip_time = ChipTime(),
 	    FPGATime const& fpga_time = FPGATime()) :
-	    m_label(label), m_chip_time(chip_time), m_fpga_time(fpga_time)
+	    label(label), chip_time(chip_time), fpga_time(fpga_time)
 	{}
 
 	/**
-	 * Get spike label value.
-	 * @return SpikeLabel
+	 * Spike label value.
 	 */
-	GENPYBIND(getter_for(label))
-	SpikeLabel get_label() const;
+	SpikeLabel label;
 
 	/**
-	 * Set spike label value.
-	 * @param value SpikeLabel to set
+	 * Chip time value.
 	 */
-	GENPYBIND(setter_for(label))
-	void set_label(SpikeLabel const& value);
+	ChipTime chip_time;
 
 	/**
-	 * Get chip time value.
-	 * @return ChipTime
+	 * FPGA time annotation.
 	 */
-	GENPYBIND(getter_for(chip_time))
-	ChipTime get_chip_time() const;
-
-	/**
-	 * Set chip time value.
-	 * @param value ChipTime to set
-	 */
-	GENPYBIND(setter_for(chip_time))
-	void set_chip_time(ChipTime const& value);
-
-	/**
-	 * Get FPGA time annotation.
-	 * @return FPGATime time annotation
-	 */
-	GENPYBIND(getter_for(fpga_time))
-	FPGATime get_fpga_time() const;
-
-	/**
-	 * Set FPGA time annotation.
-	 * @param value FPGATime time annotation
-	 */
-	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& value);
+	FPGATime fpga_time;
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event);
@@ -199,10 +172,6 @@ public:
 	bool operator!=(SpikeFromChip const& other) const;
 
 private:
-	SpikeLabel m_label;
-	ChipTime m_chip_time;
-	FPGATime m_fpga_time;
-
 	friend class cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
@@ -233,50 +202,23 @@ public:
 	    Value const& value = Value(),
 	    ChipTime const& chip_time = ChipTime(),
 	    FPGATime const& fpga_time = FPGATime()) :
-	    m_value(value), m_chip_time(chip_time), m_fpga_time(fpga_time)
+	    value(value), chip_time(chip_time), fpga_time(fpga_time)
 	{}
 
 	/**
-	 * Get sample value.
-	 * @return Value
+	 * Sample value.
 	 */
-	GENPYBIND(getter_for(value))
-	Value get_value() const;
+	Value value;
 
 	/**
-	 * Set sample value.
-	 * @param value Value to set
+	 * Chip time value.
 	 */
-	GENPYBIND(setter_for(value))
-	void set_value(Value const& value);
+	ChipTime chip_time;
 
 	/**
-	 * Get chip time value.
-	 * @return ChipTime
+	 * FPGA time annotation.
 	 */
-	GENPYBIND(getter_for(chip_time))
-	ChipTime get_chip_time() const;
-
-	/**
-	 * Set chip time value.
-	 * @param value ChipTime to set
-	 */
-	GENPYBIND(setter_for(chip_time))
-	void set_chip_time(ChipTime const& value);
-
-	/**
-	 * Get FPGA time annotation.
-	 * @return FPGATime time annotation
-	 */
-	GENPYBIND(getter_for(fpga_time))
-	FPGATime get_fpga_time() const;
-
-	/**
-	 * Set FPGA time annotation.
-	 * @param value FPGATime time annotation
-	 */
-	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& value);
+	FPGATime fpga_time;
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event);
@@ -285,10 +227,6 @@ public:
 	bool operator!=(MADCSampleFromChip const& other) const;
 
 private:
-	Value m_value;
-	ChipTime m_chip_time;
-	FPGATime m_fpga_time;
-
 	friend class cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
