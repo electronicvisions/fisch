@@ -63,17 +63,18 @@ def build(bld):
         export_includes = 'include',
     )
 
-    bld.stlib(
-        source = [
-            'src/fisch/vx/word_access/type/omnibus.cpp',
-            'src/fisch/vx/word_access/type/jtag.cpp',
-        ],
-        target = 'fisch_ppu_vx',
-        use = ['fisch_inc', 'hate_inc', 'halco_hicann_dls_ppu_vx'],
-        env = bld.all_envs['nux_vx'],
-        linkflags = '-Wl,-z,defs',
-        install_path = '${PREFIX}/lib/ppu',
-    )
+    if bld.env.have_ppu_toolchain:
+        bld.stlib(
+            source = [
+                'src/fisch/vx/word_access/type/omnibus.cpp',
+                'src/fisch/vx/word_access/type/jtag.cpp',
+            ],
+            target = 'fisch_ppu_vx',
+            use = ['fisch_inc', 'hate_inc', 'halco_hicann_dls_ppu_vx'],
+            env = bld.all_envs['nux_vx'],
+            linkflags = '-Wl,-z,defs',
+            install_path = '${PREFIX}/lib/ppu',
+        )
 
     bld.shlib(
         source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
