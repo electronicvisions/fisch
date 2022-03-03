@@ -2,7 +2,7 @@ import unittest
 import inspect
 import tempfile
 import re
-import pyfisch_vx
+import pyfisch_vx_v1 as pyfisch_vx
 import random
 
 

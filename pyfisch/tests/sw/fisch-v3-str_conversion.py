@@ -1,6 +1,6 @@
 import unittest
 
-import pyfisch_vx as fisch
+import pyfisch_vx_v3 as fisch
 
 class StrConversion(unittest.TestCase):
     def test_str_conversion(self):

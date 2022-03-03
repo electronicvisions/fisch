@@ -20,22 +20,23 @@ def configure(cfg):
 
 
 def build(bld):
-    bld(
-        target='pyfisch_vx',
-        source='../include/fisch/vx/python_bindings.h',
-        genpybind_tags='fisch_vx',
-        features='genpybind cxx cxxshlib pyext',
-        use=['fisch_vx', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
-        install_path='${PREFIX}/lib',
-    )
+    for hx_version in [1, 2, 3]:
+        bld(
+            target=f'pyfisch_vx_v{hx_version}',
+            source='../include/fisch/vx/python_bindings.h',
+            genpybind_tags='fisch_vx',
+            features='genpybind cxx cxxshlib pyext',
+            use=[f'fisch_vx_v{hx_version}', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
+            install_path='${PREFIX}/lib',
+        )
 
-    bld(
-        target='pyfisch_swtest_vx',
-        tests=bld.path.ant_glob('tests/sw/*.py'),
-        features='use pytest',
-        use='pyfisch_vx',
-        install_path='${PREFIX}/bin',
-        pythonpath=['tests'],
-    )
+        bld(
+            target=f'pyfisch_swtest_vx_v{hx_version}',
+            tests=bld.path.ant_glob(f'tests/sw/fisch-v{hx_version}-*.py'),
+            features='use pytest',
+            use=f'pyfisch_vx_v{hx_version}',
+            install_path='${PREFIX}/bin',
+            pythonpath=['tests'],
+        )
 
     bld.add_post_fun(summary)

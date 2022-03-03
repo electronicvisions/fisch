@@ -1,7 +1,11 @@
+from enum import Enum, auto
 import os
 from os.path import join
 from waflib.extras.test_base import summary
 from waflib.extras.symwaf2ic import get_toplevel_path
+import yaml
+import re
+from waflib.Errors import BuildError
 
 
 def depends(dep):
@@ -55,8 +59,30 @@ def configure(cfg):
 
 
 def build(bld):
-    bld.env.DLSvx_HARDWARE_AVAILABLE = "cube" == os.environ.get("SLURM_JOB_PARTITION")
-    bld.env.DLSvx_SIM_AVAILABLE = "FLANGE_SIMULATION_RCF_PORT" in os.environ
+    class TestTarget(Enum):
+        SOFTWARE_ONLY = auto()
+        HARDWARE = auto()
+        SIMULATION = auto()
+
+    if "FLANGE_SIMULATION_RCF_PORT" in os.environ:
+        bld.env.TEST_TARGET = TestTarget.SIMULATION
+
+        try:
+            chip_revision = int(os.environ.get("SIMULATED_CHIP_REVISION"))
+        except TypeError:
+            raise BuildError("Environment variable 'SIMULATED_CHIP_REVISION' "
+                             "not set or cannot be casted to integer.")
+        bld.env.CURRENT_SETUP = dict(chip_revision=chip_revision)
+    elif "SLURM_HWDB_ENTRIES" in os.environ:
+        bld.env.TEST_TARGET = TestTarget.HARDWARE
+        slurm_licenses = os.environ.get("SLURM_HARDWARE_LICENSES")
+        hwdb_entries = os.environ.get("SLURM_HWDB_ENTRIES")
+        fpga_id = int(re.match(r"W(?P<wafer>\d+)F(?P<fpga>\d+)",
+                               slurm_licenses)["fpga"])
+        bld.env.CURRENT_SETUP = yaml.full_load(hwdb_entries)["fpgas"][fpga_id]
+    else:
+        bld.env.TEST_TARGET = TestTarget.SOFTWARE_ONLY
+        bld.env.CURRENT_SETUP = dict(chip_revision=None)
 
     bld(
         target          = 'fisch_inc',
@@ -76,43 +102,47 @@ def build(bld):
             install_path = '${PREFIX}/lib/ppu',
         )
 
-    bld.shlib(
-        source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
-        target = 'fisch_vx',
-        use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
-    )
+    for hx_version in [1, 2, 3]:
+        bld.shlib(
+            source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
+            target = f'fisch_vx_v{hx_version}',
+            use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
+            defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
+        )
 
-    bld(
-        features = 'cxx cxxprogram gtest',
-        source = bld.path.ant_glob('tests/sw/fisch/vx/*.cpp'),
-        target = 'fisch_swtest_vx',
-        use = ['fisch_vx'],
-    )
+        bld(
+            features = 'cxx cxxprogram gtest',
+            source = bld.path.ant_glob('tests/sw/fisch/vx/*.cpp'),
+            target = f'fisch_swtest_vx_v{hx_version}',
+            use = [f'fisch_vx_v{hx_version}'],
+            defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
+        )
 
-    bld(
-        features = 'cxx cxxprogram gtest',
-        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_hwsimtest_vx',
-        use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
-        test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = not (bld.env.DLSvx_HARDWARE_AVAILABLE or bld.env.DLSvx_SIM_AVAILABLE),
-        test_timeout = 3600 if bld.env.DLSvx_SIM_AVAILABLE else 30
-    )
+        bld(
+            features = 'cxx cxxprogram gtest',
+            source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
+            target = f'fisch_hwsimtest_vx_v{hx_version}',
+            use = [f'fisch_vx_v{hx_version}', 'BOOST4FISCHTOOLS'],
+            test_main = 'tests/hw/fisch/vx/main.cpp',
+            skip_run = (bld.env.TEST_TARGET == TestTarget.SOFTWARE_ONLY or
+                        not (int(bld.env.CURRENT_SETUP["chip_revision"]) == hx_version)),
+            test_timeout = 3600 if bld.env.TEST_TARGET == TestTarget.SIMULATION else 30
+        )
 
-    # like fisch_hwsimtest_vx but not for sim backend (because of 2x test time
-    # otherwise); the defines enforces a local quiggeldy if no remote quiggeldy
-    # is available => tests quiggeldy wrapping locally
-    bld(
-        features = 'cxx cxxprogram gtest',
-        source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
-        target = 'fisch_qghwsimtest_vx',
-        use = ['fisch_vx', 'BOOST4FISCHTOOLS'],
-        defines = ['FISCH_TEST_LOCAL_QUIGGELDY'],
-        test_main = 'tests/hw/fisch/vx/main.cpp',
-        skip_run = True,  # Unstable tests, cf. issue #3976
-        depends_on = ["quiggeldy"],
-        test_timeout = 30
-    )
+        # like fisch_hwsimtest_vx but not for sim backend (because of 2x test time
+        # otherwise); the defines enforces a local quiggeldy if no remote quiggeldy
+        # is available => tests quiggeldy wrapping locally
+        bld(
+            features = 'cxx cxxprogram gtest',
+            source = bld.path.ant_glob('tests/hw/fisch/vx/test-*.cpp'),
+            target = f'fisch_qghwsimtest_vx_v{hx_version}',
+            use = [f'fisch_vx_v{hx_version}', 'BOOST4FISCHTOOLS'],
+            defines = ['FISCH_TEST_LOCAL_QUIGGELDY'],
+            test_main = 'tests/hw/fisch/vx/main.cpp',
+            skip_run = True,  # Unstable tests, cf. issue #3976
+            depends_on = ["quiggeldy"],
+            test_timeout = 30
+        )
 
     if getattr(bld.options, 'with_fisch_python_bindings', True):
         bld.recurse('pyfisch')

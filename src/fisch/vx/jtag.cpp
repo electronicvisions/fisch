@@ -1,6 +1,7 @@
 #include "fisch/vx/jtag.h"
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/detail/jtag_pll_register_coord_size.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/jtag.h"
 #include "halco/hicann-dls/vx/omnibus.h"
@@ -284,8 +285,8 @@ JTAGPLLRegister::encode_write(coordinate_type const& coord) const
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::PLL_TARGET_REG);
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(3), coord.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(
+	    false, data::Payload::NumBits(detail::jtag_pll_register_coord_size), coord.value()));
 
 	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::SHIFT_PLL);
 
