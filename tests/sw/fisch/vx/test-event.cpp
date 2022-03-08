@@ -132,7 +132,8 @@ TEST(MADCSampleFromChip, General)
 	using namespace halco::hicann_dls::vx;
 
 	EXPECT_NO_THROW(MADCSampleFromChip());
-	EXPECT_NO_THROW(MADCSampleFromChip(MADCSampleFromChip::Value(), ChipTime(), FPGATime()));
+	EXPECT_NO_THROW(MADCSampleFromChip(
+	    MADCSampleFromChip::Value(), MADCSampleFromChip::Channel(), ChipTime(), FPGATime()));
 
 	MADCSampleFromChip config;
 	MADCSampleFromChip other_config = config;
@@ -143,6 +144,12 @@ TEST(MADCSampleFromChip, General)
 		MADCSampleFromChip::Value value(5);
 		config.value = value;
 		EXPECT_EQ(config.value, value);
+	}
+
+	{
+		MADCSampleFromChip::Channel value(1);
+		config.channel = value;
+		EXPECT_EQ(config.channel, value);
 	}
 
 	{
@@ -168,12 +175,13 @@ TEST(MADCSampleFromChip, Ostream)
 	using namespace fisch::vx;
 	using namespace halco::hicann_dls::vx;
 
-	MADCSampleFromChip obj(MADCSampleFromChip::Value(5), ChipTime(3), FPGATime(7));
+	MADCSampleFromChip obj(
+	    MADCSampleFromChip::Value(5), MADCSampleFromChip::Channel(1), ChipTime(3), FPGATime(7));
 
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "MADCSampleFromChip(Value(5), ChipTime(3), FPGATime(7))");
+	EXPECT_EQ(stream.str(), "MADCSampleFromChip(Value(5), Channel(1), ChipTime(3), FPGATime(7))");
 }
 
 TEST(MADCSampleFromChip, CerealizeCoverage)
@@ -184,6 +192,7 @@ TEST(MADCSampleFromChip, CerealizeCoverage)
 	MADCSampleFromChip obj1, obj2;
 
 	obj1.value = MADCSampleFromChip::Value(5);
+	obj1.channel = MADCSampleFromChip::Channel(1);
 	obj1.chip_time = ChipTime(3);
 	obj1.fpga_time = FPGATime(7);
 

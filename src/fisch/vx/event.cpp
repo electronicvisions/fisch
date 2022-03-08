@@ -104,14 +104,14 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikeFromChip)
 std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event)
 {
 	std::stringstream ss;
-	os << "MADCSampleFromChip(" << event.value << ", " << event.chip_time << ", " << event.fpga_time
-	   << ")";
+	os << "MADCSampleFromChip(" << event.value << ", " << event.channel << ", " << event.chip_time
+	   << ", " << event.fpga_time << ")";
 	return os;
 }
 
 bool MADCSampleFromChip::operator==(MADCSampleFromChip const& other) const
 {
-	return (value == other.value) && (chip_time == other.chip_time) &&
+	return (value == other.value) && (channel == other.channel) && (chip_time == other.chip_time) &&
 	       (fpga_time == other.fpga_time);
 }
 
@@ -124,6 +124,7 @@ template <class Archive>
 void MADCSampleFromChip::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP_("m_value", value));
+	ar(CEREAL_NVP_("m_channel", channel));
 	ar(CEREAL_NVP_("m_chip_time", chip_time));
 	ar(CEREAL_NVP_("m_fpga_time", fpga_time));
 }

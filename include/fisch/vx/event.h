@@ -185,11 +185,19 @@ private:
 class GENPYBIND(visible) MADCSampleFromChip
 {
 public:
-	/** Sample value. */
+	/** Sample value. Restricted to the MADC's 10 bit resolution. */
 	struct GENPYBIND(inline_base("*")) Value
-	    : public halco::common::detail::RantWrapper<Value, uintmax_t, 0x3fff, 0>
+	    : public halco::common::detail::RantWrapper<Value, uint16_t, 0x3ff, 0>
 	{
 		constexpr explicit Value(uintmax_t const val = 0) : rant_t(val) {}
+	};
+
+	/** Channel selected on active multiplexer from which the sampled value was obtained.
+	 * Given as a ReadoutSourceSelection coordinate. */
+	struct GENPYBIND(inline_base("*")) Channel
+	    : public halco::common::detail::RantWrapper<Channel, uint8_t, 0x1, 0>
+	{
+		constexpr explicit Channel(uintmax_t const val = 0) : rant_t(val) {}
 	};
 
 	/**
@@ -200,15 +208,21 @@ public:
 	 */
 	explicit MADCSampleFromChip(
 	    Value const& value = Value(),
+	    Channel const& channel = Channel(),
 	    ChipTime const& chip_time = ChipTime(),
 	    FPGATime const& fpga_time = FPGATime()) :
-	    value(value), chip_time(chip_time), fpga_time(fpga_time)
+	    value(value), channel(channel), chip_time(chip_time), fpga_time(fpga_time)
 	{}
 
 	/**
 	 * Sample value.
 	 */
 	Value value;
+
+	/**
+	 * Channel from which this sample was acquired.
+	 */
+	Channel channel;
 
 	/**
 	 * Chip time value.

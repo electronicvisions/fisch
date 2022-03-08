@@ -97,7 +97,8 @@ void PlaybackDecoder::process(
 	for (auto madc_sample : madc_samples) {
 		m_madc_sample_queue.push_back(MADCSampleFromChip(
 		    MADCSampleFromChip::Value(
-		        static_cast<MADCSampleFromChip::Value::value_type>(madc_sample.get_value())),
+		        madc_sample.get_value().to_ulong() & 0x3ff), // sample value is in bits 0 to 9
+		    MADCSampleFromChip::Channel(madc_sample.get_value().test(10)), // channel is in bit 10
 		    calculate_chip_time(static_cast<uint8_t>(madc_sample.get_timestamp())),
 		    m_time_current));
 	}
