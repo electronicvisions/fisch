@@ -81,7 +81,7 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		queue_expected_size += ContainerT::decode_ut_message_count;
 		auto ticket_storage =
 		    std::make_shared<detail::ContainerTicketStorage<ContainerT>>(pos, m_program);
-		m_program->m_impl->m_tickets.insert(ticket_storage);
+		m_program->m_impl->m_tickets.emplace_front(ticket_storage);
 		return ContainerTicket<ContainerT>(1, std::move(ticket_storage));
 	}
 }
@@ -110,7 +110,7 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		queue_expected_size += coords.size() * ContainerT::decode_ut_message_count;
 		auto ticket_storage =
 		    std::make_shared<detail::ContainerTicketStorage<ContainerT>>(pos, m_program);
-		m_program->m_impl->m_tickets.insert(ticket_storage);
+		m_program->m_impl->m_tickets.emplace_front(ticket_storage);
 		return ContainerTicket<ContainerT>(coords.size(), std::move(ticket_storage));
 	}
 }
@@ -137,6 +137,12 @@ std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder
 
 void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 {
+	if (&other == this) {
+		throw std::runtime_error("merge_back not possible from same PlaybackProgramBuilder.");
+	}
+
+	assert(m_program);
+	assert(other.m_program);
 	assert(m_program->m_impl);
 	assert(other.m_program->m_impl);
 	// move instructions
@@ -147,16 +153,19 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 
 	// change program in tickets of other builder
 	// update position in response queues in tickets of other builder
-	auto ticket_changer = [this](auto const& ticket_ptr) {
-		typedef
-		    typename hate::remove_all_qualifiers_t<decltype(ticket_ptr)>::element_type ticket_type;
+	auto ticket_changer = [this](auto const& ticket_weak_ptr) {
+		typedef typename hate::remove_all_qualifiers_t<decltype(ticket_weak_ptr)>::element_type
+		    ticket_type;
 		typedef typename ticket_type::container_type container_type;
 		if constexpr (IsReadable<container_type>::value) {
 			// translation of response queue position
 			size_t translation = m_program->m_impl->m_queue_expected_size.at(
 			    detail::decode_message_types_index<container_type>);
-			ticket_ptr->m_pbp = m_program;
-			ticket_ptr->m_pos += translation;
+			auto ticket_ptr = ticket_weak_ptr.lock();
+			if (ticket_ptr) {
+				ticket_ptr->m_pbp = m_program;
+				ticket_ptr->m_pos += translation;
+			}
 		}
 	};
 	for (auto const& ticket_ptr_variant : other.m_program->m_impl->m_tickets) {
@@ -164,7 +173,8 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	}
 
 	// move ticket list from other builder
-	m_program->m_impl->m_tickets.merge(other.m_program->m_impl->m_tickets);
+	m_program->m_impl->m_tickets.splice_after(
+	    m_program->m_impl->m_tickets.before_begin(), other.m_program->m_impl->m_tickets);
 	assert(
 	    other.m_program->m_impl->m_tickets.empty() &&
 	    "Ticket(s) are not unique to a PlaybackProgram.");
@@ -181,6 +191,12 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 
 void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 {
+	if (&other == this) {
+		throw std::runtime_error("merge_front not possible from same PlaybackProgramBuilder.");
+	}
+
+	assert(m_program);
+	assert(other.m_program);
 	assert(m_program->m_impl);
 	assert(other.m_program->m_impl);
 	// move instructions
@@ -190,21 +206,29 @@ void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 	other.m_program->m_impl->m_instructions.clear();
 
 	// change program in tickets of other builder
-	auto other_ticket_changer = [this](auto const& ticket_ptr) { ticket_ptr->m_pbp = m_program; };
+	auto other_ticket_changer = [this](auto const& ticket_weak_ptr) {
+		auto ticket_ptr = ticket_weak_ptr.lock();
+		if (ticket_ptr) {
+			ticket_ptr->m_pbp = m_program;
+		}
+	};
 	for (auto const& ticket_ptr_variant : other.m_program->m_impl->m_tickets) {
 		std::visit(other_ticket_changer, ticket_ptr_variant);
 	}
 
 	// update position in response queues in tickets of this builder
-	auto ticket_changer = [this, other](auto const& ticket_ptr) {
-		typedef
-		    typename hate::remove_all_qualifiers_t<decltype(ticket_ptr)>::element_type ticket_type;
+	auto ticket_changer = [this, other](auto const& ticket_weak_ptr) {
+		typedef typename hate::remove_all_qualifiers_t<decltype(ticket_weak_ptr)>::element_type
+		    ticket_type;
 		typedef typename ticket_type::container_type container_type;
 		if constexpr (IsReadable<container_type>::value) {
 			// translation of response queue position
 			size_t translation = m_program->m_impl->m_queue_expected_size.at(
 			    detail::decode_message_types_index<container_type>);
-			ticket_ptr->m_pos += translation;
+			auto ticket_ptr = ticket_weak_ptr.lock();
+			if (ticket_ptr) {
+				ticket_ptr->m_pos += translation;
+			}
 		}
 	};
 	for (auto const& ticket_ptr_variant : m_program->m_impl->m_tickets) {
@@ -212,7 +236,8 @@ void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 	}
 
 	// move ticket list from other builder
-	m_program->m_impl->m_tickets.merge(other.m_program->m_impl->m_tickets);
+	m_program->m_impl->m_tickets.splice_after(
+	    m_program->m_impl->m_tickets.before_begin(), other.m_program->m_impl->m_tickets);
 	assert(
 	    other.m_program->m_impl->m_tickets.empty() &&
 	    "Ticket(s) are not unique to a PlaybackProgram.");

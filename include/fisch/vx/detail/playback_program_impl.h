@@ -3,8 +3,8 @@
 #include "hxcomm/vx/utmessage_fwd.h"
 #include <array>
 #include <cstdint>
+#include <forward_list>
 #include <mutex>
-#include <unordered_set>
 #include <variant>
 #include <vector>
 
@@ -25,9 +25,9 @@ namespace fisch::vx::detail {
 
 struct PlaybackProgramImpl
 {
-#define LAST_PLAYBACK_CONTAINER(Name, Type) std::shared_ptr<detail::ContainerTicketStorage<Type>>
+#define LAST_PLAYBACK_CONTAINER(Name, Type) std::weak_ptr<detail::ContainerTicketStorage<Type>>
 #define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
-	mutable std::unordered_set<std::variant<
+	mutable std::forward_list<std::variant<
 #include "fisch/vx/container.def"
 	    >>
 	    m_tickets;
