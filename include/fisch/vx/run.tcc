@@ -10,6 +10,9 @@ namespace fisch::vx {
 template <typename Connection>
 RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& program)
 {
+	if (!program) {
+		throw std::runtime_error("run() of invalid spared_ptr<PlaybackProgram> not possible.");
+	}
 	auto [responses, connection_time_info] =
 	    hxcomm::execute_messages(connection, program->get_to_fpga_messages());
 	hate::Timer timer;
