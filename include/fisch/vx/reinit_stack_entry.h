@@ -19,7 +19,23 @@ public:
 	ReinitStackEntry(ReinitStackEntry&&) = default;
 	~ReinitStackEntry();
 
-	void set(std::shared_ptr<PlaybackProgram> const& pbmem, bool enforce = true);
+	/**
+	 * Set and maybe enforce reinit stack entry value.
+	 * @param pbmem_request Playback program to be executed once a reinit is required.
+	 * @param pbmem_snapshot Playback program to be executed once the exclusive access to the
+	 * hardware is relinquished. All read commands within this program are translated to writes and
+	 * replace the pbmem_request for future reinit operations. This is to be used to snapshot (parts
+	 * of) the current state of the hardware prior to releasing the exclusive access to other users
+	 * and be able to reapply this state at the next reinit operation without need for client-side
+	 * synchronisation and transform of the read-out data. Currently only Omnibus read -> write
+	 * operations are supported.
+	 * @param enforce Whether to directly apply the pbmem_request or only apply it during the next
+	 * reinit.
+	 */
+	void set(
+	    std::shared_ptr<PlaybackProgram> const& pbmem_request,
+	    std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot = std::nullopt,
+	    bool enforce = true);
 
 	void enforce();
 
@@ -42,7 +58,8 @@ GENPYBIND_MANUAL({
 
 	wrapped.def("pop", &ReinitStackEntry::pop);
 	wrapped.def(
-	    "set", &ReinitStackEntry::set, pybind11::arg("pbmem"), pybind11::arg("enforce") = true);
+	    "set", &ReinitStackEntry::set, pybind11::arg("pbmem_request"),
+	    pybind11::arg("pbmem_snapshot") = std::nullopt, pybind11::arg("enforce") = true);
 })
 
 } // namespace fisch::vx

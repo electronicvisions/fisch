@@ -12,20 +12,32 @@ ReinitStackEntry::~ReinitStackEntry()
 	/* needs to be specified here because Impl not complete in inline-default definition */
 }
 
-void ReinitStackEntry::set(std::shared_ptr<PlaybackProgram> const& pbmem, bool enforce)
+void ReinitStackEntry::set(
+    std::shared_ptr<PlaybackProgram> const& pbmem_request,
+    std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot,
+    bool enforce)
 {
 	if (!m_impl) {
 		throw std::runtime_error("Unexpected access to moved-from object.");
 	}
-	assert(pbmem);
-	assert(pbmem->m_impl);
+	assert(pbmem_request);
+	assert(pbmem_request->m_impl);
 	if (std::any_of(
-	        pbmem->m_impl->m_queue_expected_size.begin(),
-	        pbmem->m_impl->m_queue_expected_size.end(), [](auto const& a) { return a > 0; })) {
+	        pbmem_request->m_impl->m_queue_expected_size.begin(),
+	        pbmem_request->m_impl->m_queue_expected_size.end(),
+	        [](auto const& a) { return a > 0; })) {
 		throw std::runtime_error(
-		    "Reinit stack entry can only be set to write-only playback programs.");
+		    "Reinit stack entry request can only be set to write-only playback programs.");
 	}
-	m_impl->set(pbmem->get_to_fpga_messages(), enforce);
+	if (pbmem_snapshot) {
+		assert(*pbmem_snapshot);
+		assert((*pbmem_snapshot)->m_impl);
+		m_impl->set(
+		    {pbmem_request->get_to_fpga_messages(), (*pbmem_snapshot)->get_to_fpga_messages()},
+		    enforce);
+	} else {
+		m_impl->set({pbmem_request->get_to_fpga_messages(), std::nullopt}, enforce);
+	}
 }
 
 void ReinitStackEntry::enforce()
