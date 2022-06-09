@@ -11,6 +11,5 @@ constexpr static int jtag_pll_register_coord_size = 3;
 #else
 constexpr static int jtag_pll_register_coord_size = 4;
 #endif
-;
 
 } // namespace fisch::vx:detail
