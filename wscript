@@ -98,6 +98,9 @@ def build(bld):
     )
 
     if bld.env.have_ppu_toolchain:
+        env = bld.all_envs['nux_vx'].derive()
+        env.detach()
+
         bld.stlib(
             source = [
                 'src/fisch/vx/word_access/type/omnibus.cpp',
@@ -105,7 +108,7 @@ def build(bld):
             ],
             target = 'fisch_ppu_vx',
             use = ['fisch_inc', 'hate_inc', 'halco_hicann_dls_ppu_vx'],
-            env = bld.all_envs['nux_vx'],
+            env = env,
             linkflags = '-Wl,-z,defs',
             install_path = '${PREFIX}/lib/ppu',
         )
