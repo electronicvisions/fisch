@@ -2,6 +2,6 @@
 host=gerrit.bioai.eu
 port=29418
 project=fisch
-defaultbranch=master
+defaultbranch=ebrains-2.0
 defaultremote=review
 defaultrebase=0
