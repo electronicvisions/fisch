@@ -12,6 +12,14 @@ struct GENPYBIND(inline_base("*")) Extoll : public halco::common::detail::BaseTy
 	{}
 };
 
+struct GENPYBIND(inline_base("*")) ExtollOnNwNode
+    : public halco::common::detail::BaseType<ExtollOnNwNode, uint64_t>
+{
+	constexpr explicit ExtollOnNwNode(value_type const value = 0) GENPYBIND(implicit_conversion) :
+	    base_t(value)
+	{}
+};
+
 } // namespace word_access_type
 } // namespace fisch::vx
 

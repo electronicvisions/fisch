@@ -23,6 +23,17 @@ constexpr halco::hicann_dls::vx::OmnibusAddress event_switch_mask{
 constexpr halco::hicann_dls::vx::OmnibusAddress external_omnibus_bit_switch{0x0400'0000};
 constexpr halco::hicann_dls::vx::OmnibusAddress external_omnibus_base_address{
     external_omnibus_bit_switch | executor_omnibus_mask};
+constexpr halco::hicann_dls::vx::OmnibusAddress odfi_rf_omnibus_base_address{
+    0x0000'0000 | external_omnibus_base_address};
+constexpr halco::hicann_dls::vx::OmnibusAddress odfi_rf_omnibus_bit_switch_n{0x0100'0000};
+constexpr halco::hicann_dls::vx::OmnibusAddress pulse_comm_config_omnibus_base_address{
+    odfi_rf_omnibus_bit_switch_n | external_omnibus_base_address};
+
+constexpr halco::hicann_dls::vx::OmnibusAddress odfi_external_access_config_base_address{
+    pulse_comm_config_omnibus_base_address};
+
+constexpr halco::hicann_dls::vx::OmnibusAddress odfi_external_access_config_reg{
+    odfi_external_access_config_base_address + 0x0};
 
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_prescaler_base_address{i2c_over_omnibus_mask +
                                                                            0x200};
