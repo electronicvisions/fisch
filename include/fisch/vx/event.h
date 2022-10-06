@@ -13,6 +13,7 @@ class access;
 namespace halco::hicann_dls::vx {
 struct NeuronLabel;
 struct SPL1Address;
+struct SpikeLabel;
 struct SpikePack1ToChipOnDLS;
 struct SpikePack2ToChipOnDLS;
 struct SpikePack3ToChipOnDLS;
@@ -23,7 +24,7 @@ namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 /**
  * Spike payload information.
  */
-typedef word_access_type::SpikeLabel SpikeLabel GENPYBIND(visible);
+typedef halco::hicann_dls::vx::SpikeLabel SpikeLabel GENPYBIND(visible);
 
 
 /**
