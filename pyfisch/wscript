@@ -26,8 +26,11 @@ def build(bld):
             source='../include/fisch/vx/python_bindings.h',
             genpybind_tags='fisch_vx',
             features='genpybind cxx cxxshlib pyext',
-            use=[f'fisch_vx_v{hx_version}', 'pyhalco_hicann_dls_vx', 'pyhxcomm_vx'],
+            use=[f'fisch_vx_v{hx_version}',
+                 f'pyhalco_hicann_dls_vx_v{hx_version}',
+                 'pyhxcomm_vx'],
             install_path='${PREFIX}/lib',
+            defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
         )
 
         bld(
