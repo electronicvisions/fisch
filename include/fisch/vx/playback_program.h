@@ -9,7 +9,7 @@
 #include <variant>
 
 namespace cereal {
-class access;
+struct access;
 } // namespace cereal
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
@@ -18,7 +18,7 @@ class PlaybackProgramBuilder;
 
 namespace detail {
 template <typename ContainerT>
-class ContainerTicketStorage;
+struct ContainerTicketStorage;
 } // namespace detail
 
 template <typename ContainerT>
@@ -145,7 +145,7 @@ private:
 
 	std::unique_ptr<detail::PlaybackProgramImpl> m_impl;
 
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <typename Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };

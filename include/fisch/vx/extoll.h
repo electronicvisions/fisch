@@ -7,7 +7,7 @@
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
-class access;
+struct access;
 } // namespace cereal
 
 namespace halco::hicann_dls::vx {
@@ -70,7 +70,7 @@ public:
 private:
 	Value m_data;
 
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };

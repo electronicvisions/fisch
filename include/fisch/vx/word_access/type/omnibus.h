@@ -3,7 +3,7 @@
 #include "halco/common/geometry.h"
 
 namespace cereal {
-class access;
+struct access;
 } // namespace cereal
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
@@ -59,7 +59,7 @@ struct GENPYBIND(visible) Omnibus
 	friend std::ostream& operator<<(std::ostream& os, Omnibus const& value);
 
 private:
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <typename Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };

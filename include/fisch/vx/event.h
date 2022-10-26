@@ -7,7 +7,7 @@
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
-class access;
+struct access;
 } // namespace cereal
 
 namespace halco::hicann_dls::vx {
@@ -95,7 +95,7 @@ public:
 protected:
 	Value m_value;
 
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };
@@ -173,7 +173,7 @@ public:
 	bool operator!=(SpikeFromChip const& other) const;
 
 private:
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };
@@ -242,7 +242,7 @@ public:
 	bool operator!=(MADCSampleFromChip const& other) const;
 
 private:
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };
@@ -307,7 +307,7 @@ private:
 	Value m_value;
 	FPGATime m_fpga_time;
 
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };
@@ -373,7 +373,7 @@ private:
 	Value m_value;
 	FPGATime m_fpga_time;
 
-	friend class cereal::access;
+	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);
 };
