@@ -8,7 +8,7 @@ namespace word_access_type GENPYBIND_MODULE {
 struct GENPYBIND(inline_base("*")) Barrier
     : public halco::common::detail::RantWrapper<Barrier, uint_fast32_t, 0xf, 0>
 {
-	constexpr explicit Barrier(uintmax_t const value = 0xf) GENPYBIND(implicit_conversion) :
+	constexpr explicit Barrier(uintmax_t const value = 0x0) GENPYBIND(implicit_conversion) :
 	    rant_t(value)
 	{}
 
