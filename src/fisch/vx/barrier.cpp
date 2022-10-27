@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, Barrier const& config)
 	ss_d << "0d" << std::dec << config.m_value.value();
 	std::stringstream ss_x;
 	ss_x << "0x" << std::hex << config.m_value.value();
-	hate::bitset<3> bits(config.m_value.value());
+	hate::bitset<4> bits(config.m_value.value());
 	os << "Barrier(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
