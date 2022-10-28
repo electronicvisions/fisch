@@ -92,9 +92,17 @@ def build(bld):
         bld.env.TEST_TARGET = TestTarget.SOFTWARE_ONLY
         bld.env.CURRENT_SETUP = dict(chip_revision=None)
 
+    bld.install_files(
+        dest = '${PREFIX}/',
+        files = bld.path.ant_glob('include/fisch/**/*.(h|tcc|def)'),
+        name = 'fisch_header',
+        relative_trick = True
+    )
+
     bld(
         target          = 'fisch_inc',
         export_includes = 'include',
+        depends_on = 'fisch_header'
     )
 
     if bld.env.have_ppu_toolchain:
