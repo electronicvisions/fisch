@@ -8,7 +8,7 @@
 
 using namespace fisch::vx;
 
-FISCH_TEST_RANGED_REGISTER_GENERAL(Barrier, 0b0000, 16, 5)
+FISCH_TEST_RANGED_REGISTER_GENERAL(Barrier, 0b00000, 32, 5)
 
 TEST(Barrier, Ostream)
 {
@@ -18,7 +18,7 @@ TEST(Barrier, Ostream)
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "Barrier(0d5 0x5 0b0101)");
+	EXPECT_EQ(stream.str(), "Barrier(0d5 0x5 0b00101)");
 }
 
 TEST(Barrier, EncodeWrite)
