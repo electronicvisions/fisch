@@ -119,7 +119,8 @@ TEST(Extoll, Decode)
 	UTMessageFromFPGA<instruction::omnibus_from_fpga::Data> message_two(
 	    instruction::omnibus_from_fpga::Data::Payload(0xbeef));
 
-	obj.decode({&message_one, &message_two});
+	std::vector messages{message_one, message_two};
+	obj.decode({messages.begin(), messages.end()});
 	EXPECT_EQ(obj.get(), Extoll::Value(0xbeef'0000'cafe));
 }
 
@@ -297,7 +298,8 @@ TEST(ExtollOnNwNode, Decode)
 	UTMessageFromFPGA<instruction::omnibus_from_fpga::Data> message_two(
 	    instruction::omnibus_from_fpga::Data::Payload(0xbeef));
 
-	obj.decode({&message_one, &message_two});
+	std::vector messages{message_one, message_two};
+	obj.decode({messages.begin(), messages.end()});
 	EXPECT_EQ(obj.get(), ExtollOnNwNode::Value(0xbeef'0000'cafe));
 }
 
