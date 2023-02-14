@@ -17,8 +17,6 @@
 using namespace fisch::vx;
 using namespace halco::hicann_dls::vx;
 
-static auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
-
 template <typename ContainerT>
 void test_playback_program_builder_read_api()
 {
@@ -561,6 +559,7 @@ TEST(PlaybackProgramBuilder, CopyBack)
 
 TEST(PlaybackProgramBuilder, PerformanceOmnibusRead)
 {
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 	constexpr size_t max_pow = 25;
 
 	double rate_mhz = 0.;
@@ -582,6 +581,7 @@ TEST(PlaybackProgramBuilder, PerformanceOmnibusRead)
 
 TEST(PlaybackProgramBuilder, PerformanceOmnibusWrite)
 {
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 	constexpr size_t max_pow = 25;
 
 	double rate_mhz = 0.;
@@ -605,6 +605,7 @@ TEST(PlaybackProgramBuilder, PerformanceOmnibusWrite)
 
 TEST(PlaybackProgram, PerformanceOmnibusReadProcessMessages)
 {
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 	constexpr size_t max_pow = 25;
 
 	double rate_mhz = 0.;
@@ -635,6 +636,7 @@ TEST(PlaybackProgram, PerformanceOmnibusReadProcessMessages)
 
 TEST(PlaybackProgram, PerformanceOmnibusReadDecode)
 {
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 	constexpr size_t max_pow = 25;
 
 	double rate_mhz = 0.;
