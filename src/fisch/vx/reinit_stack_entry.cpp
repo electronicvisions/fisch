@@ -33,10 +33,10 @@ void ReinitStackEntry::set(
 		assert(*pbmem_snapshot);
 		assert((*pbmem_snapshot)->m_impl);
 		m_impl->set(
-		    {pbmem_request->get_to_fpga_messages(), (*pbmem_snapshot)->get_to_fpga_messages()},
-		    enforce);
+		    {pbmem_request->get_to_fpga_messages(), (*pbmem_snapshot)->get_to_fpga_messages(),
+		     enforce});
 	} else {
-		m_impl->set({pbmem_request->get_to_fpga_messages(), std::nullopt}, enforce);
+		m_impl->set({pbmem_request->get_to_fpga_messages(), std::nullopt, enforce});
 	}
 }
 
