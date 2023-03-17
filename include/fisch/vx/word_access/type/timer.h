@@ -5,10 +5,11 @@
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 namespace word_access_type GENPYBIND_MODULE {
 
-struct GENPYBIND(visible) Timer
+struct GENPYBIND(inline_base("*")) Timer : public halco::common::detail::BaseType<Timer, uint32_t>
 {
-	bool operator==(Timer const& other) const;
-	bool operator!=(Timer const& other) const;
+	constexpr explicit Timer(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
+	    base_t(value)
+	{}
 };
 
 struct GENPYBIND(inline_base("*")) WaitUntil

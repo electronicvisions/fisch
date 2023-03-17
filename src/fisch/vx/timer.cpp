@@ -1,14 +1,26 @@
 #include "fisch/vx/timer.h"
+#include "fisch/vx/omnibus.h"
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
 
-std::ostream& operator<<(std::ostream& os, Timer const&)
+void Timer::set(Value const value)
 {
-	os << "Timer()";
+	m_data = value;
+}
+
+Timer::Value Timer::get() const
+{
+	return m_data;
+}
+
+std::ostream& operator<<(std::ostream& os, Timer const& timer)
+{
+	os << "Timer(" << timer.m_data.value() << ")";
 	return os;
 }
 
@@ -25,7 +37,26 @@ bool Timer::operator!=(Timer const& other) const
 std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_write_ut_message_count>
 Timer::encode_write(coordinate_type const& /* coord */) const
 {
+	if (m_data != Value(0)) {
+		throw std::runtime_error("Trying to write value different from 0. This is not supported!");
+	}
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>()};
+}
+
+std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_read_ut_message_count>
+Timer::encode_read(coordinate_type const& /* coord */)
+{
+	return Omnibus::encode_read(halco::hicann_dls::vx::OmnibusAddress(timer_readout));
+}
+
+
+void Timer::decode(UTMessageFromFPGARangeOmnibus const& messages)
+{
+	Omnibus word;
+	word.decode(messages);
+	auto value = word.get().word.value();
+
+	m_data = Value(value);
 }
 
 template <class Archive>

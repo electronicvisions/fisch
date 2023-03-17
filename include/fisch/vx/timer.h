@@ -1,4 +1,5 @@
 #pragma once
+#include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/timer.h"
 #include "hxcomm/vx/utmessage_fwd.h"
@@ -15,17 +16,37 @@ struct WaitUntilOnFPGA;
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 
 /**
- * Container for writing a timer value.
+ * Container for writing and reading a timer value.
  */
 class GENPYBIND(visible) Timer
 {
 public:
 	typedef halco::hicann_dls::vx::TimerOnDLS coordinate_type;
 
+	typedef word_access_type::Timer Value;
+
 	/**
 	 * Default constructor.
 	 */
-	Timer() = default;
+	Timer() : m_data() {}
+
+	/**
+	 * Construct an instance with a value.
+	 * @param value Value to construct instance with
+	 */
+	explicit Timer(Value const& value) : m_data(value) {}
+
+	/**
+	 * Set timer value.
+	 * @param value Value to set
+	 */
+	void set(Value value);
+
+	/**
+	 * Get timer value.
+	 * @return Value value
+	 */
+	Value get() const;
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, Timer const& timer);
@@ -34,11 +55,17 @@ public:
 	bool operator!=(Timer const& other) const;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 1;
+	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
 	    coordinate_type const& coord) const GENPYBIND(hidden);
+	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
+	    coordinate_type const& coord) GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
+	Value m_data;
 	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);

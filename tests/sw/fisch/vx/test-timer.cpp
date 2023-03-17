@@ -42,7 +42,7 @@ TEST(Timer, Ostream)
 	std::stringstream stream;
 	stream << obj;
 
-	EXPECT_EQ(stream.str(), "Timer()");
+	EXPECT_EQ(stream.str(), "Timer(0)");
 }
 
 TEST(Timer, CerealizeCoverage)

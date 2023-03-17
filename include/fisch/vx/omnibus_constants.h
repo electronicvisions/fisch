@@ -10,6 +10,7 @@ constexpr halco::hicann_dls::vx::OmnibusAddress external_ppu_memory_base_address
     0x0000'0000 | fpga_omnibus_mask};
 constexpr halco::hicann_dls::vx::OmnibusAddress executor_omnibus_mask{
     0x0800'0000 | external_ppu_memory_base_address};
+constexpr halco::hicann_dls::vx::OmnibusAddress timer_readout{0xc | executor_omnibus_mask};
 constexpr halco::hicann_dls::vx::OmnibusAddress ut_omnibus_mask{
     0x0000'4000 | executor_omnibus_mask};
 constexpr halco::hicann_dls::vx::OmnibusAddress phy_omnibus_mask{0x0000'2000 | ut_omnibus_mask};
