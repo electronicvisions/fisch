@@ -8,6 +8,7 @@
 #include "fisch/vx/playback_program_builder.h"
 #include "fisch/vx/run.h"
 #include "halco/hicann-dls/vx/coordinates.h"
+#include "hwdb4cpp/hwdb4cpp.h"
 #include "hxcomm/vx/connection_from_env.h"
 #include "hxcomm/vx/target.h"
 
@@ -39,7 +40,27 @@ TEST(I2CIdRegister, Readout)
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
-	// FIXME: static value check might be nice but is bound to specific base-board.
-	EXPECT_NE(ticket.get().at(0).get(), 0x0000'0000);
-	EXPECT_NE(ticket.get().at(0).get(), 0xffff'ffff);
+
+	auto const connection_unique_identifier =
+	    std::visit([](auto const& conn) { return conn.get_unique_identifier(); }, connection);
+
+	auto const [hxcube_id, fpga_id, _, __] =
+	    hwdb4cpp::HXCubeSetupEntry::get_ids_from_unique_branch_identifier(
+	        connection_unique_identifier);
+
+	hwdb4cpp::database hwdb;
+	hwdb.load(hwdb4cpp::database::get_default_path());
+	auto const& hxcube_setup_entry = hwdb.get_hxcube_setup_entry(hxcube_id);
+	if (!hxcube_setup_entry.fpgas.contains(fpga_id)) {
+		throw std::runtime_error("HXCubeSetupEntry doesn't feature FPGA ID from connection.");
+	}
+	if (!hxcube_setup_entry.fpgas.at(fpga_id).wing) {
+		throw std::runtime_error("HXCubeSetupEntry doesn't feature chip.");
+	}
+	if (!hxcube_setup_entry.fpgas.at(fpga_id).wing->eeprom_chip_serial) {
+		throw std::runtime_error("HXCubeSetupEntry doesn't feature chip eeprom serial.");
+	}
+	EXPECT_EQ(
+	    ticket.get().at(0).get().value(),
+	    *(hxcube_setup_entry.fpgas.at(fpga_id).wing->eeprom_chip_serial));
 }
