@@ -121,7 +121,7 @@ def build(bld):
             install_path = '${PREFIX}/lib/ppu',
         )
 
-    for hx_version in [2, 3]:
+    for hx_version in [3]:
         bld.shlib(
             source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
             target = f'fisch_vx_v{hx_version}',
