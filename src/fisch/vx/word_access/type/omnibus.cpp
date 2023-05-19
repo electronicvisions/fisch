@@ -1,7 +1,7 @@
 #include "fisch/vx/word_access/type/omnibus.h"
 
 #ifndef __ppu__
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "halco/common/cerealization_geometry.h"
 #include "hate/bitset.h"
 #include "hate/join.h"

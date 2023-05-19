@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/vx/container.h"
 #include "fisch/vx/genpybind.h"
+#include "hate/visibility.h"
 #include <memory>
 #include <vector>
 
@@ -72,7 +73,7 @@ class GENPYBIND(visible) PlaybackProgramBuilder
 {
 public:
 	/** Default constructor. */
-	PlaybackProgramBuilder();
+	PlaybackProgramBuilder() SYMBOL_VISIBLE;
 
 	/**
 	 * Add write instruction for container.
@@ -118,28 +119,29 @@ public:
 	 * Finish playback program creation and return built program. Resets the state of the builder.
 	 * @return Built playback program
 	 */
-	std::shared_ptr<PlaybackProgram> done();
+	std::shared_ptr<PlaybackProgram> done() SYMBOL_VISIBLE;
 
 	/**
 	 * Print instruction UT messages added so far to ostream.
 	 * @return Altered ostream
 	 */
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder);
+	friend std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder)
+	    SYMBOL_VISIBLE;
 
 	/**
 	 * Merge other PlaybackProgramBuilder to the end of this builder instance.
 	 * The moved-from builder is emptied during the process.
 	 * @param other Builder to move to this instance at the back
 	 */
-	void merge_back(PlaybackProgramBuilder& other);
+	void merge_back(PlaybackProgramBuilder& other) SYMBOL_VISIBLE;
 
 	/**
 	 * Merge other PlaybackProgramBuilder to the beginning of this builder instance.
 	 * The moved-from builder is emptied during the process.
 	 * @param other Builder to move to this instance at the front
 	 */
-	void merge_front(PlaybackProgramBuilder& other);
+	void merge_front(PlaybackProgramBuilder& other) SYMBOL_VISIBLE;
 
 	/**
 	 * Copy other PlaybackProgramBuilder to the end of this builder instance.
@@ -147,31 +149,31 @@ public:
 	 * @throws std::runtime_error On other builder not being write only
 	 * @param other Builder to copy to this instance at the back
 	 */
-	void copy_back(PlaybackProgramBuilder const& other);
+	void copy_back(PlaybackProgramBuilder const& other) SYMBOL_VISIBLE;
 
 	/**
 	 * Get whether builder is empty, i.e. no instructions are embodied.
 	 * @return Boolean value
 	 */
-	bool empty() const;
+	bool empty() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get whether program only contains write data.
 	 * @return Boolean Value
 	 */
-	bool is_write_only() const;
+	bool is_write_only() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get number of UT messages to FPGA.
 	 * @return Size
 	 */
-	size_t size_to_fpga() const;
+	size_t size_to_fpga() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get number of UT messages from FPGA.
 	 * @return Size
 	 */
-	size_t size_from_fpga() const;
+	size_t size_from_fpga() const SYMBOL_VISIBLE;
 
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
@@ -179,15 +181,15 @@ private:
 
 // Explicit instantiation of template member functions for all valid playback container types.
 #define PLAYBACK_CONTAINER(Name, _Type)                                                            \
-	extern template ContainerTicket<Name>                                                          \
+	extern template ContainerTicket<Name> SYMBOL_VISIBLE                                           \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    typename Name::coordinate_type const& coord);                                              \
-	extern template ContainerTicket<Name>                                                          \
+	extern template ContainerTicket<Name> SYMBOL_VISIBLE                                           \
 	PlaybackProgramBuilder::read<typename Name::coordinate_type>(                                  \
 	    std::vector<typename Name::coordinate_type> const& coord);                                 \
-	extern template void PlaybackProgramBuilder::write<Name>(                                      \
+	extern template void SYMBOL_VISIBLE PlaybackProgramBuilder::write<Name>(                       \
 	    typename Name::coordinate_type const& coord, Name const& config);                          \
-	extern template void PlaybackProgramBuilder::write<Name>(                                      \
+	extern template void SYMBOL_VISIBLE PlaybackProgramBuilder::write<Name>(                       \
 	    std::vector<typename Name::coordinate_type> const& coords,                                 \
 	    std::vector<Name> const& configs);
 #include "fisch/vx/container.def"

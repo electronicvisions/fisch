@@ -1,6 +1,8 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/genpybind.h"
 #include "halco/common/geometry.h"
+#include "hate/visibility.h"
 
 namespace cereal {
 struct access;
@@ -52,11 +54,11 @@ struct GENPYBIND(visible) Omnibus
 		return word;
 	}
 
-	bool operator==(Omnibus const& other) const;
-	bool operator!=(Omnibus const& other) const;
+	bool operator==(Omnibus const& other) const SYMBOL_VISIBLE;
+	bool operator!=(Omnibus const& other) const SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, Omnibus const& value);
+	friend std::ostream& operator<<(std::ostream& os, Omnibus const& value) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -79,3 +81,5 @@ struct GENPYBIND(inline_base("*")) PollingOmnibusBlock
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::Omnibus::Word)
 } // namespace std
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::word_access_type::Omnibus)

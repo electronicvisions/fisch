@@ -2,6 +2,7 @@
 #include "fisch/vx/constants.h"
 #include "fisch/vx/genpybind.h"
 #include "halco/common/geometry.h"
+#include "hate/visibility.h"
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
 namespace word_access_type GENPYBIND_MODULE {
@@ -51,8 +52,8 @@ struct GENPYBIND(inline_base("*")) JTAGPhyRegister
 
 struct GENPYBIND(visible) ResetJTAGTap
 {
-	bool operator==(ResetJTAGTap const& other) const;
-	bool operator!=(ResetJTAGTap const& other) const;
+	bool operator==(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
+	bool operator!=(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
 };
 
 } // namespace word_access_type

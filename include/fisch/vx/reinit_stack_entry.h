@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/playback_program.h"
+#include "hate/visibility.h"
 #include <memory>
 
 #if defined(__GENPYBIND__) || defined(__GENPYBIND_GENERATED__)
@@ -17,7 +18,7 @@ public:
 	ReinitStackEntry(Connection& connection);
 	ReinitStackEntry(ReinitStackEntry const&) = delete;
 	ReinitStackEntry(ReinitStackEntry&&) = default;
-	~ReinitStackEntry();
+	~ReinitStackEntry() SYMBOL_VISIBLE;
 
 	/**
 	 * Set and maybe enforce reinit stack entry value.
@@ -35,11 +36,11 @@ public:
 	void set(
 	    std::shared_ptr<PlaybackProgram> const& pbmem_request,
 	    std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot = std::nullopt,
-	    bool enforce = true);
+	    bool enforce = true) SYMBOL_VISIBLE;
 
-	void enforce();
+	void enforce() SYMBOL_VISIBLE;
 
-	void pop();
+	void pop() SYMBOL_VISIBLE;
 
 private:
 	// cannot forward declare using statement from hxcomm

@@ -1,6 +1,6 @@
 #include "fisch/vx/jtag.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/detail/jtag_pll_register_coord_size.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/jtag.h"

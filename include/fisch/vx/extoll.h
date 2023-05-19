@@ -1,9 +1,11 @@
 #pragma once
 
+#include "fisch/cerealization.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/extoll.h"
 #include "halco/common/geometry.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -38,29 +40,29 @@ public:
 	 * Get value.
 	 * @return Word value
 	 */
-	Value const& get() const;
+	Value const& get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value Word value to set
 	 */
-	void set(Value const& value);
+	void set(Value const& value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, Extoll const& word);
+	friend std::ostream& operator<<(std::ostream& os, Extoll const& word) SYMBOL_VISIBLE;
 
-	bool operator==(Extoll const& other) const;
-	bool operator!=(Extoll const& other) const;
+	bool operator==(Extoll const& other) const SYMBOL_VISIBLE;
+	bool operator!=(Extoll const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 2;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 2;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
+	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -92,29 +94,29 @@ public:
 	 * Get value.
 	 * @return Word value
 	 */
-	Value const& get() const;
+	Value const& get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value Word value to set
 	 */
-	void set(Value const& value);
+	void set(Value const& value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, ExtollOnNwNode const& word);
+	friend std::ostream& operator<<(std::ostream& os, ExtollOnNwNode const& word) SYMBOL_VISIBLE;
 
-	bool operator==(ExtollOnNwNode const& other) const;
-	bool operator!=(ExtollOnNwNode const& other) const;
+	bool operator==(ExtollOnNwNode const& other) const SYMBOL_VISIBLE;
+	bool operator!=(ExtollOnNwNode const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 6;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 8;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 2;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
+	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -125,3 +127,6 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::Extoll)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::ExtollOnNwNode)

@@ -1,6 +1,8 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/spi.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -36,24 +38,24 @@ public:
 	 * Get value.
 	 * @return SPIShiftRegister value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value SPIShiftRegister word value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SPIShiftRegister const& word);
+	friend std::ostream& operator<<(std::ostream& os, SPIShiftRegister const& word) SYMBOL_VISIBLE;
 
-	bool operator==(SPIShiftRegister const& other) const;
-	bool operator!=(SPIShiftRegister const& other) const;
+	bool operator==(SPIShiftRegister const& other) const SYMBOL_VISIBLE;
+	bool operator!=(SPIShiftRegister const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -85,24 +87,25 @@ public:
 	 * Get value.
 	 * @return SPIDACDataRegister value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value SPIDACDataRegister word value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SPIDACDataRegister const& word);
+	friend std::ostream& operator<<(std::ostream& os, SPIDACDataRegister const& word)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(SPIDACDataRegister const& other) const;
-	bool operator!=(SPIDACDataRegister const& other) const;
+	bool operator==(SPIDACDataRegister const& other) const SYMBOL_VISIBLE;
+	bool operator!=(SPIDACDataRegister const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 8;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -134,24 +137,25 @@ public:
 	 * Get value.
 	 * @return SPIDACControlRegister value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value SPIDACControlRegister word value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SPIDACControlRegister const& word);
+	friend std::ostream& operator<<(std::ostream& os, SPIDACControlRegister const& word)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(SPIDACControlRegister const& other) const;
-	bool operator!=(SPIDACControlRegister const& other) const;
+	bool operator==(SPIDACControlRegister const& other) const SYMBOL_VISIBLE;
+	bool operator!=(SPIDACControlRegister const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -162,3 +166,7 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SPIShiftRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SPIDACDataRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SPIDACControlRegister)

@@ -1,7 +1,7 @@
 #include "fisch/vx/event.h"
 
 #include "cereal/types/array.hpp"
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 

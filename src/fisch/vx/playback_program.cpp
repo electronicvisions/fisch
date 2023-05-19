@@ -1,6 +1,6 @@
 #include "fisch/vx/playback_program.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/common/logger.h"
 #include "fisch/vx/detail/playback_program_impl.h"
 #include "hxcomm/vx/utmessage.h"

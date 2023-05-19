@@ -1,6 +1,6 @@
 #include "fisch/vx/reset.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 

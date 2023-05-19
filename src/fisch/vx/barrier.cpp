@@ -1,6 +1,6 @@
 #include "fisch/vx/barrier.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/barrier.h"
 #include "hate/bitset.h"

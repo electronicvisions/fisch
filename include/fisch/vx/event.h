@@ -1,9 +1,11 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/chip_time.h"
 #include "fisch/vx/fpga_time.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/event.h"
 #include "hate/join.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -66,13 +68,13 @@ public:
 	 * Get spike labels.
 	 * @return Array of SpikeLabel
 	 */
-	Value const& get() const;
+	Value const& get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set spike labels.
 	 * @param value Array of SpikeLabel to set
 	 */
-	void set(Value const& value);
+	void set(Value const& value) SYMBOL_VISIBLE;
 
 	// NOTE: operator needs to be inlined for python wrapping to work
 	GENPYBIND(stringstream)
@@ -84,13 +86,13 @@ public:
 		return os;
 	}
 
-	bool operator==(SpikePackToChip const& other) const;
-	bool operator!=(SpikePackToChip const& other) const;
+	bool operator==(SpikePackToChip const& other) const SYMBOL_VISIBLE;
+	bool operator!=(SpikePackToChip const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 protected:
 	Value m_value;
@@ -167,10 +169,10 @@ public:
 	FPGATime fpga_time;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event);
+	friend std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event) SYMBOL_VISIBLE;
 
-	bool operator==(SpikeFromChip const& other) const;
-	bool operator!=(SpikeFromChip const& other) const;
+	bool operator==(SpikeFromChip const& other) const SYMBOL_VISIBLE;
+	bool operator!=(SpikeFromChip const& other) const SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -236,10 +238,11 @@ public:
 	FPGATime fpga_time;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event);
+	friend std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(MADCSampleFromChip const& other) const;
-	bool operator!=(MADCSampleFromChip const& other) const;
+	bool operator==(MADCSampleFromChip const& other) const SYMBOL_VISIBLE;
+	bool operator!=(MADCSampleFromChip const& other) const SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -274,34 +277,35 @@ public:
 	 * @return Value data
 	 */
 	GENPYBIND(getter_for(value))
-	Value get_value() const;
+	Value get_value() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get value data.
 	 * @param value Value data
 	 */
 	GENPYBIND(setter_for(value))
-	void set_value(Value const& value);
+	void set_value(Value const& value) SYMBOL_VISIBLE;
 
 	/**
 	 * Get FPGA time annotation.
 	 * @return FPGATime time annotation
 	 */
 	GENPYBIND(getter_for(fpga_time))
-	FPGATime get_fpga_time() const;
+	FPGATime get_fpga_time() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set FPGA time annotation.
 	 * @param value FPGATime time annotation
 	 */
 	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& value);
+	void set_fpga_time(FPGATime const& value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, HighspeedLinkNotification const& event);
+	friend std::ostream& operator<<(std::ostream& os, HighspeedLinkNotification const& event)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(HighspeedLinkNotification const& other) const;
-	bool operator!=(HighspeedLinkNotification const& other) const;
+	bool operator==(HighspeedLinkNotification const& other) const SYMBOL_VISIBLE;
+	bool operator!=(HighspeedLinkNotification const& other) const SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -340,34 +344,35 @@ public:
 	 * @return Value data
 	 */
 	GENPYBIND(getter_for(value))
-	Value get_value() const;
+	Value get_value() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get value data.
 	 * @param value Value data
 	 */
 	GENPYBIND(setter_for(value))
-	void set_value(Value const& value);
+	void set_value(Value const& value) SYMBOL_VISIBLE;
 
 	/**
 	 * Get FPGA time annotation.
 	 * @return FPGATime time annotation
 	 */
 	GENPYBIND(getter_for(fpga_time))
-	FPGATime get_fpga_time() const;
+	FPGATime get_fpga_time() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set FPGA time annotation.
 	 * @param value FPGATime time annotation
 	 */
 	GENPYBIND(setter_for(fpga_time))
-	void set_fpga_time(FPGATime const& value);
+	void set_fpga_time(FPGATime const& value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, TimeoutNotification const& event);
+	friend std::ostream& operator<<(std::ostream& os, TimeoutNotification const& event)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(TimeoutNotification const& other) const;
-	bool operator!=(TimeoutNotification const& other) const;
+	bool operator==(TimeoutNotification const& other) const SYMBOL_VISIBLE;
+	bool operator!=(TimeoutNotification const& other) const SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -379,3 +384,11 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SpikePackToChip<1>)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SpikePackToChip<2>)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SpikePackToChip<3>)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SpikeFromChip)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::MADCSampleFromChip)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::HighspeedLinkNotification)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::TimeoutNotification)

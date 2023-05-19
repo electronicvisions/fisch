@@ -7,6 +7,7 @@
 #include "halco/common/typed_array.h"
 #include "halco/hicann-dls/vx/event.h"
 #include "hate/type_list.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage.h"
 #include <tuple>
 
@@ -122,19 +123,19 @@ public:
 	    highspeed_link_notification_queue_type& highspeed_link_notification_queue,
 	    spike_pack_counts_type& spike_pack_counts,
 	    madc_sample_pack_counts_type& madc_sample_pack_counts,
-	    timeout_notification_queue_type& timeout_notification_queue);
+	    timeout_notification_queue_type& timeout_notification_queue) SYMBOL_VISIBLE;
 
 	/**
 	 * Process a message.
 	 * @param message UT message variant to process
 	 */
-	void operator()(ut_message_from_fpga_variant_type const& message);
+	void operator()(ut_message_from_fpga_variant_type const& message) SYMBOL_VISIBLE;
 
 	/**
 	 * Clear state leading to FPGA time annotation reset and clearing of all queues and event pack
 	 * counters.
 	 */
-	void clear();
+	void clear() SYMBOL_VISIBLE;
 
 private:
 	void process(ut_message_from_fpga_jtag_type const& message);

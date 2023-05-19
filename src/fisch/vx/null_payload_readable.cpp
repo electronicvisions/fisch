@@ -1,6 +1,6 @@
 #include "fisch/vx/null_payload_readable.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "hxcomm/vx/utmessage.h"
 #include <array>
 

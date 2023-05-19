@@ -1,6 +1,8 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/barrier.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -29,24 +31,24 @@ public:
 	 * Get value.
 	 * @return Barrier value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value Barrier value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, Barrier const& config);
+	friend std::ostream& operator<<(std::ostream& os, Barrier const& config) SYMBOL_VISIBLE;
 
-	bool operator==(Barrier const& other) const;
-	bool operator!=(Barrier const& other) const;
+	bool operator==(Barrier const& other) const SYMBOL_VISIBLE;
+	bool operator!=(Barrier const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -57,3 +59,5 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::Barrier)

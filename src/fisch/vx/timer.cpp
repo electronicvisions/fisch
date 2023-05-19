@@ -1,7 +1,7 @@
 #include "fisch/vx/timer.h"
 #include "fisch/vx/omnibus.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"

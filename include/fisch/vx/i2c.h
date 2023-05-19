@@ -1,9 +1,11 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/i2c.h"
 #include "hate/type_index.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -29,7 +31,7 @@ class I2CRwRegister;
 /**
  * General implementation of an I2C read-only register. Its length is determined by the ValueType */
 template <typename Derived, typename ValueType, typename CoordinateType>
-class I2CRoRegister
+class SYMBOL_VISIBLE I2CRoRegister
 {
 public:
 	typedef CoordinateType coordinate_type;
@@ -48,13 +50,13 @@ public:
 	 * Get value.
 	 * @return I2C register value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value I2C register value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	// NOTE: operator needs to be inlined for python wrapping to work
 	GENPYBIND(stringstream)
@@ -71,8 +73,8 @@ public:
 		return os;
 	}
 
-	bool operator==(Derived const& other) const;
-	bool operator!=(Derived const& other) const;
+	bool operator==(Derived const& other) const SYMBOL_VISIBLE;
+	bool operator!=(Derived const& other) const SYMBOL_VISIBLE;
 
 
 	/* Reading consists of 2 + register_size_bytes messages:
@@ -83,11 +85,11 @@ public:
 	static constexpr size_t GENPYBIND(hidden) decode_ut_message_count = register_size_bytes;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
+	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
-	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 protected:
 	Value m_value;
@@ -118,11 +120,14 @@ public:
 	    2 + 2 * I2CRoRegister<Derived, ValueType, CoordinateType>::register_size_bytes;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    CoordinateType const& coord) const GENPYBIND(hidden);
+	    CoordinateType const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 };
 
 
 typedef word_access_type::I2CIdRegister I2CIdRegisterValue GENPYBIND(visible);
+class I2CIdRegister;
+extern template class SYMBOL_VISIBLE
+    I2CRoRegister<I2CIdRegister, I2CIdRegisterValue, halco::hicann_dls::vx::I2CIdRegisterOnBoard>;
 
 /**
  * Container for reading the unique ID of the chip carrier board's EEPROM.
@@ -143,9 +148,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CIdRegister(Value value) : I2CRoRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -155,6 +160,11 @@ private:
 
 
 typedef word_access_type::I2CINA219RoRegister I2CINA219RoRegisterValue GENPYBIND(visible);
+class I2CINA219RoRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CINA219RoRegister,
+    I2CINA219RoRegisterValue,
+    halco::hicann_dls::vx::I2CINA219RoRegisterOnBoard>;
 
 /**
  * Container for reading a read-only register of a INA219 voltage/current/power measurement device.
@@ -175,9 +185,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CINA219RoRegister(Value value) : I2CRoRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -187,6 +197,15 @@ private:
 
 
 typedef word_access_type::I2CINA219RwRegister I2CINA219RwRegisterValue GENPYBIND(visible);
+class I2CINA219RwRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CINA219RwRegister,
+    I2CINA219RwRegisterValue,
+    halco::hicann_dls::vx::I2CINA219RwRegisterOnBoard>;
+extern template class SYMBOL_VISIBLE I2CRwRegister<
+    I2CINA219RwRegister,
+    I2CINA219RwRegisterValue,
+    halco::hicann_dls::vx::I2CINA219RwRegisterOnBoard>;
 
 /**
  * Container for accessing a read-write register of a INA219 voltage/current/power measurement
@@ -208,9 +227,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CINA219RwRegister(Value value) : I2CRwRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -220,6 +239,11 @@ private:
 
 
 typedef word_access_type::I2CTCA9554RoRegister I2CTCA9554RoRegisterValue GENPYBIND(visible);
+class I2CTCA9554RoRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CTCA9554RoRegister,
+    I2CTCA9554RoRegisterValue,
+    halco::hicann_dls::vx::I2CTCA9554RoRegisterOnBoard>;
 
 /**
  * Container for accessing a read-only I2C register on the TCA9554 IO Expander device.
@@ -240,9 +264,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CTCA9554RoRegister(Value value) : I2CRoRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -252,6 +276,15 @@ private:
 
 
 typedef word_access_type::I2CTCA9554RwRegister I2CTCA9554RwRegisterValue GENPYBIND(visible);
+class I2CTCA9554RwRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CTCA9554RwRegister,
+    I2CTCA9554RwRegisterValue,
+    halco::hicann_dls::vx::I2CTCA9554RwRegisterOnBoard>;
+extern template class SYMBOL_VISIBLE I2CRwRegister<
+    I2CTCA9554RwRegister,
+    I2CTCA9554RwRegisterValue,
+    halco::hicann_dls::vx::I2CTCA9554RwRegisterOnBoard>;
 
 /**
  * Container for accessing a read-write I2C register on the TCA9554 IO Expander device.
@@ -272,9 +305,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CTCA9554RwRegister(Value value) : I2CRwRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -284,6 +317,15 @@ private:
 
 
 typedef word_access_type::I2CAD5252RwRegister I2CAD5252RwRegisterValue GENPYBIND(visible);
+class I2CAD5252RwRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CAD5252RwRegister,
+    I2CAD5252RwRegisterValue,
+    halco::hicann_dls::vx::I2CAD5252RwRegisterOnBoard>;
+extern template class SYMBOL_VISIBLE I2CRwRegister<
+    I2CAD5252RwRegister,
+    I2CAD5252RwRegisterValue,
+    halco::hicann_dls::vx::I2CAD5252RwRegisterOnBoard>;
 
 /**
  * Container for accessing a read-write register of a AD5252 digital potentiometer channel.
@@ -304,9 +346,9 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CAD5252RwRegister(Value value) : I2CRwRegister(value) {}
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -316,6 +358,15 @@ private:
 
 
 typedef word_access_type::I2CDAC6573RwRegister I2CDAC6573RwRegisterValue GENPYBIND(visible);
+class I2CDAC6573RwRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CDAC6573RwRegister,
+    I2CDAC6573RwRegisterValue,
+    halco::hicann_dls::vx::I2CDAC6573RwRegisterOnBoard>;
+extern template class SYMBOL_VISIBLE I2CRwRegister<
+    I2CDAC6573RwRegister,
+    I2CDAC6573RwRegisterValue,
+    halco::hicann_dls::vx::I2CDAC6573RwRegisterOnBoard>;
 
 /**
  * Container for accessing a read-write register of a DAC6573
@@ -338,12 +389,12 @@ public:
 	explicit I2CDAC6573RwRegister(Value value) : I2CRwRegister(value) {}
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
-	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&);
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
-	    get_base_address(coordinate_type const&);
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -352,3 +403,11 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CIdRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CINA219RoRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CINA219RwRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CTCA9554RoRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CTCA9554RwRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CAD5252RwRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CDAC6573RwRegister)

@@ -1,8 +1,10 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/jtag.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -32,15 +34,15 @@ public:
 	ResetJTAGTap() {}
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& reset);
+	friend std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& reset) SYMBOL_VISIBLE;
 
-	bool operator==(ResetJTAGTap const& other) const;
-	bool operator!=(ResetJTAGTap const& other) const;
+	bool operator==(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
+	bool operator!=(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -70,24 +72,24 @@ public:
 	 * Get clock-scaler value.
 	 * @return Clock-scaler value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set clock-scaler value.
 	 * @param value Clock-scaler value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler);
+	friend std::ostream& operator<<(std::ostream& os, JTAGClockScaler const& scaler) SYMBOL_VISIBLE;
 
-	bool operator==(JTAGClockScaler const& other) const;
-	bool operator!=(JTAGClockScaler const& other) const;
+	bool operator==(JTAGClockScaler const& other) const SYMBOL_VISIBLE;
+	bool operator!=(JTAGClockScaler const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -118,29 +120,30 @@ public:
 	 * Get value.
 	 * @return Omnibus word value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set value.
 	 * @param value Omnibus word value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word);
+	friend std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word)
+	    SYMBOL_VISIBLE;
 
-	bool operator==(OmnibusChipOverJTAG const& other) const;
-	bool operator!=(OmnibusChipOverJTAG const& other) const;
+	bool operator==(OmnibusChipOverJTAG const& other) const SYMBOL_VISIBLE;
+	bool operator!=(OmnibusChipOverJTAG const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 6;
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
+	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -172,26 +175,26 @@ public:
 	 * Get JTAG IDCODE.
 	 * @return Value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set JTAG IDCODE.
 	 * @param value Value
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id);
+	friend std::ostream& operator<<(std::ostream& os, JTAGIdCode const& id) SYMBOL_VISIBLE;
 
-	bool operator==(JTAGIdCode const& other) const;
-	bool operator!=(JTAGIdCode const& other) const;
+	bool operator==(JTAGIdCode const& other) const SYMBOL_VISIBLE;
+	bool operator!=(JTAGIdCode const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 2;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
 	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden);
-	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
+	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -225,24 +228,24 @@ public:
 	 * Get register value.
 	 * @return Value to get
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set register value.
 	 * @param value Value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg);
+	friend std::ostream& operator<<(std::ostream& os, JTAGPLLRegister const& reg) SYMBOL_VISIBLE;
 
-	bool operator==(JTAGPLLRegister const& other) const;
-	bool operator!=(JTAGPLLRegister const& other) const;
+	bool operator==(JTAGPLLRegister const& other) const SYMBOL_VISIBLE;
+	bool operator!=(JTAGPLLRegister const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -273,24 +276,24 @@ public:
 	 * Get register value.
 	 * @return Register value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set register value.
 	 * @param value Register value to set
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg);
+	friend std::ostream& operator<<(std::ostream& os, JTAGPhyRegister const& reg) SYMBOL_VISIBLE;
 
-	bool operator==(JTAGPhyRegister const& other) const;
-	bool operator!=(JTAGPhyRegister const& other) const;
+	bool operator==(JTAGPhyRegister const& other) const SYMBOL_VISIBLE;
+	bool operator!=(JTAGPhyRegister const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -301,3 +304,10 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::ResetJTAGTap)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::JTAGClockScaler)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::OmnibusChipOverJTAG)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::JTAGIdCode)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::JTAGPLLRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::JTAGPhyRegister)

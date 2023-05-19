@@ -1,5 +1,6 @@
 #pragma once
 #include "fisch/vx/genpybind.h"
+#include "hate/visibility.h"
 #include "hxcomm/common/connection_time_info.h"
 #include <chrono>
 #include <ostream>
@@ -26,7 +27,7 @@ struct GENPYBIND(visible) RunTimeInfo
 	std::chrono::nanoseconds playback_decode_time;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, RunTimeInfo const& data);
+	friend std::ostream& operator<<(std::ostream& os, RunTimeInfo const& data) SYMBOL_VISIBLE;
 };
 
 } // namespace fisch::vx

@@ -1,6 +1,6 @@
 #include "fisch/vx/extoll.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/extoll.h"

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/systime.h"
 
 #include "test-macros.h"

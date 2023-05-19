@@ -1,6 +1,8 @@
 #pragma once
+#include "fisch/cerealization.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/reset.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
@@ -32,24 +34,24 @@ public:
 	 * Get reset value.
 	 * @return Boolean reset value
 	 */
-	Value get() const;
+	Value get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Set reset value.
 	 * @param value Boolean value to set reset to
 	 */
-	void set(Value value);
+	void set(Value value) SYMBOL_VISIBLE;
 
 	GENPYBIND(stringstream)
-	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset);
+	friend std::ostream& operator<<(std::ostream& os, ResetChip const& reset) SYMBOL_VISIBLE;
 
-	bool operator==(ResetChip const& other) const;
-	bool operator!=(ResetChip const& other) const;
+	bool operator==(ResetChip const& other) const SYMBOL_VISIBLE;
+	bool operator!=(ResetChip const& other) const SYMBOL_VISIBLE;
 
 	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
 
 	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden);
+	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -60,3 +62,5 @@ private:
 };
 
 } // namespace fisch::vx
+
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::ResetChip)

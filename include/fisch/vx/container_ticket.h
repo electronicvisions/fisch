@@ -1,5 +1,7 @@
 #pragma once
+#include "fisch/vx/container_fwd.h"
 #include "fisch/vx/genpybind.h"
+#include "hate/visibility.h"
 #include <memory>
 #include <vector>
 
@@ -35,13 +37,13 @@ public:
 	 * Get data of containers.
 	 * @return Containers filled with decoded data from playback program results
 	 */
-	std::vector<ContainerT> get() const;
+	std::vector<ContainerT> get() const SYMBOL_VISIBLE;
 
 	/**
 	 * Check whether ticket data is already available.
 	 * @return Boolean value
 	 */
-	bool valid() const;
+	bool valid() const SYMBOL_VISIBLE;
 
 	/**
 	 * Get FPGA executor timestamp of last container response if time annotation is enabled.
@@ -49,7 +51,7 @@ public:
 	 * from the beginning of the response stream.
 	 * @return FPGATime value
 	 */
-	FPGATime fpga_time() const;
+	FPGATime fpga_time() const SYMBOL_VISIBLE;
 
 	ContainerTicket(ContainerTicket const& other) = default;
 	ContainerTicket& operator=(ContainerTicket const& other) = default;
@@ -67,12 +69,10 @@ private:
 	std::shared_ptr<detail::ContainerTicketStorage<ContainerT>> m_storage;
 };
 
-#ifdef __GENPYBIND__
 // Explicit instantiation of template class for all valid playback container types.
 #define PLAYBACK_CONTAINER(Name, Type)                                                             \
-	extern template class ContainerTicket<Type>;                                                   \
+	extern template class SYMBOL_VISIBLE ContainerTicket<Type>;                                    \
 	typedef ContainerTicket<Type> _##Name##ContainerTicket GENPYBIND(opaque);
 #include "fisch/vx/container.def"
-#endif // __GENPYBIND__
 
 } // namespace fisch::vx

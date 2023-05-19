@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/event.h"
 
 template <size_t NumPack>

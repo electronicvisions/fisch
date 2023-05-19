@@ -2,7 +2,7 @@
 
 #include "fisch/vx/null_payload_readable.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "halco/hicann-dls/vx/fpga.h"
 #include "hxcomm/vx/utmessage.h"
 

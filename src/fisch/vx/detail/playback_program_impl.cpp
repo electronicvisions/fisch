@@ -1,6 +1,6 @@
 #include "fisch/vx/detail/playback_program_impl.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/event.h"
 #include "fisch/vx/fpga_time.h"
 #include "fisch/vx/playback_decoder.h"

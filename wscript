@@ -56,6 +56,14 @@ def configure(cfg):
          'error':   4,
          'fatal':   5}[cfg.options.fisch_loglevel]
     )
+    cfg.env.CXXFLAGS_FISCH = [
+        '-fvisibility=hidden',
+        '-fvisibility-inlines-hidden',
+    ]
+    cfg.env.LINKFLAGS_FISCH = [
+        '-fvisibility=hidden',
+        '-fvisibility-inlines-hidden',
+    ]
 
 
 def build(bld):
@@ -118,6 +126,7 @@ def build(bld):
             use = ['fisch_inc', 'hate_inc', 'halco_hicann_dls_ppu_vx'],
             env = env,
             linkflags = '-Wl,-z,defs',
+            uselib='FISCH',
             install_path = '${PREFIX}/lib/ppu',
         )
 
@@ -127,6 +136,7 @@ def build(bld):
             target = f'fisch_vx_v{hx_version}',
             use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
             defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
+            uselib='FISCH',
         )
 
         bld(
@@ -136,6 +146,7 @@ def build(bld):
             use = [f'fisch_vx_v{hx_version}', 'BOOST4FISCHTOOLS'],
             test_main = 'tests/sw/fisch/vx/main.cpp',
             defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
+            uselib='FISCH',
         )
 
         bld(
@@ -146,7 +157,8 @@ def build(bld):
             test_main = 'tests/hw/fisch/vx/main.cpp',
             skip_run = (bld.env.TEST_TARGET == TestTarget.SOFTWARE_ONLY or
                         not (int(bld.env.CURRENT_SETUP["chip_revision"]) == hx_version)),
-            test_timeout = 3600 if bld.env.TEST_TARGET == TestTarget.SIMULATION else 30
+            test_timeout = 3600 if bld.env.TEST_TARGET == TestTarget.SIMULATION else 30,
+            uselib='FISCH',
         )
 
         # like fisch_hwsimtest_vx but not for sim backend (because of 2x test time
@@ -161,7 +173,8 @@ def build(bld):
             test_main = 'tests/hw/fisch/vx/main.cpp',
             skip_run = True,  # Unstable tests, cf. issue #3976
             depends_on = ["quiggeldy"],
-            test_timeout = 30
+            test_timeout = 30,
+            uselib='FISCH',
         )
 
     if getattr(bld.options, 'with_fisch_python_bindings', True):

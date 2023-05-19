@@ -1,6 +1,6 @@
 #include "fisch/vx/i2c.h"
 
-#include "fisch/cerealization.h"
+#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/common/cerealization_geometry.h"
