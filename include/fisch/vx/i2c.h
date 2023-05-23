@@ -3,7 +3,6 @@
 #include "fisch/vx/decode.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/i2c.h"
-#include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/type_index.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 
@@ -19,6 +18,7 @@ struct I2CTCA9554RoRegisterOnBoard;
 struct I2CTCA9554RwRegisterOnBoard;
 struct I2CAD5252RwRegisterOnBoard;
 struct I2CDAC6573RwRegisterOnBoard;
+struct OmnibusAddress;
 } // namespace halco::hicann_dls::vx
 
 namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
