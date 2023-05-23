@@ -10,35 +10,35 @@
 
 namespace fisch::vx {
 
-Omnibus::Omnibus() : m_data() {}
-Omnibus::Omnibus(Value const& value) : m_data(value) {}
+Omnibus::Omnibus() : m_value() {}
+Omnibus::Omnibus(Value const& value) : m_value(value) {}
 
 Omnibus::Value const& Omnibus::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void Omnibus::set(Value const& value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, Omnibus const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.word.value();
+	ss_d << "0d" << std::dec << word.m_value.word.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.word.value();
+	ss_x << "0x" << std::hex << word.m_value.word.value();
 	hate::bitset<sizeof(typename Omnibus::Value::value_type) * CHAR_BIT> bits(
-	    word.m_data.word.value());
+	    word.m_value.word.value());
 	os << "Omnibus(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
-	   << ", byte_enables: " << hate::join_string(word.m_data.byte_enables, "") << ")";
+	   << ", byte_enables: " << hate::join_string(word.m_value.byte_enables, "") << ")";
 	return os;
 }
 
 bool Omnibus::operator==(Omnibus const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool Omnibus::operator!=(Omnibus const& other) const
@@ -67,27 +67,27 @@ Omnibus::encode_write(coordinate_type const& coord) const
 
 	hate::bitset<std::tuple_size<Value::ByteEnables>::value> byte_enables;
 	for (size_t i = 0; i < byte_enables.size; ++i) {
-		byte_enables.set(i, m_data.byte_enables.at(i));
+		byte_enables.set(i, m_value.byte_enables.at(i));
 	}
 
 	ret[0] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), false, byte_enables));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.word.value()));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.word.value()));
 
 	return ret;
 }
 
 void Omnibus::decode(UTMessageFromFPGARangeOmnibus const& messages)
 {
-	m_data.word = Value::Word(static_cast<uint32_t>(messages[0].decode()));
-	m_data.byte_enables = {true, true, true, true};
+	m_value.word = Value::Word(static_cast<uint32_t>(messages[0].decode()));
+	m_value.byte_enables = {true, true, true, true};
 }
 
 template <class Archive>
 void Omnibus::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)

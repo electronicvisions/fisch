@@ -24,7 +24,7 @@ public:
 	typedef halco::hicann_dls::vx::SystimeSyncOnFPGA coordinate_type;
 	typedef word_access_type::SystimeSync Value;
 
-	explicit SystimeSync(Value do_sync = Value(false));
+	explicit SystimeSync(Value value = Value(false));
 
 	/**
 	 * Get systime sync enable value.
@@ -52,7 +52,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	Value m_do_sync;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>

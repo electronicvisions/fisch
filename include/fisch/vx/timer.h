@@ -28,13 +28,13 @@ public:
 	/**
 	 * Default constructor.
 	 */
-	Timer() : m_data() {}
+	Timer() : m_value() {}
 
 	/**
 	 * Construct an instance with a value.
 	 * @param value Value to construct instance with
 	 */
-	explicit Timer(Value const& value) : m_data(value) {}
+	explicit Timer(Value const& value) : m_value(value) {}
 
 	/**
 	 * Set timer value.
@@ -65,7 +65,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 	friend struct cereal::access;
 	template <class Archive>
 	void serialize(Archive& ar, std::uint32_t const version);

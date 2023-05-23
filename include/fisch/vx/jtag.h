@@ -143,7 +143,7 @@ public:
 	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>

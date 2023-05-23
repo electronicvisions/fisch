@@ -68,7 +68,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>
@@ -127,7 +127,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend class cereal::access;
 	template <class Archive>

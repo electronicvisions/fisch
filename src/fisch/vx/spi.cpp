@@ -11,32 +11,32 @@
 
 namespace fisch::vx {
 
-SPIShiftRegister::SPIShiftRegister(Value const value) : m_data(value) {}
+SPIShiftRegister::SPIShiftRegister(Value const value) : m_value(value) {}
 
 SPIShiftRegister::Value SPIShiftRegister::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void SPIShiftRegister::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, SPIShiftRegister const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<24> bits(word.m_data.value());
+	ss_x << "0x" << std::hex << word.m_value.value();
+	hate::bitset<24> bits(word.m_value.value());
 	os << "SPIShiftRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool SPIShiftRegister::operator==(SPIShiftRegister const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool SPIShiftRegister::operator!=(SPIShiftRegister const& other) const
@@ -54,16 +54,16 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 	// The SPI omnibus master accepts data in the lowest byte of a word corresponding to a single
 	// omnibus address, which is unique for the SPI client, until the highest bit (stop bit) is
 	// set. Then the collected data is communicated to the client.
-	auto encoded1 = Omnibus(Omnibus::Value(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 2)))
+	auto encoded1 = Omnibus(Omnibus::Value(static_cast<uint8_t>(m_value.value() >> CHAR_BIT * 2)))
 	                    .encode_write(addr);
 	ret[0] = encoded1[0];
 	ret[1] = encoded1[1];
-	auto encoded2 = Omnibus(Omnibus::Value(static_cast<uint8_t>(m_data.value() >> CHAR_BIT * 1)))
+	auto encoded2 = Omnibus(Omnibus::Value(static_cast<uint8_t>(m_value.value() >> CHAR_BIT * 1)))
 	                    .encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];
 	auto encoded3 =
-	    Omnibus(Omnibus::Value(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_data.value())))
+	    Omnibus(Omnibus::Value(spi_over_omnibus_stop_bit | static_cast<uint8_t>(m_value.value())))
 	        .encode_write(addr);
 	ret[4] = encoded3[0];
 	ret[5] = encoded3[1];
@@ -74,38 +74,38 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 template <class Archive>
 void SPIShiftRegister::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIShiftRegister)
 
 
-SPIDACDataRegister::SPIDACDataRegister(Value const value) : m_data(value) {}
+SPIDACDataRegister::SPIDACDataRegister(Value const value) : m_value(value) {}
 
 SPIDACDataRegister::Value SPIDACDataRegister::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void SPIDACDataRegister::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, SPIDACDataRegister const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<12> bits(word.m_data.value());
+	ss_x << "0x" << std::hex << word.m_value.value();
+	hate::bitset<12> bits(word.m_value.value());
 	os << "SPIDACDataRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool SPIDACDataRegister::operator==(SPIDACDataRegister const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool SPIDACDataRegister::operator!=(SPIDACDataRegister const& other) const
@@ -151,7 +151,7 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	SPIDACDataRegisterBitfield bitfield;
 	bitfield.u.m.read = false;
 	bitfield.u.m.channel = coord.toSPIDACDataRegisterOnDAC().toEnum();
-	bitfield.u.m.data = m_data.value();
+	bitfield.u.m.data = m_value.value();
 
 	auto encoded1 = Omnibus(Omnibus::Value(bitfield.u.raw[1])).encode_write(addr);
 	ret[0] = encoded1[0];
@@ -179,38 +179,38 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 template <class Archive>
 void SPIDACDataRegister::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACDataRegister)
 
 
-SPIDACControlRegister::SPIDACControlRegister(Value const value) : m_data(value) {}
+SPIDACControlRegister::SPIDACControlRegister(Value const value) : m_value(value) {}
 
 SPIDACControlRegister::Value SPIDACControlRegister::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void SPIDACControlRegister::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, SPIDACControlRegister const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<13> bits(word.m_data.value());
+	ss_x << "0x" << std::hex << word.m_value.value();
+	hate::bitset<13> bits(word.m_value.value());
 	os << "SPIDACControlRegister(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool SPIDACControlRegister::operator==(SPIDACControlRegister const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool SPIDACControlRegister::operator!=(SPIDACControlRegister const& other) const
@@ -239,7 +239,7 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 	ret[1] = encoded1[1];
 
 	auto encoded2 =
-	    Omnibus(Omnibus::Value((spi_over_omnibus_stop_bit | m_data.value()))).encode_write(addr);
+	    Omnibus(Omnibus::Value((spi_over_omnibus_stop_bit | m_value.value()))).encode_write(addr);
 	ret[2] = encoded2[0];
 	ret[3] = encoded2[1];
 
@@ -249,7 +249,7 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 template <class Archive>
 void SPIDACControlRegister::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACControlRegister)

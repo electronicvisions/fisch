@@ -56,7 +56,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>
@@ -105,7 +105,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>
@@ -154,7 +154,7 @@ public:
 	    coordinate_type const& coord) const GENPYBIND(hidden);
 
 private:
-	Value m_data;
+	Value m_value;
 
 	friend struct cereal::access;
 	template <class Archive>

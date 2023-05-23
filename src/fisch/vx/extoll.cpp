@@ -28,33 +28,33 @@ std::array<halco::hicann_dls::vx::OmnibusAddress, 2> ExtollAddressToOmnibusAddre
 }
 } // namespace
 
-Extoll::Extoll() : m_data() {}
-Extoll::Extoll(Value const& value) : m_data(value) {}
+Extoll::Extoll() : m_value() {}
+Extoll::Extoll(Value const& value) : m_value(value) {}
 
 Extoll::Value const& Extoll::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void Extoll::set(Value const& value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, Extoll const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
-	hate::bitset<sizeof(typename Extoll::Value::value_type) * CHAR_BIT> bits(word.m_data.value());
+	ss_x << "0x" << std::hex << word.m_value.value();
+	hate::bitset<sizeof(typename Extoll::Value::value_type) * CHAR_BIT> bits(word.m_value.value());
 	os << "Extoll(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool Extoll::operator==(Extoll const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool Extoll::operator!=(Extoll const& other) const
@@ -90,17 +90,18 @@ Extoll::encode_write(coordinate_type const& coord) const
 
 	ret[0] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false));
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.value() & 0xffff'ffff));
+	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff));
 	ret[2] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false));
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_data.value() >> 32) & 0xffff'ffff));
+	ret[3] =
+	    hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff));
 
 	return ret;
 }
 
 void Extoll::decode(UTMessageFromFPGARangeOmnibus const& messages)
 {
-	m_data = Value(
+	m_value = Value(
 	    (static_cast<uint64_t>(messages[1].decode()) << 32) |
 	    static_cast<uint64_t>(messages[0].decode()));
 }
@@ -108,40 +109,40 @@ void Extoll::decode(UTMessageFromFPGARangeOmnibus const& messages)
 template <class Archive>
 void Extoll::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Extoll)
 
 
-ExtollOnNwNode::ExtollOnNwNode() : m_data() {}
-ExtollOnNwNode::ExtollOnNwNode(Value const& value) : m_data(value) {}
+ExtollOnNwNode::ExtollOnNwNode() : m_value() {}
+ExtollOnNwNode::ExtollOnNwNode(Value const& value) : m_value(value) {}
 
 ExtollOnNwNode::Value const& ExtollOnNwNode::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void ExtollOnNwNode::set(Value const& value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, ExtollOnNwNode const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
+	ss_x << "0x" << std::hex << word.m_value.value();
 	hate::bitset<sizeof(typename ExtollOnNwNode::Value::value_type) * CHAR_BIT> bits(
-	    word.m_data.value());
+	    word.m_value.value());
 	os << "ExtollOnNwNode(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool ExtollOnNwNode::operator==(ExtollOnNwNode const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool ExtollOnNwNode::operator!=(ExtollOnNwNode const& other) const
@@ -199,10 +200,11 @@ ExtollOnNwNode::encode_write(coordinate_type const& coord) const
 	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(conf));
 	ret[2] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false));
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_data.value() & 0xffff'ffff));
+	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff));
 	ret[4] =
 	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false));
-	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_data.value() >> 32) & 0xffff'ffff));
+	ret[5] =
+	    hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff));
 	ret[6] = hxcomm::vx::UTMessageToFPGA<address>(
 	    address::Payload(odfi_external_access_config_reg, false));
 	ret[7] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(0x0));
@@ -212,7 +214,7 @@ ExtollOnNwNode::encode_write(coordinate_type const& coord) const
 
 void ExtollOnNwNode::decode(UTMessageFromFPGARangeOmnibus const& messages)
 {
-	m_data = Value(
+	m_value = Value(
 	    (static_cast<uint64_t>(messages[1].decode()) << 32) |
 	    static_cast<uint64_t>(messages[0].decode()));
 }
@@ -220,7 +222,7 @@ void ExtollOnNwNode::decode(UTMessageFromFPGARangeOmnibus const& messages)
 template <class Archive>
 void ExtollOnNwNode::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ExtollOnNwNode)

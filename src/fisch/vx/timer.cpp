@@ -10,17 +10,17 @@ namespace fisch::vx {
 
 void Timer::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 Timer::Value Timer::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 std::ostream& operator<<(std::ostream& os, Timer const& timer)
 {
-	os << "Timer(" << timer.m_data.value() << ")";
+	os << "Timer(" << timer.m_value.value() << ")";
 	return os;
 }
 
@@ -37,7 +37,7 @@ bool Timer::operator!=(Timer const& other) const
 std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_write_ut_message_count>
 Timer::encode_write(coordinate_type const& /* coord */) const
 {
-	if (m_data != Value(0)) {
+	if (m_value != Value(0)) {
 		throw std::runtime_error("Trying to write value different from 0. This is not supported!");
 	}
 	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>()};
@@ -56,7 +56,7 @@ void Timer::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	word.decode(messages);
 	auto value = word.get().word.value();
 
-	m_data = Value(value);
+	m_value = Value(value);
 }
 
 template <class Archive>

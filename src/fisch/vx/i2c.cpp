@@ -16,19 +16,19 @@ template <typename Derived, typename ValueType, typename CoordinateType>
 typename I2CRoRegister<Derived, ValueType, CoordinateType>::Value
 I2CRoRegister<Derived, ValueType, CoordinateType>::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
 void I2CRoRegister<Derived, ValueType, CoordinateType>::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
 bool I2CRoRegister<Derived, ValueType, CoordinateType>::operator==(Derived const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
@@ -96,14 +96,14 @@ void I2CRoRegister<Derived, ValueType, CoordinateType>::decode(
 		value |= (word.get().word.value() & 0xff) << ((messages.size() - (i + 1)) * CHAR_BIT);
 	}
 
-	m_data = Value(value);
+	m_value = Value(value);
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
 template <class Archive>
 void I2CRoRegister<Derived, ValueType, CoordinateType>::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 
@@ -119,7 +119,7 @@ I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write(CoordinateType c
 	const int sizeof_data = I2CRoRegister<Derived, ValueType, CoordinateType>::register_size_bytes;
 	std::array<uint8_t, sizeof_data> data;
 	for (int i = 0; i < sizeof_data; i++) {
-		data[i] = 0xFF & (this->m_data >> (sizeof_data - (i + 1)) * CHAR_BIT);
+		data[i] = 0xFF & (this->m_value >> (sizeof_data - (i + 1)) * CHAR_BIT);
 	}
 
 	/* The register- and base addresses depends on the coordinate in a non-trivial way. The concrete
@@ -213,7 +213,7 @@ halco::hicann_dls::vx::OmnibusAddress I2CINA219RwRegister::get_base_address(
 template <class Archive>
 void I2CINA219RwRegister::serialize(Archive& ar, std::uint32_t)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 
@@ -279,7 +279,7 @@ halco::hicann_dls::vx::OmnibusAddress I2CAD5252RwRegister::get_base_address(
 template <class Archive>
 void I2CAD5252RwRegister::serialize(Archive& ar, std::uint32_t)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 
@@ -294,7 +294,7 @@ I2CDAC6573RwRegister::encode_write(I2CDAC6573RwRegister::coordinate_type const& 
 	const int sizeof_data = I2CDAC6573RwRegister::register_size_bytes;
 
 	std::array<uint8_t, sizeof_data> data;
-	uint16_t shifted_data = m_data << 6;
+	uint16_t shifted_data = m_value << 6;
 
 	for (int i = 0; i < sizeof_data; i++) {
 		data[i] = 0xFF & (shifted_data >> (sizeof_data - (i + 1)) * CHAR_BIT);
@@ -337,7 +337,7 @@ void I2CDAC6573RwRegister::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	}
 
 	// The hw-register only uses the 10 MSB out of 16 bits.
-	m_data = Value(value >> 6);
+	m_value = Value(value >> 6);
 }
 
 uint8_t I2CDAC6573RwRegister::get_register_address(coordinate_type const& coord)
@@ -356,7 +356,7 @@ halco::hicann_dls::vx::OmnibusAddress I2CDAC6573RwRegister::get_base_address(
 template <class Archive>
 void I2CDAC6573RwRegister::serialize(Archive& ar, std::uint32_t)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)

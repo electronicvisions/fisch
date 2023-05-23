@@ -88,33 +88,33 @@ void JTAGClockScaler::serialize(Archive& ar, std::uint32_t const)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
 
 
-OmnibusChipOverJTAG::OmnibusChipOverJTAG(Value const value) : m_data(value) {}
+OmnibusChipOverJTAG::OmnibusChipOverJTAG(Value const value) : m_value(value) {}
 
 OmnibusChipOverJTAG::Value OmnibusChipOverJTAG::get() const
 {
-	return m_data;
+	return m_value;
 }
 
 void OmnibusChipOverJTAG::set(Value const value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 std::ostream& operator<<(std::ostream& os, OmnibusChipOverJTAG const& word)
 {
 	std::stringstream ss_d;
-	ss_d << "0d" << std::dec << word.m_data.value();
+	ss_d << "0d" << std::dec << word.m_value.value();
 	std::stringstream ss_x;
-	ss_x << "0x" << std::hex << word.m_data.value();
+	ss_x << "0x" << std::hex << word.m_value.value();
 	hate::bitset<sizeof(typename OmnibusChipOverJTAG::Value::value_type) * CHAR_BIT> bits(
-	    word.m_data.value());
+	    word.m_value.value());
 	os << "OmnibusChipOverJTAG(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits << ")";
 	return os;
 }
 
 bool OmnibusChipOverJTAG::operator==(OmnibusChipOverJTAG const& other) const
 {
-	return (m_data == other.m_data);
+	return (m_value == other.m_value);
 }
 
 bool OmnibusChipOverJTAG::operator!=(OmnibusChipOverJTAG const& other) const
@@ -163,7 +163,7 @@ OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA);
 
 	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(32), m_data.value()));
+	    data::Payload(false, data::Payload::NumBits(32), m_value.value()));
 
 	ret[4] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST);
 
@@ -173,13 +173,13 @@ OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
 
 void OmnibusChipOverJTAG::decode(UTMessageFromFPGARangeJTAG const& messages)
 {
-	m_data = Value(static_cast<uint32_t>(messages[0].decode()));
+	m_value = Value(static_cast<uint32_t>(messages[0].decode()));
 }
 
 template <class Archive>
 void OmnibusChipOverJTAG::serialize(Archive& ar, std::uint32_t const)
 {
-	ar(CEREAL_NVP(m_data));
+	ar(CEREAL_NVP(m_value));
 }
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusChipOverJTAG)

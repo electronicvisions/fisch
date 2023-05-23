@@ -39,9 +39,9 @@ public:
 	    hate::math::round_up_integer_division(hate::math::num_bits(Value::max), 8);
 
 	// Split constructor because of genpybind bug (Issue #3765)
-	explicit I2CRoRegister() : m_data(Value()) {}
+	explicit I2CRoRegister() : m_value(Value()) {}
 	explicit I2CRoRegister(I2CRoRegister<Derived, ValueType, CoordinateType>::Value value) :
-	    m_data(value)
+	    m_value(value)
 	{}
 
 	/**
@@ -62,10 +62,10 @@ public:
 	{
 		std::stringstream ss_d;
 		// We cast this to an unsigned value to prevent problems with uint8_t values
-		ss_d << "0d" << std::dec << static_cast<unsigned>(word.m_data.value());
+		ss_d << "0d" << std::dec << static_cast<unsigned>(word.m_value.value());
 		std::stringstream ss_x;
-		ss_x << "0x" << std::hex << static_cast<unsigned>(word.m_data.value());
-		hate::bitset<register_size_bytes * CHAR_BIT> bits(word.m_data.value());
+		ss_x << "0x" << std::hex << static_cast<unsigned>(word.m_value.value());
+		hate::bitset<register_size_bytes * CHAR_BIT> bits(word.m_value.value());
 		os << hate::name<Derived>() << "(" << ss_d.str() << " " << ss_x.str() << " 0b" << bits
 		   << ")";
 		return os;
@@ -90,7 +90,7 @@ public:
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden);
 
 protected:
-	Value m_data;
+	Value m_value;
 
 private:
 	friend struct cereal::access;
