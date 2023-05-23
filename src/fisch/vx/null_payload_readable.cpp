@@ -6,8 +6,6 @@
 
 namespace fisch::vx {
 
-NullPayloadReadable::NullPayloadReadable() {}
-
 std::ostream& operator<<(std::ostream& os, NullPayloadReadable const& /*tick*/)
 {
 	os << "NullPayloadReadable()";

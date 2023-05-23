@@ -10,9 +10,6 @@
 
 namespace fisch::vx {
 
-Omnibus::Omnibus() : m_value() {}
-Omnibus::Omnibus(Value const& value) : m_value(value) {}
-
 Omnibus::Value const& Omnibus::get() const
 {
 	return m_value;
@@ -92,8 +89,6 @@ void Omnibus::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
 
-
-PollingOmnibusBlock::PollingOmnibusBlock(Value const value) : m_value(value) {}
 
 PollingOmnibusBlock::Value PollingOmnibusBlock::get() const
 {

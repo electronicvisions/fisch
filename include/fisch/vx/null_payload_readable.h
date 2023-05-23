@@ -22,7 +22,7 @@ public:
 	typedef halco::hicann_dls::vx::NullPayloadReadableOnFPGA coordinate_type;
 
 	/** Default constructor. */
-	NullPayloadReadable();
+	NullPayloadReadable() {}
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, NullPayloadReadable const& id);

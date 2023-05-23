@@ -66,8 +66,6 @@ void Timer::serialize(Archive&, std::uint32_t const)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Timer)
 
 
-WaitUntil::WaitUntil(Value const value) : m_value(value) {}
-
 WaitUntil::Value WaitUntil::get() const
 {
 	return m_value;

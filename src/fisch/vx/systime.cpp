@@ -6,8 +6,6 @@
 
 namespace fisch::vx {
 
-SystimeSync::SystimeSync(Value const value) : m_value(value) {}
-
 SystimeSync::Value SystimeSync::get() const
 {
 	return m_value;

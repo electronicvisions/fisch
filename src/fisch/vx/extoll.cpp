@@ -28,9 +28,6 @@ std::array<halco::hicann_dls::vx::OmnibusAddress, 2> ExtollAddressToOmnibusAddre
 }
 } // namespace
 
-Extoll::Extoll() : m_value() {}
-Extoll::Extoll(Value const& value) : m_value(value) {}
-
 Extoll::Value const& Extoll::get() const
 {
 	return m_value;
@@ -114,9 +111,6 @@ void Extoll::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Extoll)
 
-
-ExtollOnNwNode::ExtollOnNwNode() : m_value() {}
-ExtollOnNwNode::ExtollOnNwNode(Value const& value) : m_value(value) {}
 
 ExtollOnNwNode::Value const& ExtollOnNwNode::get() const
 {

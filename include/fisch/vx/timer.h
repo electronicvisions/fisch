@@ -26,15 +26,10 @@ public:
 	typedef word_access_type::Timer Value;
 
 	/**
-	 * Default constructor.
-	 */
-	Timer() : m_value() {}
-
-	/**
 	 * Construct an instance with a value.
 	 * @param value Value to construct instance with
 	 */
-	explicit Timer(Value const& value) : m_value(value) {}
+	explicit Timer(Value const& value = Value()) : m_value(value) {}
 
 	/**
 	 * Set timer value.
@@ -85,7 +80,7 @@ public:
 	 * Construct timer with value.
 	 * @param value Value to construct timer with
 	 */
-	explicit WaitUntil(Value value = Value());
+	explicit WaitUntil(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get timer value.

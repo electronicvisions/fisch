@@ -29,15 +29,10 @@ public:
 	typedef word_access_type::Extoll Value GENPYBIND(visible);
 
 	/**
-	 * Default constructor.
-	 */
-	explicit Extoll();
-
-	/**
 	 * Construct an instance with a value.
 	 * @param value Value to construct instance with
 	 */
-	explicit Extoll(Value const& value);
+	explicit Extoll(Value const& value = Value()) : m_value(value) {}
 
 	/**
 	 * Get value.
@@ -88,15 +83,10 @@ public:
 	typedef word_access_type::ExtollOnNwNode Value GENPYBIND(visible);
 
 	/**
-	 * Default constructor.
-	 */
-	explicit ExtollOnNwNode();
-
-	/**
 	 * Construct an instance with a value.
 	 * @param value Value to construct instance with
 	 */
-	explicit ExtollOnNwNode(Value const& value);
+	explicit ExtollOnNwNode(Value const& value = Value()) : m_value(value) {}
 
 	/**
 	 * Get value.

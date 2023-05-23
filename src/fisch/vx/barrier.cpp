@@ -9,8 +9,6 @@
 
 namespace fisch::vx {
 
-Barrier::Barrier(Value const value) : m_value(value) {}
-
 Barrier::Value Barrier::get() const
 {
 	return m_value;

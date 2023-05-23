@@ -24,7 +24,7 @@ public:
 	typedef halco::hicann_dls::vx::SystimeSyncOnFPGA coordinate_type;
 	typedef word_access_type::SystimeSync Value;
 
-	explicit SystimeSync(Value value = Value(false));
+	explicit SystimeSync(Value value = Value(false)) : m_value(value) {}
 
 	/**
 	 * Get systime sync enable value.

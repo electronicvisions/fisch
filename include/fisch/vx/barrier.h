@@ -23,7 +23,7 @@ public:
 
 	typedef word_access_type::Barrier Value GENPYBIND(visible);
 
-	explicit Barrier(Value value = Value());
+	explicit Barrier(Value const value = Value()) : m_value(value) {}
 
 	/**
 	 * Get value.

@@ -26,7 +26,7 @@ public:
 	 * Construct reset with boolean value.
 	 * @param value Boolean value to set
 	 */
-	explicit ResetChip(Value value = Value(false));
+	explicit ResetChip(Value value = Value(false)) : m_value(value) {}
 
 	/**
 	 * Get reset value.

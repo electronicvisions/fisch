@@ -26,15 +26,10 @@ public:
 	typedef word_access_type::Omnibus Value GENPYBIND(visible);
 
 	/**
-	 * Default constructor.
-	 */
-	explicit Omnibus();
-
-	/**
 	 * Construct an instance with a value.
 	 * @param value Value to construct instance with
 	 */
-	explicit Omnibus(Value const& value);
+	explicit Omnibus(Value const& value = Value()) : m_value(value) {}
 
 	/**
 	 * Get value.
@@ -87,7 +82,7 @@ public:
 	 * Resolve block if value is true (*address & mask == target) or if value is false (*address &
 	 * mask != target).
 	 */
-	PollingOmnibusBlock(Value value = Value(true));
+	PollingOmnibusBlock(Value value = Value(true)) : m_value(value) {}
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, PollingOmnibusBlock const& config);

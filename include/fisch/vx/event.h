@@ -54,13 +54,13 @@ public:
 	    Value;
 
 	/** Default constructor. */
-	explicit SpikePackToChip();
+	explicit SpikePackToChip() : m_value() {}
 
 	/**
 	 * Construct spike pack with labels.
 	 * @param labels Array of SpikeLabel values to use
 	 */
-	explicit SpikePackToChip(Value const& labels);
+	explicit SpikePackToChip(Value const& labels) : m_value(labels) {}
 
 	/**
 	 * Get spike labels.

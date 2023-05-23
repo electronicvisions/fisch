@@ -8,14 +8,6 @@
 namespace fisch::vx {
 
 template <size_t NumPack>
-SpikePackToChip<NumPack>::SpikePackToChip() : m_value()
-{}
-
-template <size_t NumPack>
-SpikePackToChip<NumPack>::SpikePackToChip(Value const& labels) : m_value(labels)
-{}
-
-template <size_t NumPack>
 typename SpikePackToChip<NumPack>::Value const& SpikePackToChip<NumPack>::get() const
 {
 	return m_value;

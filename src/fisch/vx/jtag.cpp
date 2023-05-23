@@ -11,8 +11,6 @@
 
 namespace fisch::vx {
 
-ResetJTAGTap::ResetJTAGTap() {}
-
 std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& /*reset*/)
 {
 	os << "ResetJTAGTap()";
@@ -41,8 +39,6 @@ void ResetJTAGTap::serialize(Archive& /*ar*/, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetJTAGTap)
 
-
-JTAGClockScaler::JTAGClockScaler(Value const value) : m_value(value) {}
 
 JTAGClockScaler::Value JTAGClockScaler::get() const
 {
@@ -87,8 +83,6 @@ void JTAGClockScaler::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGClockScaler)
 
-
-OmnibusChipOverJTAG::OmnibusChipOverJTAG(Value const value) : m_value(value) {}
 
 OmnibusChipOverJTAG::Value OmnibusChipOverJTAG::get() const
 {
@@ -185,8 +179,6 @@ void OmnibusChipOverJTAG::serialize(Archive& ar, std::uint32_t const)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(OmnibusChipOverJTAG)
 
 
-JTAGIdCode::JTAGIdCode(Value value) : m_value(value) {}
-
 JTAGIdCode::Value JTAGIdCode::get() const
 {
 	return m_value;
@@ -241,8 +233,6 @@ void JTAGIdCode::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGIdCode)
 
-
-JTAGPLLRegister::JTAGPLLRegister(Value const value) : m_value(value) {}
 
 JTAGPLLRegister::Value JTAGPLLRegister::get() const
 {
@@ -303,8 +293,6 @@ void JTAGPLLRegister::serialize(Archive& ar, std::uint32_t const)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(JTAGPLLRegister)
 
-
-JTAGPhyRegister::JTAGPhyRegister(Value const value) : m_value(value) {}
 
 JTAGPhyRegister::Value JTAGPhyRegister::get() const
 {

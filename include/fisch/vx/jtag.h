@@ -29,7 +29,7 @@ public:
 	typedef halco::hicann_dls::vx::ResetJTAGTapOnDLS coordinate_type;
 
 	/** Default constructor. */
-	ResetJTAGTap();
+	ResetJTAGTap() {}
 
 	GENPYBIND(stringstream)
 	friend std::ostream& operator<<(std::ostream& os, ResetJTAGTap const& reset);
@@ -64,7 +64,7 @@ public:
 	 * Construct scaler with value.
 	 * @param value Value to construct scaler with
 	 */
-	explicit JTAGClockScaler(Value value = Value());
+	explicit JTAGClockScaler(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get clock-scaler value.
@@ -112,7 +112,7 @@ public:
 	 * Construct an instance with a word value.
 	 * @param value Omnibus word value to construct instance with
 	 */
-	explicit OmnibusChipOverJTAG(Value value = Value());
+	explicit OmnibusChipOverJTAG(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get value.
@@ -166,7 +166,7 @@ public:
 	 * Construct IDCODE with value.
 	 * @param value Value to use
 	 */
-	explicit JTAGIdCode(Value value = Value());
+	explicit JTAGIdCode(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get JTAG IDCODE.
@@ -219,7 +219,7 @@ public:
 	 * Construct register by its value.
 	 * @param value Value to set on cosntruction
 	 */
-	explicit JTAGPLLRegister(Value value = Value());
+	explicit JTAGPLLRegister(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get register value.
@@ -267,7 +267,7 @@ public:
 	 * Construct register with value.
 	 * @param value Value to construct register with
 	 */
-	explicit JTAGPhyRegister(Value value = Value());
+	explicit JTAGPhyRegister(Value value = Value()) : m_value(value) {}
 
 	/**
 	 * Get register value.
