@@ -14,6 +14,7 @@ struct access;
 
 namespace halco::hicann_dls::vx {
 struct I2CIdRegisterOnBoard;
+struct I2CTempRegisterOnBoard;
 struct I2CINA219RoRegisterOnBoard;
 struct I2CINA219RwRegisterOnBoard;
 struct I2CTCA9554RoRegisterOnBoard;
@@ -148,6 +149,43 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CIdRegister(Value value) : I2CRoRegister(value) {}
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
+	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
+
+private:
+	friend struct cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t);
+};
+
+
+typedef word_access_type::I2CTempRegister I2CTempRegisterValue GENPYBIND(visible);
+class I2CTempRegister;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CTempRegister,
+    I2CTempRegisterValue,
+    halco::hicann_dls::vx::I2CTempRegisterOnBoard>;
+
+/**
+ * Container for reading the TMP112 temperature sensor on the chip carrier board.
+ */
+class GENPYBIND(inline_base("*")) I2CTempRegister
+    : public I2CRoRegister<
+          I2CTempRegister,
+          I2CTempRegisterValue,
+          halco::hicann_dls::vx::I2CTempRegisterOnBoard>
+{
+public:
+	/**
+	 * Construct an instance with a default value.
+	 */
+	explicit I2CTempRegister() : I2CRoRegister() {}
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Value to construct instance with
+	 */
+	explicit I2CTempRegister(Value value) : I2CRoRegister(value) {}
 	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
 	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;

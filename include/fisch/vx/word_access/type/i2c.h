@@ -18,6 +18,18 @@ struct GENPYBIND(inline_base("*")) I2CIdRegister
 	{}
 };
 
+struct GENPYBIND(inline_base("*")) I2CTempRegister
+    : public halco::common::detail::RantWrapper<
+          I2CTempRegister,
+          uint_fast16_t,
+          std::numeric_limits<uint16_t>::max(),
+          std::numeric_limits<uint16_t>::min()>
+{
+	constexpr explicit I2CTempRegister(uintmax_t const val = 0) GENPYBIND(implicit_conversion) :
+	    rant_t(val)
+	{}
+};
+
 struct GENPYBIND(inline_base("*")) I2CINA219RoRegister
     : public halco::common::detail::RantWrapper<
           I2CINA219RoRegister,
@@ -99,6 +111,7 @@ struct GENPYBIND(inline_base("*")) I2CDAC6573RwRegister
 namespace std {
 
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::I2CIdRegister)
+HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::I2CTempRegister)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::I2CINA219RoRegister)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::I2CINA219RwRegister)
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::I2CTCA9554RoRegister)

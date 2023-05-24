@@ -178,6 +178,25 @@ void I2CIdRegister::serialize(Archive& ar, std::uint32_t)
 }
 
 
+uint8_t I2CTempRegister::get_register_address(coordinate_type const& /*coord*/)
+{
+	// The read-only temperature is stored at register address 0.
+	return static_cast<uint8_t>(0x00);
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CTempRegister::get_base_address(
+    coordinate_type const& /*coord*/)
+{
+	return halco::hicann_dls::vx::OmnibusAddress(i2c_tmp112_base_address);
+}
+
+template <class Archive>
+void I2CTempRegister::serialize(Archive& ar, std::uint32_t)
+{
+	ar(cereal::base_class<I2CRoRegister<I2CTempRegister, Value, coordinate_type>>(this));
+}
+
+
 uint8_t I2CINA219RoRegister::get_register_address(coordinate_type const& coord)
 {
 	// The RO registers start at 1 and are indexed sequentially
@@ -360,6 +379,7 @@ void I2CDAC6573RwRegister::serialize(Archive& ar, std::uint32_t)
 }
 
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)
+EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTempRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
 
@@ -369,6 +389,7 @@ EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CAD5252RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CDAC6573RwRegister)
 
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTempRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RoRegister)
@@ -379,6 +400,7 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CDAC6573RwRegister)
 } // namespace fisch::vx
 
 CEREAL_CLASS_VERSION(fisch::vx::I2CIdRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CTempRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RoRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RoRegister, 0)
