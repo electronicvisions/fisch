@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/vx/container_ticket.h"
+#include "fisch/vx/fill.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
 
@@ -603,7 +604,64 @@ TEST(PlaybackProgramBuilder, PerformanceOmnibusWrite)
 	EXPECT_GE(rate_mhz, 15.);
 }
 
-TEST(PlaybackProgram, PerformanceOmnibusReadProcessMessages)
+TEST(PlaybackProgramBuilder, PerformanceWaitUntilWrite)
+{
+	std::mt19937 rng(std::random_device{}());
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		std::vector<halco::hicann_dls::vx::WaitUntilOnFPGA> addresses;
+		std::vector<WaitUntil> container;
+		size_t const num = hate::math::pow(2, p);
+		for (size_t i = 0; i < num; ++i) {
+			addresses.push_back(halco::hicann_dls::vx::WaitUntilOnFPGA());
+			container.push_back(fill_random<WaitUntil>(rng));
+		}
+
+		PlaybackProgramBuilder builder;
+		hate::Timer timer;
+		builder.write(addresses, container);
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 15.);
+}
+
+#define TEST_PlaybackProgramBuilder_PerformanceSpikePackNToChipWrite(N)                            \
+	TEST(PlaybackProgramBuilder, PerformanceSpikePack##N##ToChipWrite)                             \
+	{                                                                                              \
+		std::mt19937 rng(std::random_device{}());                                                  \
+		auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");             \
+		constexpr size_t max_pow = 25;                                                             \
+                                                                                                   \
+		double rate_mhz = 0.;                                                                      \
+		for (size_t p = 0; p < max_pow; ++p) {                                                     \
+			std::vector<halco::hicann_dls::vx::SpikePack##N##ToChipOnDLS> addresses;               \
+			std::vector<SpikePack##N##ToChip> container;                                           \
+			size_t const num = hate::math::pow(2, p);                                              \
+			for (size_t i = 0; i < num; ++i) {                                                     \
+				addresses.push_back(halco::hicann_dls::vx::SpikePack##N##ToChipOnDLS());           \
+				container.push_back(fill_random<SpikePack##N##ToChip>(rng));                       \
+			}                                                                                      \
+                                                                                                   \
+			PlaybackProgramBuilder builder;                                                        \
+			hate::Timer timer;                                                                     \
+			builder.write(addresses, container);                                                   \
+			rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());             \
+			LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");      \
+		}                                                                                          \
+		EXPECT_GE(rate_mhz, 15.);                                                                  \
+	}
+// clang-format off
+TEST_PlaybackProgramBuilder_PerformanceSpikePackNToChipWrite(1)
+TEST_PlaybackProgramBuilder_PerformanceSpikePackNToChipWrite(2)
+TEST_PlaybackProgramBuilder_PerformanceSpikePackNToChipWrite(3)
+// clang-format on
+#undef TEST_PlaybackProgramBuilder_PerformanceSpikePackNToChipWrite
+
+            TEST(PlaybackProgram, PerformanceOmnibusReadProcessMessages)
 {
 	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
 	constexpr size_t max_pow = 25;
@@ -664,4 +722,62 @@ TEST(PlaybackProgram, PerformanceOmnibusReadDecode)
 		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
 	}
 	EXPECT_GE(rate_mhz, 30.);
+}
+
+TEST(PlaybackProgramBuilder, PerformanceSpiketrainGeneratedWrite)
+{
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		SpikePack1ToChipOnDLS spike_coordinate;
+		WaitUntilOnFPGA wait_until_coordinate;
+		size_t const num = hate::math::pow(2, p);
+
+		hate::Timer timer;
+		PlaybackProgramBuilder builder;
+		// regular spike-train with 10 cycles ISI and SpikeLabel()
+		builder.write(TimerOnDLS(), Timer());
+		for (size_t i = 0; i < num; ++i) {
+			builder.write(wait_until_coordinate, WaitUntil(WaitUntil::Value(i * 10)));
+			builder.write(spike_coordinate, SpikePack1ToChip());
+		}
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 8.);
+}
+
+TEST(PlaybackProgramBuilder, PerformanceSpiketrainStoredWrite)
+{
+	auto logger = log4cxx::Logger::getLogger("fisch.Test_PlaybackProgramBuilder");
+	constexpr size_t max_pow = 25;
+
+	double rate_mhz = 0.;
+	for (size_t p = 0; p < max_pow; ++p) {
+		size_t const num = hate::math::pow(2, p);
+		std::vector<SpikePack1ToChip> spikes;
+		std::vector<WaitUntil> times;
+		SpikePack1ToChipOnDLS spike_coordinate;
+		WaitUntilOnFPGA wait_until_coordinate;
+		// regular spike-train with 10 cycles ISI and random SpikeLabel
+		for (size_t i = 0; i < num; ++i) {
+			spikes.push_back(SpikePack1ToChip());
+			times.push_back(WaitUntil(WaitUntil::Value(i * 10)));
+		}
+
+		hate::Timer timer;
+		PlaybackProgramBuilder builder;
+		builder.write(TimerOnDLS(), Timer());
+		for (size_t i = 0; i < num; ++i) {
+			builder.write(wait_until_coordinate, times[i]);
+			builder.write(spike_coordinate, spikes[i]);
+		}
+		rate_mhz = static_cast<double>(num) / static_cast<double>(timer.get_us());
+
+		LOG4CXX_INFO(logger, num << ": " << timer.print() << ", " << rate_mhz << " MHz");
+	}
+	EXPECT_GE(rate_mhz, 8.);
 }
