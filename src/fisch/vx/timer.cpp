@@ -1,9 +1,7 @@
 #include "fisch/vx/timer.h"
 #include "fisch/vx/omnibus.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -59,12 +57,6 @@ void Timer::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	m_value = Value(value);
 }
 
-template <class Archive>
-void Timer::serialize(Archive&, std::uint32_t const)
-{}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Timer)
-
 
 WaitUntil::Value WaitUntil::get() const
 {
@@ -101,15 +93,4 @@ WaitUntil::encode_write(coordinate_type const& /* coord */) const
 	    hxcomm::vx::instruction::timing::WaitUntil::Payload(m_value))};
 }
 
-template <class Archive>
-void WaitUntil::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(WaitUntil)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::Timer, 1)
-CEREAL_CLASS_VERSION(fisch::vx::WaitUntil, 0)

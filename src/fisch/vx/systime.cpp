@@ -1,7 +1,5 @@
 #include "fisch/vx/systime.h"
 
-#include "fisch/cerealization.tcc"
-#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -40,14 +38,4 @@ SystimeSync::encode_write(coordinate_type const& /* coord */) const
 	    hxcomm::vx::instruction::timing::SystimeInit::Payload(m_value))};
 }
 
-template <class Archive>
-void SystimeSync::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SystimeSync)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::SystimeSync, 1)

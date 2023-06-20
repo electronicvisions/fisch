@@ -1,6 +1,5 @@
 #include "fisch/vx/playback_program.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/common/logger.h"
 #include "fisch/vx/detail/playback_program_impl.h"
 #include "hxcomm/vx/utmessage.h"
@@ -8,7 +7,6 @@
 #include <sstream>
 #include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/for_each.hpp>
-#include <cereal/types/memory.hpp>
 
 namespace fisch::vx {
 
@@ -141,14 +139,4 @@ bool PlaybackProgram::operator!=(PlaybackProgram const& other) const
 	return !(*this == other);
 }
 
-template <typename Archive>
-void PlaybackProgram::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_impl));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PlaybackProgram)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::PlaybackProgram, 3)

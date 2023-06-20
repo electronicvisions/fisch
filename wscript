@@ -139,11 +139,18 @@ def build(bld):
             uselib='FISCH',
         )
 
+        bld.shlib(
+            source = bld.path.ant_glob('src/cereal/types/fisch/vx/**/*.cpp'),
+            target = f'fisch_vx_v{hx_version}_serialization',
+            use = [f'fisch_vx_v{hx_version}', 'hxcomm', 'halco_hicann_dls_vx'],
+            defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
+        )
+
         bld(
             features = 'cxx cxxprogram gtest',
             source = bld.path.ant_glob('tests/sw/fisch/vx/test-*.cpp'),
             target = f'fisch_swtest_vx_v{hx_version}',
-            use = [f'fisch_vx_v{hx_version}', 'BOOST4FISCHTOOLS'],
+            use = [f'fisch_vx_v{hx_version}', 'BOOST4FISCHTOOLS', f'fisch_vx_v{hx_version}_serialization'],
             test_main = 'tests/sw/fisch/vx/main.cpp',
             defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
             uselib='FISCH',

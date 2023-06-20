@@ -1,9 +1,7 @@
 #include "fisch/vx/i2c.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/i2c.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
@@ -100,14 +98,6 @@ void I2CRoRegister<Derived, ValueType, CoordinateType>::decode(
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
-template <class Archive>
-void I2CRoRegister<Derived, ValueType, CoordinateType>::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-
-template <typename Derived, typename ValueType, typename CoordinateType>
 std::array<
     hxcomm::vx::UTMessageToFPGAVariant,
     I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write_ut_message_count>
@@ -171,12 +161,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CIdRegister::get_base_address(
 	return halco::hicann_dls::vx::OmnibusAddress(i2c_eeprom_base_address);
 }
 
-template <class Archive>
-void I2CIdRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(cereal::base_class<I2CRoRegister<I2CIdRegister, Value, coordinate_type>>(this));
-}
-
 
 uint8_t I2CTempRegister::get_register_address(coordinate_type const& /*coord*/)
 {
@@ -190,12 +174,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CTempRegister::get_base_address(
 	return halco::hicann_dls::vx::OmnibusAddress(i2c_tmp112_base_address);
 }
 
-template <class Archive>
-void I2CTempRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(cereal::base_class<I2CRoRegister<I2CTempRegister, Value, coordinate_type>>(this));
-}
-
 
 uint8_t I2CINA219RoRegister::get_register_address(coordinate_type const& coord)
 {
@@ -207,12 +185,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CINA219RoRegister::get_base_address(
     coordinate_type const& coord)
 {
 	return halco::hicann_dls::vx::OmnibusAddress(i2c_ina219_base_address + coord.toINA219OnBoard());
-}
-
-template <class Archive>
-void I2CINA219RoRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(cereal::base_class<I2CRoRegister<I2CINA219RoRegister, Value, coordinate_type>>(this));
 }
 
 
@@ -229,12 +201,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CINA219RwRegister::get_base_address(
 	return halco::hicann_dls::vx::OmnibusAddress(i2c_ina219_base_address + coord.toINA219OnBoard());
 }
 
-template <class Archive>
-void I2CINA219RwRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
 
 uint8_t I2CTCA9554RoRegister::get_register_address(coordinate_type const& coord)
 {
@@ -249,12 +215,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CTCA9554RoRegister::get_base_address(
 	    i2c_tca9554_base_address + coord.toTCA9554OnBoard());
 }
 
-template <class Archive>
-void I2CTCA9554RoRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(cereal::base_class<I2CRoRegister<I2CTCA9554RoRegister, Value, coordinate_type>>(this));
-}
-
 
 uint8_t I2CTCA9554RwRegister::get_register_address(coordinate_type const& coord)
 {
@@ -267,12 +227,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CTCA9554RwRegister::get_base_address(
 {
 	return halco::hicann_dls::vx::OmnibusAddress(
 	    i2c_tca9554_base_address + coord.toTCA9554OnBoard());
-}
-
-template <class Archive>
-void I2CTCA9554RwRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(cereal::base_class<I2CRoRegister<I2CTCA9554RwRegister, Value, coordinate_type>>(this));
 }
 
 
@@ -293,12 +247,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CAD5252RwRegister::get_base_address(
 	// The AD5252 on the ultra96 have addresses 0x2d, 0x2e, 0x2f in this order. 0x2c is omitted.
 	return halco::hicann_dls::vx::OmnibusAddress(
 	    i2c_ad5252_base_address + coord.toAD5252ChannelOnBoard().toAD5252OnBoard() + 1);
-}
-
-template <class Archive>
-void I2CAD5252RwRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(CEREAL_NVP(m_value));
 }
 
 
@@ -372,12 +320,6 @@ halco::hicann_dls::vx::OmnibusAddress I2CDAC6573RwRegister::get_base_address(
 	    i2c_dac6573_base_address + coord.toDAC6573OnBoard());
 }
 
-template <class Archive>
-void I2CDAC6573RwRegister::serialize(Archive& ar, std::uint32_t)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CIdRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTempRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
@@ -388,22 +330,4 @@ EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9554RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CAD5252RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CDAC6573RwRegister)
 
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTempRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RoRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RwRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CAD5252RwRegister)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CDAC6573RwRegister)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::I2CIdRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CTempRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RoRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CINA219RwRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RoRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RwRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CAD5252RwRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::I2CDAC6573RwRegister, 0)

@@ -1,8 +1,6 @@
 #include "fisch/vx/extoll.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/extoll.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
@@ -102,14 +100,6 @@ void Extoll::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	    (static_cast<uint64_t>(messages[1].decode()) << 32) |
 	    static_cast<uint64_t>(messages[0].decode()));
 }
-
-template <class Archive>
-void Extoll::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Extoll)
 
 
 ExtollOnNwNode::Value const& ExtollOnNwNode::get() const
@@ -213,15 +203,4 @@ void ExtollOnNwNode::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	    static_cast<uint64_t>(messages[0].decode()));
 }
 
-template <class Archive>
-void ExtollOnNwNode::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ExtollOnNwNode)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::Extoll, 0)
-CEREAL_CLASS_VERSION(fisch::vx::ExtollOnNwNode, 0)

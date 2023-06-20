@@ -1,9 +1,7 @@
 #include "fisch/vx/spi.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/spi.h"
 #include "hate/bitset.h"
 #include "hxcomm/vx/utmessage.h"
@@ -68,14 +66,6 @@ SPIShiftRegister::encode_write(coordinate_type const& /*coord*/) const
 
 	return ret;
 }
-
-template <class Archive>
-void SPIShiftRegister::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIShiftRegister)
 
 
 SPIDACDataRegister::Value SPIDACDataRegister::get() const
@@ -172,14 +162,6 @@ SPIDACDataRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-template <class Archive>
-void SPIDACDataRegister::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACDataRegister)
-
 
 SPIDACControlRegister::Value SPIDACControlRegister::get() const
 {
@@ -240,16 +222,4 @@ SPIDACControlRegister::encode_write(coordinate_type const& coord) const
 	return ret;
 }
 
-template <class Archive>
-void SPIDACControlRegister::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SPIDACControlRegister)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::SPIShiftRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SPIDACDataRegister, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SPIDACControlRegister, 0)

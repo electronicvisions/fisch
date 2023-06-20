@@ -1,11 +1,8 @@
 #include "fisch/vx/word_access/type/omnibus.h"
 
 #ifndef __ppu__
-#include "fisch/cerealization.tcc"
-#include "halco/common/cerealization_geometry.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
-#include <cereal/types/array.hpp>
 #endif
 
 namespace fisch::vx::word_access_type GENPYBIND_MODULE {
@@ -42,19 +39,4 @@ bool Omnibus::operator!=(Omnibus const& other) const
 	return !(*this == other);
 }
 
-#ifndef __ppu__
-template <class Archive>
-void Omnibus::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(word));
-	ar(CEREAL_NVP(byte_enables));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
-#endif
-
 } // namespace fisch::vx::word_access_type
-
-#ifndef __ppu__
-CEREAL_CLASS_VERSION(fisch::vx::word_access_type::Omnibus, 0)
-#endif

@@ -1,7 +1,5 @@
 #include "fisch/vx/reset.h"
 
-#include "fisch/cerealization.tcc"
-#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -41,14 +39,4 @@ ResetChip::encode_write(coordinate_type const& /* coord */) const
 	    hxcomm::vx::instruction::system::Reset::Payload(m_value))};
 }
 
-template <class Archive>
-void ResetChip::serialize(Archive& ar, std::uint32_t)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(ResetChip)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::ResetChip, 1)

@@ -1,8 +1,6 @@
 #include "fisch/vx/omnibus.h"
 
-#include "fisch/cerealization.tcc"
 #include "fisch/vx/omnibus_constants.h"
-#include "halco/common/cerealization_geometry.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
@@ -81,14 +79,6 @@ void Omnibus::decode(UTMessageFromFPGARangeOmnibus const& messages)
 	m_value.byte_enables = {true, true, true, true};
 }
 
-template <class Archive>
-void Omnibus::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(Omnibus)
-
 
 PollingOmnibusBlock::Value PollingOmnibusBlock::get() const
 {
@@ -124,15 +114,4 @@ PollingOmnibusBlock::encode_write(coordinate_type const& /* coord */) const
 	    hxcomm::vx::instruction::timing::PollingOmnibusBlock::Payload(m_value))};
 }
 
-template <class Archive>
-void PollingOmnibusBlock::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(PollingOmnibusBlock)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::Omnibus, 1)
-CEREAL_CLASS_VERSION(fisch::vx::PollingOmnibusBlock, 1)

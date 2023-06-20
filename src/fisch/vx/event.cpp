@@ -1,8 +1,5 @@
 #include "fisch/vx/event.h"
 
-#include "cereal/types/array.hpp"
-#include "fisch/cerealization.tcc"
-#include "halco/common/cerealization_geometry.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -47,20 +44,9 @@ SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 	    typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload(spikes))};
 }
 
-template <size_t NumPack>
-template <typename Archive>
-void SpikePackToChip<NumPack>::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-}
-
 template class SpikePackToChip<1>;
 template class SpikePackToChip<2>;
 template class SpikePackToChip<3>;
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikePackToChip<1>)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikePackToChip<2>)
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikePackToChip<3>)
 
 
 std::ostream& operator<<(std::ostream& os, SpikeFromChip const& event)
@@ -82,16 +68,6 @@ bool SpikeFromChip::operator!=(SpikeFromChip const& other) const
 	return !(*this == other);
 }
 
-template <class Archive>
-void SpikeFromChip::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP_("m_label", label));
-	ar(CEREAL_NVP_("m_chip_time", chip_time));
-	ar(CEREAL_NVP_("m_fpga_time", fpga_time));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(SpikeFromChip)
-
 
 std::ostream& operator<<(std::ostream& os, MADCSampleFromChip const& event)
 {
@@ -111,17 +87,6 @@ bool MADCSampleFromChip::operator!=(MADCSampleFromChip const& other) const
 {
 	return !(*this == other);
 }
-
-template <class Archive>
-void MADCSampleFromChip::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP_("m_value", value));
-	ar(CEREAL_NVP_("m_channel", channel));
-	ar(CEREAL_NVP_("m_chip_time", chip_time));
-	ar(CEREAL_NVP_("m_fpga_time", fpga_time));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(MADCSampleFromChip)
 
 
 HighspeedLinkNotification::Value HighspeedLinkNotification::get_value() const
@@ -161,15 +126,6 @@ bool HighspeedLinkNotification::operator!=(HighspeedLinkNotification const& othe
 	return !(*this == other);
 }
 
-template <class Archive>
-void HighspeedLinkNotification::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-	ar(CEREAL_NVP(m_fpga_time));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(HighspeedLinkNotification)
-
 
 TimeoutNotification::Value TimeoutNotification::get_value() const
 {
@@ -208,21 +164,4 @@ bool TimeoutNotification::operator!=(TimeoutNotification const& other) const
 	return !(*this == other);
 }
 
-template <class Archive>
-void TimeoutNotification::serialize(Archive& ar, std::uint32_t const)
-{
-	ar(CEREAL_NVP(m_value));
-	ar(CEREAL_NVP(m_fpga_time));
-}
-
-EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(TimeoutNotification)
-
 } // namespace fisch::vx
-
-CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<1>, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<2>, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SpikePackToChip<3>, 0)
-CEREAL_CLASS_VERSION(fisch::vx::SpikeFromChip, 1)
-CEREAL_CLASS_VERSION(fisch::vx::MADCSampleFromChip, 1)
-CEREAL_CLASS_VERSION(fisch::vx::HighspeedLinkNotification, 0)
-CEREAL_CLASS_VERSION(fisch::vx::TimeoutNotification, 0)

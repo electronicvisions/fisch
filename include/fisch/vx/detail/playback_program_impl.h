@@ -1,5 +1,6 @@
 #pragma once
 #include "fisch/vx/playback_decoder.h"
+#include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
 #include <array>
 #include <cstdint>
@@ -48,7 +49,7 @@ struct PlaybackProgramImpl
 	PlaybackDecoder m_decoder;
 	std::array<size_t, std::tuple_size<decltype(m_receive_queue)>::value> m_queue_expected_size;
 
-	PlaybackProgramImpl();
+	PlaybackProgramImpl() SYMBOL_VISIBLE;
 
 	bool operator==(PlaybackProgramImpl const& other) const;
 	bool operator!=(PlaybackProgramImpl const& other) const;

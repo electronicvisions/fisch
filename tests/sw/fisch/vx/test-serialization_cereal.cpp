@@ -2,9 +2,9 @@
 
 #include "fisch/vx/container.h"
 
+#include "cereal/types/halco/common/geometry.h"
 #include <cereal/archives/json.hpp>
 #include <cereal/cereal.hpp>
-#include "halco/common/cerealization_geometry.h"
 
 using namespace fisch::vx;
 
