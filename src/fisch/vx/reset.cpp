@@ -1,5 +1,6 @@
 #include "fisch/vx/reset.h"
 
+#include "fisch/vx/encode.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -32,11 +33,11 @@ bool ResetChip::operator!=(ResetChip const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetChip::encode_write_ut_message_count>
-ResetChip::encode_write(coordinate_type const& /* coord */) const
+void ResetChip::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Reset>(
-	    hxcomm::vx::instruction::system::Reset::Payload(m_value))};
+	return target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::system::Reset>(
+	    hxcomm::vx::instruction::system::Reset::Payload(m_value)));
 }
 
 } // namespace fisch::vx

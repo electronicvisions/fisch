@@ -3,6 +3,7 @@
 #include "fisch/vx/null_payload_readable.h"
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/fpga.h"
 #include "hxcomm/vx/utmessage.h"
 
@@ -26,7 +27,9 @@ TEST(NullPayloadReadable, EncodeRead)
 
 	NullPayloadReadable obj;
 
-	auto messages = obj.encode_read(typename NullPayloadReadable::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_read(typename NullPayloadReadable::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::system::Loopback>>(messages.at(0));

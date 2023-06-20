@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/jtag.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
@@ -28,7 +29,9 @@ TEST(JTAGClockScaler, EncodeWrite)
 	JTAGClockScaler obj;
 	obj.set(JTAGClockScaler::Value(12));
 
-	auto messages = obj.encode_write(typename JTAGClockScaler::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(typename JTAGClockScaler::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Scaler>>(messages.at(0));

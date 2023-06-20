@@ -1,6 +1,7 @@
 #include "fisch/vx/timer.h"
 #include "fisch/vx/omnibus.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "hxcomm/vx/utmessage.h"
 
@@ -32,19 +33,18 @@ bool Timer::operator!=(Timer const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_write_ut_message_count>
-Timer::encode_write(coordinate_type const& /* coord */) const
+void Timer::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
 	if (m_value != Value(0)) {
 		throw std::runtime_error("Trying to write value different from 0. This is not supported!");
 	}
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>()};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Setup>());
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Timer::encode_read_ut_message_count>
-Timer::encode_read(coordinate_type const& /* coord */)
+void Timer::encode_read(coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target)
 {
-	return Omnibus::encode_read(halco::hicann_dls::vx::OmnibusAddress(timer_readout));
+	Omnibus::encode_read(halco::hicann_dls::vx::OmnibusAddress(timer_readout), target);
 }
 
 
@@ -86,11 +86,11 @@ bool WaitUntil::operator!=(WaitUntil const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, WaitUntil::encode_write_ut_message_count>
-WaitUntil::encode_write(coordinate_type const& /* coord */) const
+void WaitUntil::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::WaitUntil>(
-	    hxcomm::vx::instruction::timing::WaitUntil::Payload(m_value))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::WaitUntil>(
+	    hxcomm::vx::instruction::timing::WaitUntil::Payload(m_value)));
 }
 
 } // namespace fisch::vx

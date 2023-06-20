@@ -2,10 +2,11 @@
 
 #include "fisch/vx/jtag.h"
 
-#include <cereal/archives/json.hpp>
-#include <cereal/cereal.hpp>
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/jtag.h"
 #include "hxcomm/vx/utmessage.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(ResetJTAGTap, General)
 {
@@ -26,7 +27,9 @@ TEST(ResetJTAGTap, EncodeWrite)
 
 	ResetJTAGTap obj;
 
-	auto messages = obj.encode_write(typename ResetJTAGTap::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(typename ResetJTAGTap::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Init>>(messages.at(0));

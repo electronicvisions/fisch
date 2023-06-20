@@ -2,10 +2,11 @@
 
 #include "fisch/vx/omnibus.h"
 
-#include <cereal/archives/json.hpp>
-#include <cereal/cereal.hpp>
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "hxcomm/vx/utmessage.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(Omnibus, General)
 {
@@ -41,7 +42,9 @@ TEST(Omnibus, EncodeRead)
 	Omnibus obj;
 
 	Omnibus::coordinate_type coord(3);
-	auto messages = obj.encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message_addr =
@@ -60,7 +63,9 @@ TEST(Omnibus, EncodeWrite)
 	obj.set(Omnibus::Value(12, {false}));
 
 	Omnibus::coordinate_type coord(3);
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 2);
 	auto message_addr =

@@ -1,6 +1,7 @@
 #include "fisch/vx/jtag.h"
 
 #include "fisch/vx/detail/jtag_pll_register_coord_size.h"
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/jtag.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
@@ -25,10 +26,10 @@ bool ResetJTAGTap::operator!=(ResetJTAGTap const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, ResetJTAGTap::encode_write_ut_message_count>
-ResetJTAGTap::encode_write(coordinate_type const& /* coord */) const
+void ResetJTAGTap::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Init>()};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Init>());
 }
 
 
@@ -60,11 +61,11 @@ bool JTAGClockScaler::operator!=(JTAGClockScaler const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGClockScaler::encode_write_ut_message_count>
-JTAGClockScaler::encode_write(coordinate_type const& /* coord */) const
+void JTAGClockScaler::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Scaler>(
-	    hxcomm::vx::instruction::to_fpga_jtag::Scaler::Payload(m_value.value()))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::to_fpga_jtag::Scaler>(
+	    hxcomm::vx::instruction::to_fpga_jtag::Scaler::Payload(m_value.value())));
 }
 
 
@@ -100,53 +101,47 @@ bool OmnibusChipOverJTAG::operator!=(OmnibusChipOverJTAG const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, OmnibusChipOverJTAG::encode_read_ut_message_count>
-OmnibusChipOverJTAG::encode_read(coordinate_type const& coord)
+void OmnibusChipOverJTAG::encode_read(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-
-	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS));
 
 	hate::bitset<sizeof(Value) * CHAR_BIT + 1> addr(coord.value());
 	addr.set(addr.size - 1, true);
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(addr.size), addr));
+	target(hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(addr.size), addr)));
 
-	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST));
 
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0)));
 
-	ret[4] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA));
 
-	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0)));
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, OmnibusChipOverJTAG::encode_write_ut_message_count>
-OmnibusChipOverJTAG::encode_write(coordinate_type const& coord) const
+void OmnibusChipOverJTAG::encode_write(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS));
 
-	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_ADDRESS);
+	target(hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(33), coord.value())));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(33), coord.value()));
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA));
 
-	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_DATA);
+	target(hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(32), m_value.value())));
 
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(32), m_value.value()));
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST));
 
-	ret[4] = hxcomm::vx::UTMessageToFPGA<ins>(ins::OMNIBUS_REQUEST);
-
-	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(false, data::Payload::NumBits(3), 0)));
 }
 
 void OmnibusChipOverJTAG::decode(UTMessageFromFPGARangeJTAG const& messages)
@@ -183,17 +178,15 @@ bool JTAGIdCode::operator!=(JTAGIdCode const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGIdCode::encode_read_ut_message_count>
-JTAGIdCode::encode_read(coordinate_type const& /* coord */)
+void JTAGIdCode::encode_read(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target)
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::IDCODE);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::IDCODE));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(true, data::Payload::NumBits(32), 0)));
 }
 
 void JTAGIdCode::decode(UTMessageFromFPGARangeJTAG const& messages)
@@ -234,23 +227,21 @@ bool JTAGPLLRegister::operator!=(JTAGPLLRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPLLRegister::encode_write_ut_message_count>
-JTAGPLLRegister::encode_write(coordinate_type const& coord) const
+void JTAGPLLRegister::encode_write(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::PLL_TARGET_REG);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::PLL_TARGET_REG));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(
-	    false, data::Payload::NumBits(detail::jtag_pll_register_coord_size), coord.value()));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(
+	    false, data::Payload::NumBits(detail::jtag_pll_register_coord_size), coord.value())));
 
-	ret[2] = hxcomm::vx::UTMessageToFPGA<ins>(ins::SHIFT_PLL);
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::SHIFT_PLL));
 
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(32), m_value.value()));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(32), m_value.value())));
 }
 
 
@@ -285,19 +276,16 @@ bool JTAGPhyRegister::operator!=(JTAGPhyRegister const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, JTAGPhyRegister::encode_write_ut_message_count>
-JTAGPhyRegister::encode_write(coordinate_type const& coord) const
+void JTAGPhyRegister::encode_write(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using ins = hxcomm::vx::instruction::to_fpga_jtag::Ins;
 	using data = hxcomm::vx::instruction::to_fpga_jtag::Data;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-	ret[0] = hxcomm::vx::UTMessageToFPGA<ins>(ins::Payload((1 << 6) | (coord.toEnum() << 3) | 4));
+	target(hxcomm::vx::UTMessageToFPGA<ins>(ins::Payload((1 << 6) | (coord.toEnum() << 3) | 4)));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(
-	    data::Payload(false, data::Payload::NumBits(22), m_value.value()));
-
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(
+	    data::Payload(false, data::Payload::NumBits(22), m_value.value())));
 }
 
 } // namespace fisch::vx

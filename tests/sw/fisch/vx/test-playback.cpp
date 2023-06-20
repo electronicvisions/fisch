@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/vx/container_ticket.h"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/fill.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/playback_program_builder.h"
@@ -130,12 +131,10 @@ TEST(PlaybackProgramBuilder, WriteSingle)
 
 	auto program = builder.done();
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(program_to_fpga_messages.size(), Omnibus::encode_write_ut_message_count);
-
-	auto expected_to_fpga_messages = config.encode_write(coord);
-	for (size_t i = 0; i < program_to_fpga_messages.size(); ++i) {
-		EXPECT_EQ(expected_to_fpga_messages.at(i), program_to_fpga_messages.at(i));
-	}
+	std::vector<hxcomm::vx::UTMessageToFPGAVariant> expected_to_fpga_messages;
+	UTMessageToFPGABackEmplacer emplacer(expected_to_fpga_messages);
+	config.encode_write(coord, emplacer);
+	EXPECT_EQ(expected_to_fpga_messages, program_to_fpga_messages);
 }
 
 TEST(PlaybackProgramBuilder, WriteMultiple)
@@ -160,18 +159,13 @@ TEST(PlaybackProgramBuilder, WriteMultiple)
 
 	auto program = builder.done();
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(
-	    program_to_fpga_messages.size(),
-	    Omnibus::encode_write_ut_message_count * ref_addresses.size());
 
+	std::vector<hxcomm::vx::UTMessageToFPGAVariant> expected_to_fpga_messages;
+	UTMessageToFPGABackEmplacer emplacer(expected_to_fpga_messages);
 	for (size_t i = 0; i < ref_addresses.size(); ++i) {
-		auto expected_to_fpga_messages = ref_words.at(i).encode_write(ref_addresses.at(i));
-		for (size_t j = 0; j < expected_to_fpga_messages.size(); ++j) {
-			EXPECT_EQ(
-			    expected_to_fpga_messages.at(j),
-			    program_to_fpga_messages.at(j + i * Omnibus::encode_write_ut_message_count));
-		}
+		ref_words.at(i).encode_write(ref_addresses.at(i), emplacer);
 	}
+	EXPECT_EQ(expected_to_fpga_messages, program_to_fpga_messages);
 }
 
 TEST(PlaybackProgramBuilder, ReadSingle)
@@ -192,12 +186,11 @@ TEST(PlaybackProgramBuilder, ReadSingle)
 	auto program = builder.done();
 
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(program_to_fpga_messages.size(), Omnibus::encode_read_ut_message_count);
 
-	auto expected_to_fpga_messages = Omnibus::encode_read(coord);
-	for (size_t i = 0; i < program_to_fpga_messages.size(); ++i) {
-		EXPECT_EQ(expected_to_fpga_messages.at(i), program_to_fpga_messages.at(i));
-	}
+	std::vector<hxcomm::vx::UTMessageToFPGAVariant> expected_to_fpga_messages;
+	UTMessageToFPGABackEmplacer emplacer(expected_to_fpga_messages);
+	Omnibus::encode_read(coord, emplacer);
+	EXPECT_EQ(expected_to_fpga_messages, program_to_fpga_messages);
 
 	program->push_from_fpga_message(from_fpga_message);
 
@@ -226,17 +219,13 @@ TEST(PlaybackProgramBuilder, ReadMultiple)
 	auto program = builder.done();
 
 	auto program_to_fpga_messages = program->get_to_fpga_messages();
-	EXPECT_EQ(
-	    program_to_fpga_messages.size(), Omnibus::encode_read_ut_message_count * addresses.size());
 
+	std::vector<hxcomm::vx::UTMessageToFPGAVariant> expected_to_fpga_messages;
+	UTMessageToFPGABackEmplacer emplacer(expected_to_fpga_messages);
 	for (size_t i = 0; i < addresses.size(); ++i) {
-		auto expected_to_fpga_messages = Omnibus::encode_read(addresses.at(i));
-		for (size_t j = 0; j < expected_to_fpga_messages.size(); ++j) {
-			EXPECT_EQ(
-			    expected_to_fpga_messages.at(j),
-			    program_to_fpga_messages.at(j + i * Omnibus::encode_read_ut_message_count));
-		}
+		Omnibus::encode_read(addresses.at(i), emplacer);
 	}
+	EXPECT_EQ(expected_to_fpga_messages, program_to_fpga_messages);
 
 	// too little messages
 	hxcomm::vx::UTMessageFromFPGA<hxcomm::vx::instruction::omnibus_from_fpga::Data>

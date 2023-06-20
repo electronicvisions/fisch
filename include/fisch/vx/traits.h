@@ -1,6 +1,8 @@
 #pragma once
-#include "hate/type_list.h"
+#include "fisch/vx/encode_fwd.h"
+#include "hate/type_traits.h"
 #include <type_traits>
+#include <vector>
 #include <boost/utility/enable_if.hpp>
 
 namespace fisch::vx {
@@ -19,29 +21,15 @@ struct HasPositiveDecodeUTMessageCount<
 	constexpr static bool value = (T::decode_ut_message_count > 0);
 };
 
-template <typename T, typename = void>
-struct HasPositiveEncodeReadUTMessageCount : public std::false_type
-{};
+template <typename T>
+using HasEncodeRead = decltype(T::encode_read(
+    std::declval<typename T::coordinate_type const&>(),
+    std::declval<UTMessageToFPGABackEmplacer&>()));
 
 template <typename T>
-struct HasPositiveEncodeReadUTMessageCount<
-    T,
-    typename boost::enable_if_has_type<decltype(T::encode_read_ut_message_count)>::type>
-{
-	constexpr static bool value = (T::encode_read_ut_message_count > 0);
-};
-
-template <typename T, typename = void>
-struct HasPositiveEncodeWriteUTMessageCount : public std::false_type
-{};
-
-template <typename T>
-struct HasPositiveEncodeWriteUTMessageCount<
-    T,
-    typename boost::enable_if_has_type<decltype(T::encode_write_ut_message_count)>::type>
-{
-	constexpr static bool value = (T::encode_write_ut_message_count > 0);
-};
+using HasEncodeWrite = decltype(std::declval<T const>().encode_write(
+    std::declval<typename T::coordinate_type const&>(),
+    std::declval<UTMessageToFPGABackEmplacer&>()));
 
 } // namespace detail
 
@@ -54,7 +42,7 @@ template <typename ContainerT>
 struct IsReadable
 {
 	constexpr static bool value = detail::HasPositiveDecodeUTMessageCount<ContainerT>::value &&
-	                              detail::HasPositiveEncodeReadUTMessageCount<ContainerT>::value;
+	                              hate::is_detected_v<detail::HasEncodeRead, ContainerT>;
 };
 
 
@@ -65,7 +53,7 @@ struct IsReadable
 template <typename ContainerT>
 struct IsWritable
 {
-	constexpr static bool value = detail::HasPositiveEncodeWriteUTMessageCount<ContainerT>::value;
+	constexpr static bool value = hate::is_detected_v<detail::HasEncodeWrite, ContainerT>;
 };
 
 

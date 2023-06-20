@@ -2,6 +2,7 @@
 
 #include "fisch/vx/spi.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/spi.h"
 #include "hxcomm/vx/utmessage.h"
@@ -19,7 +20,9 @@ TEST(SPIDACControlRegister, EncodeWrite)
 	obj.set(SPIDACControlRegister::Value(12));
 
 	typename SPIDACControlRegister::coordinate_type coord(halco::common::Enum(3));
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto message_addr_1 =

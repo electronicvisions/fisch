@@ -2,10 +2,11 @@
 
 #include "fisch/vx/jtag.h"
 
-#include <cereal/archives/json.hpp>
-#include <cereal/cereal.hpp>
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hxcomm/vx/utmessage.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(OmnibusChipOverJTAG, General)
 {
@@ -38,7 +39,9 @@ TEST(OmnibusChipOverJTAG, EncodeRead)
 	OmnibusChipOverJTAG obj;
 
 	typename OmnibusChipOverJTAG::coordinate_type coord(3);
-	auto messages = obj.encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 6);
 	auto message_ins_1 = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
@@ -73,7 +76,9 @@ TEST(OmnibusChipOverJTAG, EncodeWrite)
 	obj.set(OmnibusChipOverJTAG::Value(12));
 
 	typename OmnibusChipOverJTAG::coordinate_type coord(3);
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 6);
 	auto message_ins_1 = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));

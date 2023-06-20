@@ -37,7 +37,7 @@ Before committing any changes, make sure to run `git-clang-format` and add the r
 
 A container in fisch abstracts the payload to a register-like access, which can be read, written or both.
 To each container, a unique `coordinate_type` coordinate from `halco` describes the range of accessible locations of this register access.
-A container provides a recipe to issue a compiletime-fixed number of appropriate UT messages for read and/or write operation as well as decoding of (a compile-time fixed amount of) UT message responses to a read instruction sequence.
+A container provides a recipe to issue appropriate UT messages for a read and/or write operation as well as decoding of (a compile-time fixed amount of) UT message responses to a read instruction sequence.
 This is done through `encode_read`, `encode_write` and `decode` member functions:
 ```cpp
 class MyNewRegister
@@ -45,22 +45,18 @@ class MyNewRegister
 public:
     typedef halco::hicann_dls::vx::MyNewRegisterOnDLS coordinate_type;
 
-    constexpr static size_t encode_read_ut_message_count R;
-    constexpr static size_t encode_write_ut_message_count W;
     constexpr static size_t decode_ut_message_count D;
 
     std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count>
-    encode_read(coordinate_type const& coord);
+    static void encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target);
 
-    std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count>
-    encode_write(coordinate_type const& coord);
+    void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target);
 
-    void decode(std::array<hxcomm::vx::UTMessageFromFPGAVariant, decode_ut_message_count> const& messages);
+    void decode(UTMessageFromFPGARange<Instruction> const& messages);
 };
 ```
-A container is writable exactly if the `encode_write_ut_message_count` is larger than zero, which means for writing the container data, messages are produced.
-A container is readable exactly if the `encode_read_ut_message_count` and `decode_ut_message_count` are larger than zero, which means that for reading container data, messages are produced leading to a non-zero amount of responses which are decoded.
-It is assumed that if the message counts are non-zero, the associated functions also exist.
+A container is writable exactly if it features an `encode_write(coordinate_type const&, UTMessageToFPGABackEmplacer&) const` method.
+A container is readable exactly if it features a `static encode_read(coordinate_type const&, UTMessageToFPGABackEmplacer&)` static method and `decode_ut_message_count` larger than zero, which means that for reading container data, messages are produced leading to a non-zero amount of responses which are decoded.
 If a container is read- or write-only, the variables and member functions of the non-implemented operation can be omitted.
 
 Registers with a ranged-number representation use `RantWrapper` from `halco`, see `JTAGClockScaler` in `include/fisch/vx/jtag.h` for an exemplary use.

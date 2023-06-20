@@ -2,6 +2,7 @@
 
 #include "fisch/vx/extoll.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/extoll.h"
 #include "hxcomm/vx/utmessage.h"
@@ -55,7 +56,9 @@ TEST(Extoll, EncodeRead)
 	Extoll obj;
 
 	Extoll::coordinate_type coord(3);
-	auto messages = obj.encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_read(coord, emplacer);
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord);
 
 	EXPECT_EQ(messages.size(), 2);
@@ -79,7 +82,9 @@ TEST(Extoll, EncodeWrite)
 	obj.set(Extoll::Value(0xcafe'0000'babe));
 
 	Extoll::coordinate_type coord(3);
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord);
 
 	EXPECT_EQ(messages.size(), 4);
@@ -192,7 +197,9 @@ TEST(ExtollOnNwNode, EncodeRead)
 	ExtollOnNwNode::coordinate_type coord(
 	    ExtollAddress(3),
 	    ExtollNodeIdOnExtollNetwork(ExtollNodeId(5), ExtollChipType(ExtollChipType::fpga)));
-	auto messages = obj.encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_read(coord, emplacer);
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord.toExtollAddress());
 
 	EXPECT_EQ(messages.size(), 6);
@@ -238,7 +245,9 @@ TEST(ExtollOnNwNode, EncodeWrite)
 	ExtollOnNwNode::coordinate_type coord(
 	    ExtollAddress(3),
 	    ExtollNodeIdOnExtollNetwork(ExtollNodeId(5), ExtollChipType(ExtollChipType::fpga)));
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord.toExtollAddress());
 
 	EXPECT_EQ(messages.size(), 8);

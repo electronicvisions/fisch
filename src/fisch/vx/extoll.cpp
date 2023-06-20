@@ -1,5 +1,6 @@
 #include "fisch/vx/extoll.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/extoll.h"
 #include "hate/bitset.h"
@@ -57,41 +58,29 @@ bool Extoll::operator!=(Extoll const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Extoll::encode_read_ut_message_count>
-Extoll::encode_read(coordinate_type const& coord)
+void Extoll::encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord);
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-
-	ret[0] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), true));
-	ret[1] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), true));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), true)));
+	target(hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), true)));
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Extoll::encode_write_ut_message_count>
-Extoll::encode_write(coordinate_type const& coord) const
+void Extoll::encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 	using data = hxcomm::vx::instruction::omnibus_to_fpga::Data;
 
 	auto omni_addresses = ExtollAddressToOmnibusAddress(coord);
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-
-	ret[0] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false));
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff));
-	ret[2] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false));
-	ret[3] =
-	    hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff));
-
-	return ret;
+	target(
+	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff)));
+	target(
+	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff)));
 }
 
 void Extoll::decode(UTMessageFromFPGARangeOmnibus const& messages)
@@ -134,8 +123,7 @@ bool ExtollOnNwNode::operator!=(ExtollOnNwNode const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, ExtollOnNwNode::encode_read_ut_message_count>
-ExtollOnNwNode::encode_read(coordinate_type const& coord)
+void ExtollOnNwNode::encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 	using data = hxcomm::vx::instruction::omnibus_to_fpga::Data;
@@ -149,23 +137,18 @@ ExtollOnNwNode::encode_read(coordinate_type const& coord)
 	// encode valid-bit together with ndid if it's not a local access:
 	uint32_t conf = is_self ? 0x0 : static_cast<uint32_t>(ndid | (0x1 << 16));
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-
-	ret[0] = hxcomm::vx::UTMessageToFPGA<address>(
-	    address::Payload(odfi_external_access_config_reg, false));
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(conf));
-	ret[2] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), true));
-	ret[3] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), true));
-	ret[4] = hxcomm::vx::UTMessageToFPGA<address>(
-	    address::Payload(odfi_external_access_config_reg, false));
-	ret[5] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(0x0));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<address>(
+	    address::Payload(odfi_external_access_config_reg, false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(conf)));
+	target(hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), true)));
+	target(hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), true)));
+	target(hxcomm::vx::UTMessageToFPGA<address>(
+	    address::Payload(odfi_external_access_config_reg, false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(0x0)));
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, ExtollOnNwNode::encode_write_ut_message_count>
-ExtollOnNwNode::encode_write(coordinate_type const& coord) const
+void ExtollOnNwNode::encode_write(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 	using data = hxcomm::vx::instruction::omnibus_to_fpga::Data;
@@ -177,23 +160,18 @@ ExtollOnNwNode::encode_write(coordinate_type const& coord) const
 
 	uint32_t conf = is_self ? 0x0 : static_cast<uint32_t>(ndid | (0x1 << 16));
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-
-	ret[0] = hxcomm::vx::UTMessageToFPGA<address>(
-	    address::Payload(odfi_external_access_config_reg, false));
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(conf));
-	ret[2] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false));
-	ret[3] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff));
-	ret[4] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false));
-	ret[5] =
-	    hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff));
-	ret[6] = hxcomm::vx::UTMessageToFPGA<address>(
-	    address::Payload(odfi_external_access_config_reg, false));
-	ret[7] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(0x0));
-
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<address>(
+	    address::Payload(odfi_external_access_config_reg, false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(conf)));
+	target(
+	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[0].value(), false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.value() & 0xffff'ffff)));
+	target(
+	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(omni_addresses[1].value(), false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload((m_value.value() >> 32) & 0xffff'ffff)));
+	target(hxcomm::vx::UTMessageToFPGA<address>(
+	    address::Payload(odfi_external_access_config_reg, false)));
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(0x0)));
 }
 
 void ExtollOnNwNode::decode(UTMessageFromFPGARangeOmnibus const& messages)

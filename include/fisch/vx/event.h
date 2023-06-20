@@ -1,12 +1,15 @@
 #pragma once
 #include "fisch/cerealization.h"
+#include "fisch/vx/back_emplacer_fwd.h"
 #include "fisch/vx/chip_time.h"
+#include "fisch/vx/encode_fwd.h"
 #include "fisch/vx/fpga_time.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/event.h"
 #include "hate/join.h"
 #include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
+#include <vector>
 
 namespace cereal {
 struct access;
@@ -89,10 +92,10 @@ public:
 	bool operator==(SpikePackToChip const& other) const SYMBOL_VISIBLE;
 	bool operator!=(SpikePackToChip const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(
+	    coordinate_type const& coord,
+	    BackEmplacer<std::vector<hxcomm::vx::UTMessageToFPGAVariant>>& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 protected:
 	Value m_value;

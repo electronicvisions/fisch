@@ -2,6 +2,7 @@
 #include "fisch/cerealization.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
+#include "fisch/vx/encode_fwd.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/jtag.h"
 #include "hate/visibility.h"
@@ -39,10 +40,8 @@ public:
 	bool operator==(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
 	bool operator!=(ResetJTAGTap const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	friend struct cereal::access;
@@ -86,10 +85,8 @@ public:
 	bool operator==(JTAGClockScaler const& other) const SYMBOL_VISIBLE;
 	bool operator!=(JTAGClockScaler const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 1;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -135,14 +132,12 @@ public:
 	bool operator==(OmnibusChipOverJTAG const& other) const SYMBOL_VISIBLE;
 	bool operator!=(OmnibusChipOverJTAG const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 6;
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	static void encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
@@ -189,11 +184,10 @@ public:
 	bool operator==(JTAGIdCode const& other) const SYMBOL_VISIBLE;
 	bool operator!=(JTAGIdCode const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 2;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
+	static void encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 	void decode(UTMessageFromFPGARangeJTAG const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
@@ -242,10 +236,8 @@ public:
 	bool operator==(JTAGPLLRegister const& other) const SYMBOL_VISIBLE;
 	bool operator!=(JTAGPLLRegister const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -290,10 +282,8 @@ public:
 	bool operator==(JTAGPhyRegister const& other) const SYMBOL_VISIBLE;
 	bool operator!=(JTAGPhyRegister const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 2;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;

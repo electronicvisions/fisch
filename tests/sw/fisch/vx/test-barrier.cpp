@@ -2,6 +2,7 @@
 
 #include "fisch/vx/barrier.h"
 
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/barrier.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
@@ -28,7 +29,9 @@ TEST(Barrier, EncodeWrite)
 	Barrier obj;
 	obj.set(Barrier::Value(5));
 
-	auto messages = obj.encode_write(typename Barrier::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(typename Barrier::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::timing::Barrier>>(messages.at(0));

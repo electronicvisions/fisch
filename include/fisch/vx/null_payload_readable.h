@@ -1,6 +1,7 @@
 #pragma once
 #include "fisch/cerealization.h"
 #include "fisch/vx/decode.h"
+#include "fisch/vx/encode_fwd.h"
 #include "fisch/vx/genpybind.h"
 #include "hate/visibility.h"
 #include "hxcomm/vx/utmessage_fwd.h"
@@ -32,14 +33,10 @@ public:
 	bool operator==(NullPayloadReadable const& other) const SYMBOL_VISIBLE;
 	bool operator!=(NullPayloadReadable const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_read_ut_message_count = 1;
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 0;
 	constexpr static size_t GENPYBIND(hidden) decode_ut_message_count = 1;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	static void encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 	void decode(UTMessageFromFPGARangeLoopback const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:

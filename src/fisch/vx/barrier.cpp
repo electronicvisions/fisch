@@ -1,5 +1,6 @@
 #include "fisch/vx/barrier.h"
 
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/barrier.h"
 #include "hate/bitset.h"
 #include "hate/join.h"
@@ -38,11 +39,11 @@ bool Barrier::operator!=(Barrier const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Barrier::encode_write_ut_message_count>
-Barrier::encode_write(coordinate_type const& /* coord */) const
+void Barrier::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Barrier>(
-	    hxcomm::vx::instruction::timing::Barrier::Payload(m_value))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::Barrier>(
+	    hxcomm::vx::instruction::timing::Barrier::Payload(m_value)));
 }
 
 } // namespace fisch::vx

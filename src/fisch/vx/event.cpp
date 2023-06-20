@@ -1,5 +1,6 @@
 #include "fisch/vx/event.h"
 
+#include "fisch/vx/encode.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -29,10 +30,8 @@ bool SpikePackToChip<NumPack>::operator!=(SpikePackToChip<NumPack> const& other)
 }
 
 template <size_t NumPack>
-std::array<
-    hxcomm::vx::UTMessageToFPGAVariant,
-    SpikePackToChip<NumPack>::encode_write_ut_message_count>
-SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
+void SpikePackToChip<NumPack>::encode_write(
+    coordinate_type const& /*coord*/, UTMessageToFPGABackEmplacer& target) const
 {
 	typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload::spikes_type
 	    spikes;
@@ -40,8 +39,8 @@ SpikePackToChip<NumPack>::encode_write(coordinate_type const& /*coord*/) const
 		return typename decltype(spikes)::value_type(label.value());
 	});
 
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>>(
-	    typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload(spikes))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>>(
+	    typename hxcomm::vx::instruction::event_to_fpga::SpikePack<NumPack>::Payload(spikes)));
 }
 
 template class SpikePackToChip<1>;

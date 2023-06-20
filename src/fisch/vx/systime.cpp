@@ -1,5 +1,6 @@
 #include "fisch/vx/systime.h"
 
+#include "fisch/vx/encode.h"
 #include "hxcomm/vx/utmessage.h"
 
 namespace fisch::vx {
@@ -31,11 +32,11 @@ bool SystimeSync::operator!=(SystimeSync const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, SystimeSync::encode_write_ut_message_count>
-SystimeSync::encode_write(coordinate_type const& /* coord */) const
+void SystimeSync::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::SystimeInit>(
-	    hxcomm::vx::instruction::timing::SystimeInit::Payload(m_value))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::SystimeInit>(
+	    hxcomm::vx::instruction::timing::SystimeInit::Payload(m_value)));
 }
 
 } // namespace fisch::vx

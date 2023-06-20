@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -19,7 +20,9 @@ TEST(I2CINA219RwRegister, EncodeRead)
 	typename I2CINA219RwRegister::coordinate_type coord(
 	    halco::hicann_dls::vx::I2CINA219RwRegisterOnINA219::calibration,
 	    halco::hicann_dls::vx::INA219OnBoard::vdd12_analog);
-	auto messages = I2CINA219RwRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CINA219RwRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
@@ -56,7 +59,9 @@ TEST(I2CINA219RwRegister, EncodeWrite)
 	    halco::hicann_dls::vx::I2CINA219RwRegisterOnINA219::calibration,
 	    halco::hicann_dls::vx::INA219OnBoard::vdd12_analog);
 	I2CINA219RwRegister reg(I2CINA219RwRegister::Value(0x1234));
-	auto messages = reg.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	reg.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 6);
 	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

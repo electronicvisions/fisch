@@ -1,5 +1,6 @@
 #pragma once
 #include "fisch/cerealization.h"
+#include "fisch/vx/encode_fwd.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/spi.h"
 #include "hate/visibility.h"
@@ -52,10 +53,8 @@ public:
 	bool operator==(SPIShiftRegister const& other) const SYMBOL_VISIBLE;
 	bool operator!=(SPIShiftRegister const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 6;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -102,10 +101,8 @@ public:
 	bool operator==(SPIDACDataRegister const& other) const SYMBOL_VISIBLE;
 	bool operator!=(SPIDACDataRegister const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 8;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;
@@ -152,10 +149,8 @@ public:
 	bool operator==(SPIDACControlRegister const& other) const SYMBOL_VISIBLE;
 	bool operator!=(SPIDACControlRegister const& other) const SYMBOL_VISIBLE;
 
-	constexpr static size_t GENPYBIND(hidden) encode_write_ut_message_count = 4;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 private:
 	Value m_value;

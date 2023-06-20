@@ -1,5 +1,6 @@
 #include "fisch/vx/omnibus.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/omnibus.h"
 #include "hate/bitset.h"
@@ -41,36 +42,27 @@ bool Omnibus::operator!=(Omnibus const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Omnibus::encode_read_ut_message_count>
-Omnibus::encode_read(coordinate_type const& coord)
+void Omnibus::encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-
-	ret[0] = hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), true));
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), true)));
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, Omnibus::encode_write_ut_message_count>
-Omnibus::encode_write(coordinate_type const& coord) const
+void Omnibus::encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
 {
 	using address = hxcomm::vx::instruction::omnibus_to_fpga::Address;
 	using data = hxcomm::vx::instruction::omnibus_to_fpga::Data;
-
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
 
 	hate::bitset<std::tuple_size<Value::ByteEnables>::value> byte_enables;
 	for (size_t i = 0; i < byte_enables.size; ++i) {
 		byte_enables.set(i, m_value.byte_enables.at(i));
 	}
 
-	ret[0] =
-	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), false, byte_enables));
+	target(
+	    hxcomm::vx::UTMessageToFPGA<address>(address::Payload(coord.value(), false, byte_enables)));
 
-	ret[1] = hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.word.value()));
-
-	return ret;
+	target(hxcomm::vx::UTMessageToFPGA<data>(data::Payload(m_value.word.value())));
 }
 
 void Omnibus::decode(UTMessageFromFPGARangeOmnibus const& messages)
@@ -107,11 +99,11 @@ bool PollingOmnibusBlock::operator!=(PollingOmnibusBlock const& other) const
 	return !(*this == other);
 }
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, PollingOmnibusBlock::encode_write_ut_message_count>
-PollingOmnibusBlock::encode_write(coordinate_type const& /* coord */) const
+void PollingOmnibusBlock::encode_write(
+    coordinate_type const& /* coord */, UTMessageToFPGABackEmplacer& target) const
 {
-	return {hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::PollingOmnibusBlock>(
-	    hxcomm::vx::instruction::timing::PollingOmnibusBlock::Payload(m_value))};
+	target(hxcomm::vx::UTMessageToFPGA<hxcomm::vx::instruction::timing::PollingOmnibusBlock>(
+	    hxcomm::vx::instruction::timing::PollingOmnibusBlock::Payload(m_value)));
 }
 
 } // namespace fisch::vx

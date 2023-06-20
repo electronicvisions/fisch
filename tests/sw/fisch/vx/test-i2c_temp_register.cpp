@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.h"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -17,7 +18,9 @@ TEST(I2CTempRegister, EncodeRead)
 	using namespace hxcomm::vx;
 
 	typename I2CTempRegister::coordinate_type coord;
-	auto messages = I2CTempRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CTempRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

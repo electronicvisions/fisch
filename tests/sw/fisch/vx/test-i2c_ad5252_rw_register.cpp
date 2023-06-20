@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -20,7 +21,9 @@ TEST(I2CAD5252RwRegister, EncodeRead)
 
 	typename I2CAD5252RwRegister::coordinate_type coord(
 	    I2CAD5252RwRegisterOnAD5252Channel::rdac_volatile, AD5252ChannelOnBoard::vdd_12madc);
-	auto messages = I2CAD5252RwRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CAD5252RwRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 3);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
@@ -53,7 +56,9 @@ TEST(I2CAD5252RwRegister, EncodeWrite)
 	typename I2CAD5252RwRegister::coordinate_type coord(
 	    I2CAD5252RwRegisterOnAD5252Channel::rdac_volatile, AD5252ChannelOnBoard::vdd_12madc);
 	I2CAD5252RwRegister reg(I2CAD5252RwRegister::Value(0x70));
-	auto messages = reg.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	reg.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

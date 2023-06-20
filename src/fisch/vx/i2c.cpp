@@ -1,5 +1,6 @@
 #include "fisch/vx/i2c.h"
 
+#include "fisch/vx/encode.h"
 #include "fisch/vx/omnibus.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -36,46 +37,31 @@ bool I2CRoRegister<Derived, ValueType, CoordinateType>::operator!=(Derived const
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
-std::array<
-    hxcomm::vx::UTMessageToFPGAVariant,
-    I2CRoRegister<Derived, ValueType, CoordinateType>::encode_read_ut_message_count>
-I2CRoRegister<Derived, ValueType, CoordinateType>::encode_read(coordinate_type const& coord)
+void I2CRoRegister<Derived, ValueType, CoordinateType>::encode_read(
+    coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
 {
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> ret;
-
 	/* The register- and base addresses depends on the coordinate in a non-trivial way. The concrete
 	 * implementation needs to convert this */
 	auto register_addr = Derived::get_register_address(coord);
 	halco::hicann_dls::vx::OmnibusAddress base_addr = Derived::get_base_address(coord);
 
-	auto enc_write_register = Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr);
-	ret[0] = enc_write_register[0];
-	ret[1] = enc_write_register[1];
+	Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr, target);
 
 	// The I2C controller will automatically send a repeat start when the r/w mode changes.
-	auto enc_read = Omnibus::encode_read(base_addr);
 	if (encode_read_ut_message_count > 3) {
 		for (size_t i = 2; i < encode_read_ut_message_count - 1; i++) {
-			ret[i] = enc_read[0];
+			Omnibus::encode_read(base_addr, target);
 		}
 	}
 
-	auto enc_read_stop = Omnibus::encode_read(
-	    halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop));
-	ret[encode_read_ut_message_count - 1] = enc_read_stop[0];
-
-	return ret;
+	Omnibus::encode_read(
+	    halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop), target);
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
-std::array<
-    hxcomm::vx::UTMessageToFPGAVariant,
-    I2CRoRegister<Derived, ValueType, CoordinateType>::encode_write_ut_message_count>
-I2CRoRegister<Derived, ValueType, CoordinateType>::encode_write(
-    coordinate_type const& /*coord*/) const
-{
-	return {};
-}
+void I2CRoRegister<Derived, ValueType, CoordinateType>::encode_write(
+    coordinate_type const& /*coord*/, UTMessageToFPGABackEmplacer& /*target*/) const
+{}
 
 template <typename Derived, typename ValueType, typename CoordinateType>
 void I2CRoRegister<Derived, ValueType, CoordinateType>::decode(
@@ -98,13 +84,9 @@ void I2CRoRegister<Derived, ValueType, CoordinateType>::decode(
 }
 
 template <typename Derived, typename ValueType, typename CoordinateType>
-std::array<
-    hxcomm::vx::UTMessageToFPGAVariant,
-    I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write_ut_message_count>
-I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write(CoordinateType const& coord) const
+void I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write(
+    CoordinateType const& coord, UTMessageToFPGABackEmplacer& target) const
 {
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-
 	// I2C works on byte-sized chunks of data.
 	const int sizeof_data = I2CRoRegister<Derived, ValueType, CoordinateType>::register_size_bytes;
 	std::array<uint8_t, sizeof_data> data;
@@ -117,25 +99,17 @@ I2CRwRegister<Derived, ValueType, CoordinateType>::encode_write(CoordinateType c
 	auto register_addr = Derived::get_register_address(coord);
 	halco::hicann_dls::vx::OmnibusAddress base_addr = Derived::get_base_address(coord);
 
-	auto enc_write_register = Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr);
-	ret[0] = enc_write_register[0];
-	ret[1] = enc_write_register[1];
+	Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr, target);
 
 	if (sizeof_data > 1) {
 		for (size_t i = 0; i < sizeof_data - 1; i++) {
-			auto enc_write_data = Omnibus(Omnibus::Value(data[i])).encode_write(base_addr);
-			ret[2 + 2 * i] = enc_write_data[0];
-			ret[3 + 2 * i] = enc_write_data[1];
+			Omnibus(Omnibus::Value(data[i])).encode_write(base_addr, target);
 		}
 	}
 
-	auto enc_write_stop =
-	    Omnibus(Omnibus::Value(data[sizeof_data - 1]))
-	        .encode_write(halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop));
-	ret[encode_write_ut_message_count - 2] = enc_write_stop[0];
-	ret[encode_write_ut_message_count - 1] = enc_write_stop[1];
-
-	return ret;
+	Omnibus(Omnibus::Value(data[sizeof_data - 1]))
+	    .encode_write(
+	        halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop), target);
 }
 
 /**
@@ -250,12 +224,10 @@ halco::hicann_dls::vx::OmnibusAddress I2CAD5252RwRegister::get_base_address(
 }
 
 
-std::array<hxcomm::vx::UTMessageToFPGAVariant, I2CDAC6573RwRegister::encode_write_ut_message_count>
-I2CDAC6573RwRegister::encode_write(I2CDAC6573RwRegister::coordinate_type const& coord) const
+void I2CDAC6573RwRegister::encode_write(
+    I2CDAC6573RwRegister::coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
     GENPYBIND(hidden)
 {
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> ret;
-
 	// The hw-register only uses the 10 MSB out of 16 bits in the register. We need to shift the
 	// data 6 bits to the left to align it properly accross the two I2C bytes.
 	const int sizeof_data = I2CDAC6573RwRegister::register_size_bytes;
@@ -271,21 +243,13 @@ I2CDAC6573RwRegister::encode_write(I2CDAC6573RwRegister::coordinate_type const& 
 	auto register_addr = I2CDAC6573RwRegister::get_register_address(coord);
 	halco::hicann_dls::vx::OmnibusAddress base_addr = I2CDAC6573RwRegister::get_base_address(coord);
 
-	auto enc_write_register = Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr);
-	ret[0] = enc_write_register[0];
-	ret[1] = enc_write_register[1];
+	Omnibus(Omnibus::Value(register_addr)).encode_write(base_addr, target);
 
-	auto enc_write_data = Omnibus(Omnibus::Value(data[0])).encode_write(base_addr);
-	ret[2] = enc_write_data[0];
-	ret[3] = enc_write_data[1];
+	Omnibus(Omnibus::Value(data[0])).encode_write(base_addr, target);
 
-	auto enc_write_stop =
-	    Omnibus(Omnibus::Value(data[1]))
-	        .encode_write(halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop));
-	ret[4] = enc_write_stop[0];
-	ret[5] = enc_write_stop[1];
-
-	return ret;
+	Omnibus(Omnibus::Value(data[1]))
+	    .encode_write(
+	        halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop), target);
 }
 
 void I2CDAC6573RwRegister::decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden)

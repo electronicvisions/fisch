@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -19,7 +20,9 @@ TEST(I2CDAC6573RwRegister, EncodeRead)
 
 	typename I2CDAC6573RwRegister::coordinate_type coord(
 	    halco::hicann_dls::vx::DAC6573ChannelOnBoard::v_res_meas);
-	auto messages = I2CDAC6573RwRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CDAC6573RwRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(
@@ -58,7 +61,9 @@ TEST(I2CDAC6573RwRegister, EncodeWrite)
 	typename I2CDAC6573RwRegister::coordinate_type coord(
 	    halco::hicann_dls::vx::DAC6573ChannelOnBoard::v_res_meas);
 	I2CDAC6573RwRegister reg(I2CDAC6573RwRegister::Value(0x03fa));
-	auto messages = reg.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	reg.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 6);
 	auto addr = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

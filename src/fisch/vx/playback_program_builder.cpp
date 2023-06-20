@@ -6,6 +6,7 @@
 #include "fisch/vx/container_ticket.h"
 #include "fisch/vx/coordinates.h"
 #include "fisch/vx/detail/playback_program_impl.h"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/playback_program.h"
 #include "fisch/vx/traits.h"
 #include "hate/join.h"
@@ -28,8 +29,8 @@ void PlaybackProgramBuilder::write(
 		ss << config << " can't be written.";
 		throw std::logic_error(ss.str());
 	} else {
-		auto const messages = config.encode_write(coord);
-		m_instructions.insert(m_instructions.end(), messages.begin(), messages.end());
+		UTMessageToFPGABackEmplacer emplacer(m_instructions);
+		config.encode_write(coord, emplacer);
 	}
 }
 
@@ -48,9 +49,9 @@ void PlaybackProgramBuilder::write(
 		ss << "Containers [" << hate::join_string(configs, ", ") << "] can't be written.";
 		throw std::logic_error(ss.str());
 	} else {
+		UTMessageToFPGABackEmplacer emplacer(m_instructions);
 		for (size_t i = 0; i < size; ++i) {
-			auto const messages = configs[i].encode_write(coords[i]);
-			m_instructions.insert(m_instructions.end(), messages.cbegin(), messages.cend());
+			configs[i].encode_write(coords[i], emplacer);
 		}
 	}
 }
@@ -67,9 +68,8 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 		ss << "Coordinate " << coord << " can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
-		auto const messages = ContainerT::encode_read(coord);
-
-		m_instructions.insert(m_instructions.end(), messages.begin(), messages.end());
+		UTMessageToFPGABackEmplacer emplacer(m_instructions);
+		ContainerT::encode_read(coord, emplacer);
 
 		assert(m_program);
 		assert(m_program->m_impl);
@@ -95,9 +95,9 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		ss << "Coordinates [" << hate::join_string(coords, ", ") << "] can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
+		UTMessageToFPGABackEmplacer emplacer(m_instructions);
 		for (auto const& coord : coords) {
-			auto const messages = ContainerT::encode_read(coord);
-			m_instructions.insert(m_instructions.end(), messages.cbegin(), messages.cend());
+			ContainerT::encode_read(coord, emplacer);
 		}
 
 		assert(m_program);

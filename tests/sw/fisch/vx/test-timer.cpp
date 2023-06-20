@@ -2,10 +2,11 @@
 
 #include "fisch/vx/timer.h"
 
-#include <cereal/archives/json.hpp>
-#include <cereal/cereal.hpp>
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/timing.h"
 #include "hxcomm/vx/utmessage.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 
 TEST(Timer, General)
 {
@@ -26,7 +27,9 @@ TEST(Timer, EncodeWrite)
 
 	Timer obj;
 
-	auto messages = obj.encode_write(typename Timer::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(typename Timer::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::timing::Setup>>(messages.at(0));

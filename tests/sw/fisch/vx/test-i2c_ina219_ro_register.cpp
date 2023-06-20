@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -19,7 +20,9 @@ TEST(I2CINA219RoRegister, EncodeRead)
 	typename I2CINA219RoRegister::coordinate_type coord(
 	    halco::hicann_dls::vx::I2CINA219RoRegisterOnINA219::bus,
 	    halco::hicann_dls::vx::INA219OnBoard::vdd12_analog);
-	auto messages = I2CINA219RoRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CINA219RoRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 4);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

@@ -2,11 +2,11 @@
 #include "fisch/cerealization.h"
 #include "fisch/vx/constants.h"
 #include "fisch/vx/decode.h"
+#include "fisch/vx/encode_fwd.h"
 #include "fisch/vx/genpybind.h"
 #include "fisch/vx/word_access/type/i2c.h"
 #include "hate/type_index.h"
 #include "hate/visibility.h"
-#include "hxcomm/vx/utmessage_fwd.h"
 
 namespace cereal {
 struct access;
@@ -82,13 +82,12 @@ public:
 	 * [ addr_write, data_reg, addr_read_0, addr_read_1, ...] */
 	static constexpr size_t GENPYBIND(hidden)
 	    encode_read_ut_message_count = 2 + register_size_bytes;
-	static constexpr size_t GENPYBIND(hidden) encode_write_ut_message_count = 0;
 	static constexpr size_t GENPYBIND(hidden) decode_ut_message_count = register_size_bytes;
 
-	static std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_read_ut_message_count> encode_read(
-	    coordinate_type const& coord) GENPYBIND(hidden) SYMBOL_VISIBLE;
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	static void encode_read(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target)
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
@@ -120,8 +119,8 @@ public:
 	static constexpr size_t GENPYBIND(hidden) encode_write_ut_message_count =
 	    2 + 2 * I2CRoRegister<Derived, ValueType, CoordinateType>::register_size_bytes;
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    CoordinateType const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(CoordinateType const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 };
 
 
@@ -426,8 +425,8 @@ public:
 	 */
 	explicit I2CDAC6573RwRegister(Value value) : I2CRwRegister(value) {}
 
-	std::array<hxcomm::vx::UTMessageToFPGAVariant, encode_write_ut_message_count> encode_write(
-	    coordinate_type const& coord) const GENPYBIND(hidden) SYMBOL_VISIBLE;
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 	void decode(UTMessageFromFPGARangeOmnibus const& messages) GENPYBIND(hidden) SYMBOL_VISIBLE;
 
 	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "fisch/cerealization.tcc"
+#include "fisch/vx/encode.h"
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
@@ -20,7 +21,9 @@ TEST(I2CTCA9554RoRegister, EncodeRead)
 	typename I2CTCA9554RoRegister::coordinate_type coord(
 	    halco::hicann_dls::vx::I2CTCA9554RoRegisterOnTCA9554::inputs,
 	    halco::hicann_dls::vx::TCA9554OnBoard());
-	auto messages = I2CTCA9554RoRegister::encode_read(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	I2CTCA9554RoRegister::encode_read(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 3);
 	auto addr_write = UTMessageToFPGA<instruction::omnibus_to_fpga::Address>(

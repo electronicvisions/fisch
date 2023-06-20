@@ -2,6 +2,7 @@
 
 #include "fisch/vx/reset.h"
 
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/reset.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
@@ -25,7 +26,9 @@ TEST(ResetChip, EncodeWrite)
 	ResetChip::Value value(true);
 	ResetChip obj(value);
 
-	auto messages = obj.encode_write(typename ResetChip::coordinate_type());
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(typename ResetChip::coordinate_type(), emplacer);
 
 	EXPECT_EQ(messages.size(), 1);
 	auto message = std::get<UTMessageToFPGA<instruction::system::Reset>>(messages.at(0));

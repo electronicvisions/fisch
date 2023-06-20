@@ -2,6 +2,7 @@
 
 #include "fisch/vx/jtag.h"
 
+#include "fisch/vx/encode.h"
 #include "halco/hicann-dls/vx/jtag.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
@@ -18,7 +19,9 @@ TEST(JTAGPhyRegister, EncodeWrite)
 	obj.set(JTAGPhyRegister::Value(12));
 
 	typename JTAGPhyRegister::coordinate_type coord(3);
-	auto messages = obj.encode_write(coord);
+	std::vector<UTMessageToFPGAVariant> messages;
+	UTMessageToFPGABackEmplacer emplacer(messages);
+	obj.encode_write(coord, emplacer);
 
 	EXPECT_EQ(messages.size(), 2);
 	auto message_ins = std::get<UTMessageToFPGA<instruction::to_fpga_jtag::Ins>>(messages.at(0));
