@@ -3,18 +3,13 @@
 Map<String, Object> pipelineOptions = [
 		projects: ["fisch"],
 		moduleOptions: [modules: ["ppu-toolchain"]],
+		testSlurmResource: getHxTestResource(3),
+		preTestHook: { configureHxCubeBitfile() },
+		testOptions: "--test-execall -j1",
 		container: [app: "dls-core"],
 		notificationChannel: "#dls-software",
 		configureInstallOptions: "--build-profile=ci"
 ]
-
-if (!isTriggeredByGerrit()) {
-	pipelineOptions << [
-			testSlurmResource: getHxTestResource(3),
-			preTestHook: { configureHxCubeBitfile() },
-			testOptions: "--test-execall -j1",
-	]
-}
 
 withCcache() {
 	wafDefaultPipeline(pipelineOptions)
