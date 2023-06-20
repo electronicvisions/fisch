@@ -2,6 +2,7 @@
 #include "fisch/vx/container.h"
 #include "fisch/vx/genpybind.h"
 #include "hate/visibility.h"
+#include "hxcomm/vx/utmessage_fwd.h"
 #include <memory>
 #include <vector>
 
@@ -74,6 +75,8 @@ class GENPYBIND(visible) PlaybackProgramBuilder
 public:
 	/** Default constructor. */
 	PlaybackProgramBuilder() SYMBOL_VISIBLE;
+
+	~PlaybackProgramBuilder() SYMBOL_VISIBLE;
 
 	/**
 	 * Add write instruction for container.
@@ -177,6 +180,9 @@ public:
 
 private:
 	std::shared_ptr<PlaybackProgram> m_program;
+
+	// intermediate buffer for instructions (moved to m_program in done())
+	std::vector<hxcomm::vx::UTMessageToFPGAVariant> m_instructions;
 };
 
 // Explicit instantiation of template member functions for all valid playback container types.

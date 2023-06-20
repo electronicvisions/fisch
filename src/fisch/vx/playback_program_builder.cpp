@@ -17,6 +17,8 @@ namespace fisch::vx {
 
 PlaybackProgramBuilder::PlaybackProgramBuilder() : m_program(std::make_shared<PlaybackProgram>()) {}
 
+PlaybackProgramBuilder::~PlaybackProgramBuilder() {}
+
 template <class ContainerT>
 void PlaybackProgramBuilder::write(
     [[maybe_unused]] typename ContainerT::coordinate_type const& coord, ContainerT const& config)
@@ -27,10 +29,7 @@ void PlaybackProgramBuilder::write(
 		throw std::logic_error(ss.str());
 	} else {
 		auto const messages = config.encode_write(coord);
-		assert(m_program);
-		assert(m_program->m_impl);
-		m_program->m_impl->m_instructions.insert(
-		    m_program->m_impl->m_instructions.end(), messages.begin(), messages.end());
+		m_instructions.insert(m_instructions.end(), messages.begin(), messages.end());
 	}
 }
 
@@ -49,12 +48,9 @@ void PlaybackProgramBuilder::write(
 		ss << "Containers [" << hate::join_string(configs, ", ") << "] can't be written.";
 		throw std::logic_error(ss.str());
 	} else {
-		assert(m_program);
-		assert(m_program->m_impl);
 		for (size_t i = 0; i < size; ++i) {
 			auto const messages = configs[i].encode_write(coords[i]);
-			m_program->m_impl->m_instructions.insert(
-			    m_program->m_impl->m_instructions.end(), messages.cbegin(), messages.cend());
+			m_instructions.insert(m_instructions.end(), messages.cbegin(), messages.cend());
 		}
 	}
 }
@@ -73,11 +69,10 @@ PlaybackProgramBuilder::read(CoordinateT const& coord)
 	} else {
 		auto const messages = ContainerT::encode_read(coord);
 
+		m_instructions.insert(m_instructions.end(), messages.begin(), messages.end());
+
 		assert(m_program);
 		assert(m_program->m_impl);
-		m_program->m_impl->m_instructions.insert(
-		    m_program->m_impl->m_instructions.end(), messages.begin(), messages.end());
-
 		size_t& queue_expected_size = m_program->m_impl->m_queue_expected_size.at(
 		    detail::decode_message_types_index<ContainerT>);
 		size_t const pos = queue_expected_size;
@@ -100,14 +95,13 @@ PlaybackProgramBuilder::read(std::vector<CoordinateT> const& coords)
 		ss << "Coordinates [" << hate::join_string(coords, ", ") << "] can't be read.";
 		throw std::logic_error(ss.str());
 	} else {
-		assert(m_program);
-		assert(m_program->m_impl);
 		for (auto const& coord : coords) {
 			auto const messages = ContainerT::encode_read(coord);
-			m_program->m_impl->m_instructions.insert(
-			    m_program->m_impl->m_instructions.end(), messages.cbegin(), messages.cend());
+			m_instructions.insert(m_instructions.end(), messages.cbegin(), messages.cend());
 		}
 
+		assert(m_program);
+		assert(m_program->m_impl);
 		size_t& queue_expected_size = m_program->m_impl->m_queue_expected_size.at(
 		    detail::decode_message_types_index<ContainerT>);
 		size_t const pos = queue_expected_size;
@@ -128,6 +122,10 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 		                << size_to_fpga() << ") larger than playback memory size on FPGA ("
 		                << playback_memory_size_to_fpga << ") -> no timing guarantees possible.");
 	}
+	assert(m_program);
+	assert(m_program->m_impl);
+	assert(m_program->m_impl->m_instructions.empty());
+	std::swap(m_program->m_impl->m_instructions, m_instructions);
 	auto ret = std::make_shared<PlaybackProgram>();
 	std::swap(ret, m_program);
 	return ret;
@@ -135,8 +133,12 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 
 std::ostream& operator<<(std::ostream& os, PlaybackProgramBuilder const& builder)
 {
-	assert(builder.m_program);
-	os << *(builder.m_program);
+	for (auto it = builder.m_instructions.cbegin(); it < builder.m_instructions.cend(); ++it) {
+		if (it != builder.m_instructions.cbegin()) {
+			os << std::endl;
+		}
+		std::visit([&os](auto m) { os << m; }, *it);
+	}
 	return os;
 }
 
@@ -151,10 +153,9 @@ void PlaybackProgramBuilder::merge_back(PlaybackProgramBuilder& other)
 	assert(m_program->m_impl);
 	assert(other.m_program->m_impl);
 	// move instructions
-	m_program->m_impl->m_instructions.insert(
-	    m_program->m_impl->m_instructions.end(), other.m_program->m_impl->m_instructions.cbegin(),
-	    other.m_program->m_impl->m_instructions.cend());
-	other.m_program->m_impl->m_instructions.clear();
+	m_instructions.insert(
+	    m_instructions.end(), other.m_instructions.cbegin(), other.m_instructions.cend());
+	other.m_instructions.clear();
 
 	// change program in tickets of other builder
 	// update position in response queues in tickets of other builder
@@ -205,10 +206,9 @@ void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 	assert(m_program->m_impl);
 	assert(other.m_program->m_impl);
 	// move instructions
-	m_program->m_impl->m_instructions.insert(
-	    m_program->m_impl->m_instructions.begin(), other.m_program->m_impl->m_instructions.cbegin(),
-	    other.m_program->m_impl->m_instructions.cend());
-	other.m_program->m_impl->m_instructions.clear();
+	m_instructions.insert(
+	    m_instructions.begin(), other.m_instructions.cbegin(), other.m_instructions.cend());
+	other.m_instructions.clear();
 
 	// change program in tickets of other builder
 	auto other_ticket_changer = [this](auto const& ticket_weak_ptr) {
@@ -263,25 +263,18 @@ void PlaybackProgramBuilder::copy_back(PlaybackProgramBuilder const& other)
 		throw std::runtime_error("PlaybackProgramBuilder to copy is not write only.");
 	}
 	// copy instructions
-	assert(m_program);
-	assert(other.m_program);
-	assert(m_program->m_impl);
-	assert(other.m_program->m_impl);
-	m_program->m_impl->m_instructions.insert(
-	    m_program->m_impl->m_instructions.end(), other.m_program->m_impl->m_instructions.cbegin(),
-	    other.m_program->m_impl->m_instructions.cend());
+	m_instructions.insert(
+	    m_instructions.end(), other.m_instructions.cbegin(), other.m_instructions.cend());
 }
 
 bool PlaybackProgramBuilder::empty() const
 {
-	return m_program->empty();
+	return m_instructions.empty();
 }
 
 size_t PlaybackProgramBuilder::size_to_fpga() const
 {
-	assert(m_program);
-	assert(m_program->m_impl);
-	return m_program->m_impl->m_instructions.size();
+	return m_instructions.size();
 }
 
 size_t PlaybackProgramBuilder::size_from_fpga() const
