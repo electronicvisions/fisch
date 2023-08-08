@@ -20,7 +20,7 @@ def configure(cfg):
 
 
 def build(bld):
-    for hx_version in [3]:
+    for hx_version in [3, 4]:
         bld(
             target=f'pyfisch_vx_v{hx_version}',
             source='../include/fisch/vx/python_bindings.h',
