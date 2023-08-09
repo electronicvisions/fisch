@@ -43,7 +43,7 @@ struct GENPYBIND(inline_base("*")) JTAGPLLRegister
 
 struct GENPYBIND(inline_base("*")) JTAGPhyRegister
     : public halco::common::detail::
-          RantWrapper<JTAGPhyRegister, uint_fast16_t, 4194303 /* 2^22-1 */, 0>
+          RantWrapper<JTAGPhyRegister, uint_fast32_t, 4194303 /* 2^22-1 */, 0>
 {
 	constexpr explicit JTAGPhyRegister(uintmax_t const value = 0) GENPYBIND(implicit_conversion) :
 	    rant_t(value)
