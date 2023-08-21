@@ -50,8 +50,8 @@ size_t get_hx_revision(Connection& connection)
 	auto const jtag_id = jtag_id_ticket.get().at(0).get();
 	auto const hx_revision = jtag_id >> 28; // bits 28-31 represent the chip revision
 
-	if (hx_revision > 3) {
-		throw std::runtime_error("Unknown HX revision found.");
+	if (hx_revision > 4) {
+		throw std::runtime_error("Unknown BSS-2 revision found.");
 	}
 
 	return hx_revision;
