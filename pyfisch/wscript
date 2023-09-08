@@ -29,7 +29,6 @@ def build(bld):
             use=[f'fisch_vx_v{hx_version}',
                  f'pyhalco_hicann_dls_vx_v{hx_version}',
                  'pyhxcomm_vx'],
-            install_path='${PREFIX}/lib',
             defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
         )
 
