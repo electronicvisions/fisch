@@ -196,7 +196,7 @@ def build(bld):
             install_path = 'doc/fisch',
             pars = {
                 "PROJECT_NAME": "\"FPGA Instruction Set Compiler for HICANN\"",
-                "PREDEFINED": "GENPYBIND()= GENPYBIND_TAG_FISCH_VX=",
+                "PREDEFINED": "GENPYBIND(...)= GENPYBIND_MANUAL(...)= SYMBOL_VISIBLE=",
                 "INCLUDE_PATH": join(get_toplevel_path(), "fisch", "include"),
                 "OUTPUT_DIRECTORY": join(get_toplevel_path(), "build", "fisch", "doc")
             },
