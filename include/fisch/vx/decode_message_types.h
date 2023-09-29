@@ -7,10 +7,15 @@ namespace fisch::vx {
 
 namespace detail {
 
+/**
+ * @note Collection of message types omitted in documentation.
+ */
 typedef hate::type_list_unique_t<hate::multi_concat_t<
+/// @cond DISABLED
 #define LAST_PLAYBACK_CONTAINER(Name, Type) typename DecodeMessageTypeList<Type>::type
 #define PLAYBACK_CONTAINER(Name, Type) typename DecodeMessageTypeList<Type>::type,
 #include "fisch/vx/container.def"
+    /// @endcond
     >>
     decode_message_types;
 

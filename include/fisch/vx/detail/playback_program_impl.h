@@ -28,8 +28,13 @@ struct PlaybackProgramImpl
 {
 #define LAST_PLAYBACK_CONTAINER(Name, Type) std::weak_ptr<detail::ContainerTicketStorage<Type>>
 #define PLAYBACK_CONTAINER(Name, Type) LAST_PLAYBACK_CONTAINER(Name, Type),
+	/**
+	 * @note Collection of message types omitted in documentation.
+	 */
 	mutable std::forward_list<std::variant<
+/// @cond DISABLED
 #include "fisch/vx/container.def"
+	    /// @endcond
 	    >>
 	    m_tickets;
 
