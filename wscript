@@ -3,7 +3,6 @@ import os
 from os.path import join
 from waflib.extras.test_base import summary
 from waflib.extras.symwaf2ic import get_toplevel_path
-import yaml
 import re
 from waflib.Errors import BuildError
 
@@ -87,6 +86,7 @@ def build(bld):
         hwdb_entries = os.environ.get("SLURM_HWDB_YAML")
         fpga_id = int(re.match(r"W(?P<wafer>\d+)F(?P<fpga>\d+)",
                                slurm_licenses)["fpga"])
+        import yaml
         fpgas = yaml.full_load(hwdb_entries)["fpgas"]
         fpga = None
         for entry in fpgas:
