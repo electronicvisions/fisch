@@ -31,6 +31,8 @@ template <class ContainerT>
 class ContainerTicket
 {
 public:
+	ContainerTicket() = default;
+
 	typedef ContainerT container_type;
 
 	/**
@@ -65,7 +67,7 @@ private:
 
 	friend class PlaybackProgramBuilder;
 
-	size_t m_container_count;
+	size_t m_container_count{};
 	std::shared_ptr<detail::ContainerTicketStorage<ContainerT>> m_storage;
 };
 
