@@ -63,6 +63,14 @@ bool PlaybackProgram::run_ok() const
 		auto const num_context = 10u;
 		auto const min_instruction = error_value - std::min(error_value, num_context);
 		std::stringstream ss;
+		if (error_value > m_impl->m_instructions.size()) {
+			ss << "Program execution triggered a Playback instruction timeout. "
+			   << "Index to timed-out instruction provided by hardware is invalid: "
+			   << "FPGA reported " << error_value << " but the program size is only "
+			   << m_impl->m_instructions.size() << "\n";
+			FISCH_LOG_ERROR(logger, ss.str());
+			return false;
+		}
 		ss << "Program execution triggered a Playback instruction timeout notification at "
 		   << error.get_fpga_time() << ", instruction(" << error.get_value().value()
 		   << "; total: " << m_impl->m_instructions.size() << "). Printing additional context:"
