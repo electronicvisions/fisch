@@ -16,7 +16,8 @@ struct OmnibusAddress;
 struct PollingOmnibusBlockOnFPGA;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for reading and writing an omnibus word.
@@ -115,7 +116,8 @@ private:
 	Value m_value;
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::Omnibus)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::PollingOmnibusBlock)

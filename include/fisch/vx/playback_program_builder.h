@@ -6,7 +6,8 @@
 #include <memory>
 #include <vector>
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgram;
 
@@ -200,4 +201,5 @@ private:
 	    std::vector<Name> const& configs);
 #include "fisch/vx/container.def"
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch

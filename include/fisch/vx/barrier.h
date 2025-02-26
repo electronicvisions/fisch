@@ -13,7 +13,8 @@ namespace halco::hicann_dls::vx {
 struct BarrierOnFPGA;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for sync operation.
@@ -56,6 +57,7 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::Barrier)

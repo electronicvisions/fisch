@@ -24,7 +24,8 @@ struct I2CDAC6573RwRegisterOnBoard;
 struct OmnibusAddress;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 template <typename Derived, typename ValueType, typename CoordinateType>
 class I2CRwRegister;
@@ -439,7 +440,8 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CIdRegister)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CINA219RoRegister)

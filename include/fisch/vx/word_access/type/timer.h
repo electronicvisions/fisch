@@ -2,7 +2,8 @@
 #include "fisch/vx/genpybind.h"
 #include "halco/common/geometry.h"
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 namespace word_access_type GENPYBIND_MODULE {
 
 struct GENPYBIND(inline_base("*")) Timer : public halco::common::detail::BaseType<Timer, uint32_t>
@@ -20,7 +21,8 @@ struct GENPYBIND(inline_base("*")) WaitUntil
 };
 
 } // namespace word_access_type
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::WaitUntil)

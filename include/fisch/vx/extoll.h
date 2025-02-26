@@ -17,7 +17,8 @@ struct ExtollAddress;
 struct ExtollAddressOnExtollNetwork;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for reading and writing an Extoll (quad-)word,
@@ -122,7 +123,8 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::Extoll)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::ExtollOnNwNode)

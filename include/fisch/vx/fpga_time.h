@@ -2,7 +2,8 @@
 #include "fisch/vx/genpybind.h"
 #include "halco/common/geometry.h"
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /** Systime type for FPGA executor times. */
 struct GENPYBIND(inline_base("*")) FPGATime
@@ -13,7 +14,8 @@ struct GENPYBIND(inline_base("*")) FPGATime
 	{}
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 namespace std {
 

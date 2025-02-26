@@ -8,7 +8,8 @@
 #include "pyhxcomm/vx/reinit_stack_entry.h"
 #endif
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 
 class ReinitStackEntry
 {
@@ -63,6 +64,7 @@ GENPYBIND_MANUAL({
 	    pybind11::arg("pbmem_snapshot") = std::nullopt, pybind11::arg("enforce") = true);
 })
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 #include "fisch/vx/reinit_stack_entry.tcc"

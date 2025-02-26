@@ -8,7 +8,8 @@ namespace cereal {
 struct access;
 } // namespace cereal
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch {
+namespace vx GENPYBIND_TAG_FISCH_VX {
 namespace word_access_type GENPYBIND_MODULE {
 
 struct GENPYBIND(visible) Omnibus
@@ -76,7 +77,8 @@ struct GENPYBIND(inline_base("*")) PollingOmnibusBlock
 };
 
 } // namespace word_access_type
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 namespace std {
 HALCO_GEOMETRY_HASH_CLASS(fisch::vx::word_access_type::Omnibus::Word)
