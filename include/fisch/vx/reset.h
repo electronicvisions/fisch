@@ -13,7 +13,7 @@ namespace halco::hicann_dls::vx {
 struct ResetChipOnDLS;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for writing the chip reset.
@@ -59,6 +59,7 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
+} // namespace vx
 } // namespace fisch::vx
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::ResetChip)

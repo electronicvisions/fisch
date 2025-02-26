@@ -14,7 +14,7 @@ namespace cereal {
 struct access;
 } // namespace cereal
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
 
@@ -156,6 +156,7 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::PlaybackProgram)

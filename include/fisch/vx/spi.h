@@ -16,7 +16,7 @@ struct SPIDACDataRegisterOnBoard;
 struct SPIDACControlRegisterOnBoard;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for reading and writing the shift register over SPI.
@@ -160,7 +160,8 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SPIShiftRegister)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SPIDACDataRegister)

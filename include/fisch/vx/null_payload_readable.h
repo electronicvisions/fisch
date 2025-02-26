@@ -14,7 +14,7 @@ namespace halco::hicann_dls::vx {
 struct NullPayloadReadableOnFPGA;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for reading a payload-free tick.
@@ -45,6 +45,7 @@ private:
 	void serialize(Archive& ar, std::uint32_t);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::NullPayloadReadable)

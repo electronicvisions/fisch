@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 class PlaybackProgramBuilder;
 class PlaybackProgram;
@@ -77,4 +77,5 @@ private:
 	typedef ContainerTicket<Type> _##Name##ContainerTicket GENPYBIND(opaque);
 #include "fisch/vx/container.def"
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch

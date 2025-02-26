@@ -9,7 +9,7 @@
 #include <pybind11/chrono.h>
 #endif
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Time information of a run() invokation.
@@ -30,4 +30,5 @@ struct GENPYBIND(visible) RunTimeInfo
 	friend std::ostream& operator<<(std::ostream& os, RunTimeInfo const& data) SYMBOL_VISIBLE;
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch

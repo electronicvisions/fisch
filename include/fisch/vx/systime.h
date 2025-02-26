@@ -14,7 +14,7 @@ namespace halco::hicann_dls::vx {
 struct SystimeSyncOnFPGA;
 } // namespace halco::hicann_dls::vx
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Container for syncronization of chip and FPGA systime.
@@ -61,6 +61,7 @@ private:
 	void serialize(Archive& ar, std::uint32_t const version);
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::SystimeSync)

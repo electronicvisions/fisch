@@ -11,7 +11,7 @@
 #include "hxcomm/vx/utmessage.h"
 #include <tuple>
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 
 /**
  * Playback decoder decoding a linear stream of UT messages into data response queues.
@@ -182,4 +182,5 @@ private:
 	FPGATime m_time_current;
 };
 
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch

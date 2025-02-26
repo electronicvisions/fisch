@@ -3,7 +3,7 @@
 #include "halco/common/geometry.h"
 #include "hate/visibility.h"
 
-namespace fisch::vx GENPYBIND_TAG_FISCH_VX {
+namespace fisch { namespace vx GENPYBIND_TAG_FISCH_VX {
 namespace word_access_type GENPYBIND_MODULE {
 
 struct GENPYBIND(inline_base("*")) Barrier
@@ -21,4 +21,5 @@ struct GENPYBIND(inline_base("*")) Barrier
 };
 
 } // namespace word_access_type
-} // namespace fisch::vx
+} // namespace vx
+} // namespace fisch
