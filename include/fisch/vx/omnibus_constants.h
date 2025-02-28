@@ -42,6 +42,9 @@ constexpr halco::hicann_dls::vx::OmnibusAddress i2c_prescaler_base_address{i2c_o
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_eeprom_base_address{i2c_over_omnibus_mask +
                                                                         0x50};
 
+constexpr halco::hicann_dls::vx::OmnibusAddress i2c_tca9546_base_address{
+    i2c_over_omnibus_mask + 0x70};
+
 constexpr halco::hicann_dls::vx::OmnibusAddress i2c_tmp112_base_address{
     i2c_over_omnibus_mask + 0x48};
 

@@ -136,6 +136,34 @@ halco::hicann_dls::vx::OmnibusAddress I2CIdRegister::get_base_address(
 }
 
 
+void I2CTCA9546Register::encode_write(
+    I2CTCA9546Register::coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+    GENPYBIND(hidden)
+{
+	/**
+	The multiplexer has only one control register that enables/disables channels.
+	It is immediately written with the first I2C communication.
+	A register address is thus not available. */
+
+	uint8_t data = this->m_value;
+	halco::hicann_dls::vx::OmnibusAddress base_addr = I2CTCA9546Register::get_base_address(coord);
+	Omnibus(Omnibus::Value(data)).encode_write(base_addr, target);
+}
+
+uint8_t I2CTCA9546Register::get_register_address(coordinate_type const& /*coord*/)
+{
+	/* The multiplexer has only one RW register with no address.
+	This function is needed for compilation of functions inherited from base class. */
+	return static_cast<uint8_t>(0x00);
+}
+
+halco::hicann_dls::vx::OmnibusAddress I2CTCA9546Register::get_base_address(
+    coordinate_type const& /*coord*/)
+{
+	return halco::hicann_dls::vx::OmnibusAddress(i2c_tca9546_base_address);
+}
+
+
 uint8_t I2CTempRegister::get_register_address(coordinate_type const& /*coord*/)
 {
 	// The read-only temperature is stored at register address 0.
@@ -289,6 +317,7 @@ EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTempRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RO_REGISTER(I2CTCA9554RoRegister)
 
+EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9546Register)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CINA219RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CTCA9554RwRegister)
 EXPLICIT_INSTANTIATE_FISCH_I2C_RW_REGISTER(I2CAD5252RwRegister)

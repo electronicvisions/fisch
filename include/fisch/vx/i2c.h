@@ -14,6 +14,7 @@ struct access;
 
 namespace halco::hicann_dls::vx {
 struct I2CIdRegisterOnBoard;
+struct I2CTCA9546RegisterOnBoard;
 struct I2CTempRegisterOnBoard;
 struct I2CINA219RoRegisterOnBoard;
 struct I2CINA219RwRegisterOnBoard;
@@ -149,6 +150,49 @@ public:
 	 * @param value Value to construct instance with
 	 */
 	explicit I2CIdRegister(Value value) : I2CRoRegister(value) {}
+	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
+	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
+	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
+
+private:
+	friend struct cereal::access;
+	template <class Archive>
+	void serialize(Archive& ar, std::uint32_t);
+};
+
+
+typedef word_access_type::I2CTCA9546Register I2CTCA9546RegisterValue GENPYBIND(visible);
+class I2CTCA9546Register;
+extern template class SYMBOL_VISIBLE I2CRoRegister<
+    I2CTCA9546Register,
+    I2CTCA9546RegisterValue,
+    halco::hicann_dls::vx::I2CTCA9546RegisterOnBoard>;
+extern template class SYMBOL_VISIBLE I2CRwRegister<
+    I2CTCA9546Register,
+    I2CTCA9546RegisterValue,
+    halco::hicann_dls::vx::I2CTCA9546RegisterOnBoard>;
+
+/**
+ * Container for accessing I2C Muliplexer chain selection.
+ */
+class GENPYBIND(inline_base("*")) I2CTCA9546Register
+    : public I2CRwRegister<
+          I2CTCA9546Register,
+          I2CTCA9546RegisterValue,
+          halco::hicann_dls::vx::I2CTCA9546RegisterOnBoard>
+{
+public:
+	/**
+	 * Construct an instance with a default value.
+	 */
+	explicit I2CTCA9546Register() : I2CRwRegister() {}
+	/**
+	 * Construct an instance with a word value.
+	 * @param value Value to construct instance with
+	 */
+	explicit I2CTCA9546Register(Value value) : I2CRwRegister(value) {}
+	void encode_write(coordinate_type const& coord, UTMessageToFPGABackEmplacer& target) const
+	    GENPYBIND(hidden) SYMBOL_VISIBLE;
 	static uint8_t GENPYBIND(hidden) get_register_address(coordinate_type const&) SYMBOL_VISIBLE;
 	static halco::hicann_dls::vx::OmnibusAddress GENPYBIND(hidden)
 	    get_base_address(coordinate_type const&) SYMBOL_VISIBLE;
@@ -444,6 +488,7 @@ private:
 } // namespace fisch
 
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CIdRegister)
+FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CTCA9546Register)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CINA219RoRegister)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CINA219RwRegister)
 FISCH_EXTERN_INSTANTIATE_CEREAL_SERIALIZE(fisch::vx::I2CTCA9554RoRegister)

@@ -60,6 +60,12 @@ void I2CTempRegister::serialize(Archive& ar, std::uint32_t)
 	ar(cereal::base_class<I2CRoRegister<I2CTempRegister, Value, coordinate_type>>(this));
 }
 
+template <class Archive>
+void I2CTCA9546Register::serialize(Archive& ar, std::uint32_t)
+{
+	ar(cereal::base_class<I2CRoRegister<I2CTCA9546Register, Value, coordinate_type>>(this));
+}
+
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CIdRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RoRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CINA219RwRegister)
@@ -68,6 +74,7 @@ EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9554RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CAD5252RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CDAC6573RwRegister)
 EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTempRegister)
+EXPLICIT_INSTANTIATE_CEREAL_SERIALIZE(I2CTCA9546Register)
 
 } // namespace fisch::vx
 
@@ -79,3 +86,4 @@ CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9554RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CAD5252RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CDAC6573RwRegister, 0)
 CEREAL_CLASS_VERSION(fisch::vx::I2CTempRegister, 0)
+CEREAL_CLASS_VERSION(fisch::vx::I2CTCA9546Register, 0)
