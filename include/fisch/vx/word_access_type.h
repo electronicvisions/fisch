@@ -1,7 +1,6 @@
 #pragma once
 #include "fisch/vx/word_access/type/barrier.h"
 #include "fisch/vx/word_access/type/event.h"
-#include "fisch/vx/word_access/type/extoll.h"
 #include "fisch/vx/word_access/type/i2c.h"
 #include "fisch/vx/word_access/type/jtag.h"
 #include "fisch/vx/word_access/type/null_payload_readable.h"
