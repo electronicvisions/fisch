@@ -13,11 +13,6 @@ GENPYBIND_MANUAL({
 	parent.attr("__variant__") = "pybind11";
 	parent->py::module::import("pyhalco_hicann_dls_vx_v3");
 });
-#elif (FISCH_VX_CHIP_VERSION == 4)
-GENPYBIND_MANUAL({
-	parent.attr("__variant__") = "pybind11";
-	parent->py::module::import("pyhalco_hicann_dls_vx_v4");
-});
 #else
 #error "Unknown FISCH_VX_CHIP_VERSION value."
 #endif
