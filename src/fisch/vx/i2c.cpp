@@ -246,9 +246,9 @@ uint8_t I2CAD5252RwRegister::get_register_address(coordinate_type const& coord)
 halco::hicann_dls::vx::OmnibusAddress I2CAD5252RwRegister::get_base_address(
     coordinate_type const& coord)
 {
-	// The AD5252 on the ultra96 have addresses 0x2d, 0x2e, 0x2f in this order. 0x2c is omitted.
+	// The AD5252 on the jboa have addresses 0x2c, 0x2d, 0x2e in this order.
 	return halco::hicann_dls::vx::OmnibusAddress(
-	    i2c_ad5252_base_address + coord.toAD5252ChannelOnBoard().toAD5252OnBoard() + 1);
+	    i2c_ad5252_base_address + coord.toAD5252ChannelOnBoard().toAD5252OnBoard());
 }
 
 
