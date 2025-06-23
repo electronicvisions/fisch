@@ -16,7 +16,7 @@ constexpr size_t jtag_clock_scaler_max = 0xff;
 /** Minimal JTAG clock-sclaer value. */
 constexpr size_t jtag_clock_scaler_min = 0;
 
-/** Maximal ultra96 DAC channel value (10bit). */
+/** Maximal jboa DAC channel value (10bit). */
 constexpr size_t dac6573_value_max = 0x3ff;
 
 /** Maximal xboard DAC channel value. */

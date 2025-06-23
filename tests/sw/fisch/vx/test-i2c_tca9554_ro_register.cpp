@@ -5,7 +5,7 @@
 #include "fisch/vx/i2c.h"
 #include "fisch/vx/omnibus_constants.h"
 #include "halco/hicann-dls/vx/i2c.h"
-#include "halco/hicann-dls/vx/ultra96.h"
+#include "halco/hicann-dls/vx/jboa.h"
 #include "hxcomm/vx/utmessage.h"
 #include "test-macros.h"
 
