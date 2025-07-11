@@ -4,6 +4,7 @@
 #include "hxcomm/common/connection_time_info.h"
 #include <chrono>
 #include <ostream>
+#include <vector>
 
 #if defined(__GENPYBIND__) || defined(__GENPYBIND_GENERATED__)
 #include <pybind11/chrono.h>
@@ -20,7 +21,7 @@ struct GENPYBIND(visible) RunTimeInfo
 	/**
 	 * Time information of the connection usage during the run() invokation.
 	 */
-	hxcomm::ConnectionTimeInfo connection;
+	std::vector<hxcomm::ConnectionTimeInfo> connection;
 
 	/**
 	 * Time spent decoding response messages into the playback program response queues.

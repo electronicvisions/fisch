@@ -33,7 +33,7 @@ TEST(I2CTempRegister, Readout)
 
 	auto const [hxcube_id, fpga_id, _, __] =
 	    hwdb4cpp::HXCubeSetupEntry::get_ids_from_unique_branch_identifier(
-	        connection_unique_identifier);
+	        connection_unique_identifier.at(0));
 
 	hwdb4cpp::database hwdb;
 	hwdb.load(hwdb4cpp::database::get_default_path());

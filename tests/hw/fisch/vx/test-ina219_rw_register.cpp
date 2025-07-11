@@ -32,7 +32,7 @@ TEST(I2CINA219RwRegister, Rw)
 	auto program = builder.done();
 
 	auto connection = hxcomm::vx::get_connection_from_env();
-	if (std::holds_alternative<hxcomm::vx::SimConnection>(connection)) {
+	if (std::holds_alternative<hxcomm::vx::MultiSimConnection>(connection)) {
 		GTEST_SKIP() << "INA219 Register write read test only works in hardware.";
 	}
 	run(connection, program);

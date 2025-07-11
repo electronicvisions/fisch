@@ -33,7 +33,7 @@ TEST(I2CDAC6573RwRegister, DISABLED_Rw)
 	auto program = builder.done();
 
 	auto connection = hxcomm::vx::get_connection_from_env();
-	if (std::holds_alternative<hxcomm::vx::SimConnection>(connection)) {
+	if (std::holds_alternative<hxcomm::vx::MultiSimConnection>(connection)) {
 		GTEST_SKIP() << "DAC6573 Register write read test only works in hardware.";
 	}
 	run(connection, program);
