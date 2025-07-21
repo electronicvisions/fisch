@@ -136,6 +136,26 @@ void TimeoutNotification::set_value(Value const& value)
 	m_value = value;
 }
 
+TimeoutNotification::TraceStallCnt TimeoutNotification::get_trace_stall() const
+{
+	return m_trace_stall;
+}
+
+void TimeoutNotification::set_trace_stall(TraceStallCnt const& value)
+{
+	m_trace_stall = value;
+}
+
+TimeoutNotification::OmnibusReadInFlightCnt TimeoutNotification::get_omnibus_reads() const
+{
+	return m_omnibus_reads;
+}
+
+void TimeoutNotification::set_omnibus_reads(OmnibusReadInFlightCnt const& value)
+{
+	m_omnibus_reads = value;
+}
+
 FPGATime TimeoutNotification::get_fpga_time() const
 {
 	return m_fpga_time;
@@ -149,13 +169,15 @@ void TimeoutNotification::set_fpga_time(FPGATime const& value)
 std::ostream& operator<<(std::ostream& os, TimeoutNotification const& event)
 {
 	std::stringstream ss;
-	os << "TimeoutNotification(" << event.m_value << ", " << event.m_fpga_time << ")";
+	os << "TimeoutNotification(" << event.m_value << ", " << event.m_trace_stall << ", "
+	   << event.m_omnibus_reads << ", " << event.m_fpga_time << ")";
 	return os;
 }
 
 bool TimeoutNotification::operator==(TimeoutNotification const& other) const
 {
-	return (m_value == other.m_value) && (m_fpga_time == other.m_fpga_time);
+	return (m_value == other.m_value) && (m_trace_stall == other.m_trace_stall) &&
+	       (m_omnibus_reads == other.m_omnibus_reads) && (m_fpga_time == other.m_fpga_time);
 }
 
 bool TimeoutNotification::operator!=(TimeoutNotification const& other) const

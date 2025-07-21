@@ -51,6 +51,8 @@ template <class Archive>
 void TimeoutNotification::serialize(Archive& ar, std::uint32_t const)
 {
 	ar(CEREAL_NVP(m_value));
+	ar(CEREAL_NVP(m_trace_stall));
+	ar(CEREAL_NVP(m_omnibus_reads));
 	ar(CEREAL_NVP(m_fpga_time));
 }
 

@@ -71,10 +71,15 @@ bool PlaybackProgram::run_ok() const
 			FISCH_LOG_ERROR(logger, ss.str());
 			return false;
 		}
-		ss << "Program execution triggered a Playback instruction timeout notification at "
-		   << error.get_fpga_time() << ", instruction(" << error.get_value().value()
-		   << "; total: " << m_impl->m_instructions.size() << "). Printing additional context:"
-		   << "\n";
+		ss << "Program execution triggered a Playback instruction timeout notification:\n"
+		   << "  fpga_time    : " << error.get_fpga_time() << ",\n"
+		   << "  instruction  : " << error.get_value().value() << " of total "
+		   << m_impl->m_instructions.size() << ",\n"
+		   << "  trace_stalls : " << error.get_trace_stall().value()
+		   << " inside sliding window of size " << error.get_trace_stall().max << ",\n"
+		   << "  omnibus_reads: " << error.get_omnibus_reads().value()
+		   << " in flight of highest tree depth " << error.get_omnibus_reads().max << ".\n"
+		   << "Printing additional context:\n";
 		for (auto i = min_instruction; i <= error_value; i++) {
 			ss << "Instruction(" << i << "): ";
 			std::visit([&ss](auto const& ins) { ss << ins; }, m_impl->m_instructions.at(i));

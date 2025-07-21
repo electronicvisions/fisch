@@ -332,6 +332,18 @@ public:
 		constexpr explicit Value(value_type const val = 0) : base_t(val) {}
 	};
 
+	struct GENPYBIND(inline_base("*")) TraceStallCnt
+	    : public halco::common::detail::RantWrapper<TraceStallCnt, uint32_t, 96, 0>
+	{
+		constexpr explicit TraceStallCnt(uintmax_t const val = 0) : rant_t(val) {}
+	};
+
+	struct GENPYBIND(inline_base("*")) OmnibusReadInFlightCnt
+	    : public halco::common::detail::RantWrapper<OmnibusReadInFlightCnt, uint32_t, 50, 0>
+	{
+		constexpr explicit OmnibusReadInFlightCnt(uintmax_t const val = 0) : rant_t(val) {}
+	};
+
 	/**
 	 * Construct Playback instruction timeout notification from a value and an
 	 * FPGA time.
@@ -339,8 +351,14 @@ public:
 	 * @param fpga_time FPGATime time annotation
 	 */
 	explicit TimeoutNotification(
-	    Value const& value = Value(), FPGATime const& fpga_time = FPGATime()) :
-	    m_value(value), m_fpga_time(fpga_time)
+	    Value const& value = Value(),
+	    TraceStallCnt const& trace_stall = TraceStallCnt(),
+	    OmnibusReadInFlightCnt const& omnibus_reads = OmnibusReadInFlightCnt(),
+	    FPGATime const& fpga_time = FPGATime()) :
+	    m_value(value),
+	    m_trace_stall(trace_stall),
+	    m_omnibus_reads(omnibus_reads),
+	    m_fpga_time(fpga_time)
 	{}
 
 	/**
@@ -351,11 +369,39 @@ public:
 	Value get_value() const SYMBOL_VISIBLE;
 
 	/**
-	 * Get value data.
+	 * Set value data.
 	 * @param value Value data
 	 */
 	GENPYBIND(setter_for(value))
 	void set_value(Value const& value) SYMBOL_VISIBLE;
+
+	/**
+	 * Get trace stall counter.
+	 * @return TraceStallCnt
+	 */
+	GENPYBIND(getter_for(trace_stall))
+	TraceStallCnt get_trace_stall() const SYMBOL_VISIBLE;
+
+	/**
+	 * Set trace stall counter.
+	 * @param value TraceStallCnt
+	 */
+	GENPYBIND(setter_for(trace_stall))
+	void set_trace_stall(TraceStallCnt const& value) SYMBOL_VISIBLE;
+
+	/**
+	 * Get omnibus reads in flight counter.
+	 * @return OmnibusReadInFLightCnt
+	 */
+	GENPYBIND(getter_for(omnibus_reads))
+	OmnibusReadInFlightCnt get_omnibus_reads() const SYMBOL_VISIBLE;
+
+	/**
+	 * Set omnibus reads in flight counter.
+	 * @param value OmnibusReadInFlightCnt
+	 */
+	GENPYBIND(setter_for(omnibus_reads))
+	void set_omnibus_reads(OmnibusReadInFlightCnt const& value) SYMBOL_VISIBLE;
 
 	/**
 	 * Get FPGA time annotation.
@@ -380,6 +426,8 @@ public:
 
 private:
 	Value m_value;
+	TraceStallCnt m_trace_stall;
+	OmnibusReadInFlightCnt m_omnibus_reads;
 	FPGATime m_fpga_time;
 
 	friend struct cereal::access;

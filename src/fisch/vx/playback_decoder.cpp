@@ -115,10 +115,11 @@ void PlaybackDecoder::process(ut_message_from_fpga_highspeed_link_notification_t
 
 void PlaybackDecoder::process(ut_message_from_fpga_timeout_notification_type const& message)
 {
+	auto message_raw = message.decode().to_ullong();
 	m_timeout_notification_queue.push_back(TimeoutNotification(
-	    TimeoutNotification::Value(
-	        static_cast<TimeoutNotification::Value::value_type>(message.decode())),
-	    m_time_current));
+	    TimeoutNotification::Value(message_raw & 0xffffffff),
+	    TimeoutNotification::TraceStallCnt((message_raw >> 32) & 0x7f),
+	    TimeoutNotification::OmnibusReadInFlightCnt((message_raw >> 39) & 0x3f), m_time_current));
 }
 
 ChipTime PlaybackDecoder::calculate_chip_time(uint8_t const timestamp) const
