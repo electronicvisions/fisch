@@ -339,7 +339,7 @@ public:
 	};
 
 	struct GENPYBIND(inline_base("*")) OmnibusReadInFlightCnt
-	    : public halco::common::detail::RantWrapper<OmnibusReadInFlightCnt, uint32_t, 50, 0>
+	    : public halco::common::detail::RantWrapper<OmnibusReadInFlightCnt, uint32_t, 52, 0>
 	{
 		constexpr explicit OmnibusReadInFlightCnt(uintmax_t const val = 0) : rant_t(val) {}
 	};
