@@ -143,11 +143,14 @@ void I2CTCA9546Register::encode_write(
 	/**
 	The multiplexer has only one control register that enables/disables channels.
 	It is immediately written with the first I2C communication.
-	A register address is thus not available. */
+	A register address is thus not available.
+	Only one byte is needed to write the control register. */
 
 	uint8_t data = this->m_value;
 	halco::hicann_dls::vx::OmnibusAddress base_addr = I2CTCA9546Register::get_base_address(coord);
-	Omnibus(Omnibus::Value(data)).encode_write(base_addr, target);
+	Omnibus(Omnibus::Value(data))
+	    .encode_write(
+	        halco::hicann_dls::vx::OmnibusAddress(base_addr | i2c_over_omnibus_stop), target);
 }
 
 uint8_t I2CTCA9546Register::get_register_address(coordinate_type const& /*coord*/)
