@@ -5,6 +5,8 @@
 #include "hxcomm/vx/utmessage.h"
 #include <algorithm>
 #include <sstream>
+#include <type_traits>
+#include <variant>
 #include <boost/hana/ext/std/tuple.hpp>
 #include <boost/hana/for_each.hpp>
 
@@ -73,8 +75,8 @@ bool PlaybackProgram::run_ok() const
 		}
 		ss << "Program execution triggered a Playback instruction timeout notification:\n"
 		   << "  fpga_time    : " << error.get_fpga_time() << ",\n"
-		   << "  instruction  : " << error.get_value().value() << " of total "
-		   << m_impl->m_instructions.size() << ",\n"
+		   << "  instruction  : " << error_value << " of total " << m_impl->m_instructions.size()
+		   << ",\n"
 		   << "  trace_stalls : " << error.get_trace_stall().value()
 		   << " inside sliding window of size " << error.get_trace_stall().max << ",\n"
 		   << "  omnibus_reads: " << error.get_omnibus_reads().value()
@@ -84,6 +86,46 @@ bool PlaybackProgram::run_ok() const
 			ss << "Instruction(" << i << "): ";
 			std::visit([&ss](auto const& ins) { ss << ins; }, m_impl->m_instructions.at(i));
 			ss << "\n";
+		}
+		auto const omnibus_reads_value = error.get_omnibus_reads().value();
+		if (omnibus_reads_value > 0) {
+			ss << "Printing playback memory from last successful omnibus read to the timed-out "
+			      "instruction:\n";
+			using NoticountT = std::remove_const<decltype(omnibus_reads_value)>::type;
+			NoticountT instruction_last_successful = 0, instruction_first_incomplete = 0;
+			for (NoticountT i = error_value, no_reads = 0; i > 0; i--) {
+				std::visit(
+				    [&no_reads](auto const& ins) {
+					    using T = std::decay_t<decltype(ins)>;
+					    if constexpr (std::is_same_v<
+					                      T,
+					                      hxcomm::vx::UTMessageToFPGA<
+					                          hxcomm::vx::instruction::omnibus_to_fpga::Address>>) {
+						    auto address_payload = ins.decode();
+						    if (address_payload.get_is_read()) {
+							    no_reads++;
+						    }
+					    }
+				    },
+				    m_impl->m_instructions.at(i));
+				if (no_reads == omnibus_reads_value) {
+					instruction_first_incomplete = i;
+				}
+				if (no_reads > omnibus_reads_value) {
+					instruction_last_successful = i;
+					break;
+				}
+			}
+			for (NoticountT i = instruction_last_successful; i <= error_value; i++) {
+				if (i == instruction_first_incomplete) {
+					ss << "-> ";
+				} else {
+					ss << "   ";
+				}
+				ss << "Instruction(" << i << "): ";
+				std::visit([&ss](auto const& ins) { ss << ins; }, m_impl->m_instructions.at(i));
+				ss << "\n";
+			}
 		}
 		FISCH_LOG_ERROR(logger, ss.str());
 		return false;
