@@ -14,8 +14,7 @@ namespace fisch::vx {
 
 PlaybackProgram::PlaybackProgram() : m_impl(std::make_unique<detail::PlaybackProgramImpl>()) {}
 
-PlaybackProgram::~PlaybackProgram()
-{}
+PlaybackProgram::~PlaybackProgram() {}
 
 PlaybackProgram::spike_pack_counts_type const& PlaybackProgram::get_spikes_pack_counts() const
 {
@@ -49,7 +48,7 @@ PlaybackProgram::get_highspeed_link_notifications() const
 	return m_impl->m_highspeed_link_notification_response_queue;
 }
 
-bool PlaybackProgram::run_ok() const
+bool PlaybackProgram::run_ok(std::string fpga_identifier) const
 {
 	assert(m_impl);
 	// Sophisticated logic to check if we encountered an error.
@@ -65,6 +64,9 @@ bool PlaybackProgram::run_ok() const
 		auto const num_context = 10u;
 		auto const min_instruction = error_value - std::min(error_value, num_context);
 		std::stringstream ss;
+
+		ss << fpga_identifier << "\n";
+
 		if (error_value > m_impl->m_instructions.size()) {
 			ss << "Program execution triggered a Playback instruction timeout. "
 			   << "Index to timed-out instruction provided by hardware is invalid: "

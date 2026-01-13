@@ -91,9 +91,10 @@ public:
 
 	/**
 	 * Check if we did not receive fatal error notifications from the FPGA.
+	 * @param fpga_identifier Optional identifier to improve the logging for multichip setups.
 	 * @return Boolean value (true if ok)
 	 */
-	bool run_ok() const SYMBOL_VISIBLE;
+	bool run_ok(std::string fpga_identifier = std::string()) const SYMBOL_VISIBLE;
 
 	/**
 	 * Check that result data to all tickets is available.

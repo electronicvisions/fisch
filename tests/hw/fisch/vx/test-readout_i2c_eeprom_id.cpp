@@ -17,7 +17,7 @@ using namespace fisch::vx;
 
 TEST(I2CIdRegister, Readout)
 {
-	auto connection = hxcomm::vx::get_connection_from_env();
+	auto connection = hxcomm::vx::get_connection_from_env(1);
 
 	if (std::visit(
 	        [](auto& conn) {
@@ -36,7 +36,7 @@ TEST(I2CIdRegister, Readout)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	run(connection, program);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());

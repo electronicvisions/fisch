@@ -32,11 +32,11 @@ TEST(I2CDAC6573RwRegister, DISABLED_Rw)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
+	auto connection = hxcomm::vx::get_connection_from_env(1);
 	if (std::holds_alternative<hxcomm::vx::MultiSimConnection>(connection)) {
 		GTEST_SKIP() << "DAC6573 Register write read test only works in hardware.";
 	}
-	run(connection, program);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());

@@ -45,7 +45,7 @@ size_t get_hx_revision(Connection& connection)
 
 	{
 		auto program = builder.done();
-		run(connection, program);
+		run(connection, {program});
 	}
 	auto const jtag_id = jtag_id_ticket.get().at(0).get();
 	auto const hx_revision = jtag_id >> 28; // bits 28-31 represent the chip revision
@@ -60,7 +60,7 @@ size_t get_hx_revision(Connection& connection)
 
 TEST(Omnibus, ByteEnables)
 {
-	auto connection = hxcomm::vx::get_connection_from_env();
+	auto connection = hxcomm::vx::get_connection_from_env(1);
 
 	{
 		auto const hx_revision = get_hx_revision(connection);
@@ -166,7 +166,7 @@ TEST(Omnibus, ByteEnables)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	run(connection, program);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket_initial.valid());
 	EXPECT_EQ(ticket_initial.get().at(0).get(), Omnibus::Value(0x12345678));

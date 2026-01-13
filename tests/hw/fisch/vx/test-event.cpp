@@ -116,8 +116,8 @@ TEST(SpikePack1ToChip, Loopback)
 	builder.write(WaitUntilOnFPGA(), WaitUntil(WaitUntil::Value(1000)));
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
-	run(connection, program);
+	auto connection = hxcomm::vx::get_connection_from_env(1);
+	run(connection, {program});
 
 	auto spikes = program->get_spikes();
 

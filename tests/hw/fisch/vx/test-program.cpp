@@ -67,13 +67,13 @@ TEST(PlaybackProgram, Rerun)
 	auto read_program = std::get<0>(program_n_ticket);
 	auto read_ticket = std::get<1>(program_n_ticket);
 
-	auto connection = hxcomm::vx::get_connection_from_env();
-	run(connection, program_write_1);
-	run(connection, read_program);
+	auto connection = hxcomm::vx::get_connection_from_env(1);
+	run(connection, {program_write_1});
+	run(connection, {read_program});
 	EXPECT_EQ(read_ticket.get().at(0), config_1);
 
-	run(connection, program_write_2);
-	run(connection, read_program);
+	run(connection, {program_write_2});
+	run(connection, {read_program});
 	EXPECT_EQ(read_ticket.get().at(0), config_2);
 }
 
@@ -137,8 +137,8 @@ TEST(PlaybackProgramBuilder, MergeBack)
 
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
-	run(connection, program);
+	auto connection = hxcomm::vx::get_connection_from_env(1);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket_1.valid());
 	EXPECT_TRUE(ticket_2.valid());

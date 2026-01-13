@@ -4,18 +4,27 @@
 #include "hate/type_traits.h"
 #include "hxcomm/common/execute_messages.h"
 #include <chrono>
+#include <cstddef>
 
 namespace fisch::vx {
 
 template <typename Connection>
-RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& program)
+RunTimeInfo run(
+    Connection& connection, std::vector<std::shared_ptr<PlaybackProgram>> const& programs)
 {
-	if (!program) {
-		throw std::runtime_error("run() of invalid shared_ptr<PlaybackProgram> not possible.");
+	if (hxcomm::visit_connection([](auto& conn) { return conn.size(); }, connection) !=
+	    programs.size()) {
+		throw std::runtime_error("For each fpga exactly one program is required.");
 	}
+
 	std::vector<std::reference_wrapper<std::vector<PlaybackProgram::to_fpga_message_type> const>>
 	    fpga_messages;
-	fpga_messages.push_back(program->get_to_fpga_messages());
+	for (auto const& program : programs) {
+		if (!program) {
+			throw std::runtime_error("run() of invalid shared_ptr<PlaybackProgram> not possible.");
+		}
+		fpga_messages.push_back(program->get_to_fpga_messages());
+	}
 
 	auto result = hxcomm::execute_messages(connection, fpga_messages);
 
@@ -26,25 +35,46 @@ RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& 
 	}
 
 	hate::Timer timer;
-	program->clear_from_fpga_messages();
+	auto unique_ids = hxcomm::visit_connection(
+	    [](auto& conn) { return conn.get_unique_identifier(); }, connection);
+	size_t fpgas_with_fails = 0;
+	bool all_tickets_valid = true;
+	for (size_t i = 0; i < programs.size(); i++) {
+		auto& program = programs.at(i);
+		program->clear_from_fpga_messages();
 
-	if constexpr (hate::is_container_v<decltype(result)>) {
-		for (auto const& response : result.at(0).first) { // TO-DO: Correct vectorization
-			program->push_from_fpga_message(response);
+		if constexpr (hate::is_container_v<decltype(result)>) {
+			for (auto const& response : result.at(i).first) {
+				program->push_from_fpga_message(response);
+			}
+		} else {
+			while (!result.empty()) {
+				program->push_from_fpga_message(result.at(i).first);
+				result.at(i).pop();
+			}
 		}
-	} else {
-		while (!result.empty()) {
-			program->push_from_fpga_message(result.at(0).first); // TO-DO Correct vectorization
-			result.at(0).pop();                                  // TO-DO Correct vectorization
+		if (!program->run_ok(unique_ids.at(i))) {
+			fpgas_with_fails += 1;
+		}
+		if (!program->tickets_valid()) {
+			all_tickets_valid = false;
 		}
 	}
-	if (!program->run_ok()) {
-		throw std::runtime_error("FPGA sent error notification(s). Please check"
-		                         " for previous error messages.");
+	if (fpgas_with_fails > 0) {
+		std::stringstream ss;
+		ss << fpgas_with_fails;
+		if (fpgas_with_fails == 1) {
+			ss << " FPGA ";
+		} else {
+			ss << " FGPAs ";
+		}
+		ss << "sent error notification(s). Please check for previous error messages.";
+		throw std::runtime_error(ss.str());
 	}
-	if (!program->tickets_valid()) {
-		throw std::runtime_error("Not all response data to PlaybackProgram valid.");
+	if (!all_tickets_valid) {
+		throw std::runtime_error("Not all response data to PlaybackPrograms valid.");
 	}
+
 	return {connection_time_info, std::chrono::nanoseconds(timer.get_ns())};
 }
 

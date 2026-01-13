@@ -31,11 +31,11 @@ TEST(I2CINA219RwRegister, Rw)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
+	auto connection = hxcomm::vx::get_connection_from_env(1);
 	if (std::holds_alternative<hxcomm::vx::MultiSimConnection>(connection)) {
 		GTEST_SKIP() << "INA219 Register write read test only works in hardware.";
 	}
-	run(connection, program);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());

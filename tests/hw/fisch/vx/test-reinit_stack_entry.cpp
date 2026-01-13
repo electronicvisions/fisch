@@ -18,27 +18,27 @@ using namespace halco::hicann_dls::vx;
 TEST(ReinitStackEntry, Register)
 {
 	auto empty_program = PlaybackProgramBuilder().done();
-	auto connection = hxcomm::vx::get_connection_from_env();
+	auto connection = hxcomm::vx::get_connection_from_env(1);
 
 	ReinitStackEntry reinit1{connection};
-	run(connection, empty_program);
+	run(connection, {empty_program});
 
-	reinit1.set(empty_program);
+	reinit1.set({empty_program});
 
 	{
 		ReinitStackEntry reinit2{connection};
-		reinit2.set(empty_program);
+		reinit2.set({empty_program});
 
 		{
 			ReinitStackEntry reinit3{connection};
 
-			reinit3.set(empty_program);
+			reinit3.set({empty_program});
 
-			run(connection, empty_program);
+			run(connection, {empty_program});
 		}
-		run(connection, empty_program);
+		run(connection, {empty_program});
 	}
-	run(connection, empty_program);
+	run(connection, {empty_program});
 }
 
 TEST(ReinitStackEntry, Snapshot)
@@ -64,11 +64,11 @@ TEST(ReinitStackEntry, Snapshot)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
 	auto program_read_2_after_write = builder.done();
 
-	auto connection_1 = hxcomm::vx::get_connection_from_env();
+	auto connection_1 = hxcomm::vx::get_connection_from_env(1);
 	if (!std::holds_alternative<hxcomm::vx::QuiggeldyConnection>(connection_1)) {
 		GTEST_SKIP() << "Snapshot test only works with quiggeldy.";
 	}
-	auto connection_2 = hxcomm::vx::get_connection_from_env();
+	auto connection_2 = hxcomm::vx::get_connection_from_env(1);
 
 	builder.read(external_ppu_memory_base_address);
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::omnibus));
@@ -76,13 +76,16 @@ TEST(ReinitStackEntry, Snapshot)
 	auto program_reinit_request_1 = builder.done(); // empty
 
 	ReinitStackEntry reinit_1{connection_1};
-	reinit_1.set(program_reinit_request_1, program_reinit_snapshot_1);
+	reinit_1.set(
+	    {program_reinit_request_1},
+	    std::make_optional<std::vector<std::shared_ptr<fisch::vx::PlaybackProgram>>>(
+	        {program_reinit_snapshot_1}));
 
-	run(connection_1, program_write_1);            // write 0x12345678
-	run(connection_2, program_write_2);            // snapshot 1, write 0x87654321
-	run(connection_2, program_read_2_after_write); // read 0x87654321
-	run(connection_1, program_read_1);             // apply snapshot 1, read 0x12345678
-	run(connection_2, program_read_2);             // read 0x12345678, no snapshot 2
+	run(connection_1, {program_write_1});            // write 0x12345678
+	run(connection_2, {program_write_2});            // snapshot 1, write 0x87654321
+	run(connection_2, {program_read_2_after_write}); // read 0x87654321
+	run(connection_1, {program_read_1});             // apply snapshot 1, read 0x12345678
+	run(connection_2, {program_read_2});             // read 0x12345678, no snapshot 2
 
 	auto read_2_after_write = ticket_read_2_after_write.get().at(0);
 	auto read_1 = ticket_read_1.get().at(0);

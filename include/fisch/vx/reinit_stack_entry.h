@@ -23,8 +23,8 @@ public:
 
 	/**
 	 * Set and maybe enforce reinit stack entry value.
-	 * @param pbmem_request Playback program to be executed once a reinit is required.
-	 * @param pbmem_snapshot Playback program to be executed once the exclusive access to the
+	 * @param pbmem_requests Playback program to be executed once a reinit is required.
+	 * @param pbmem_snapshots Playback program to be executed once the exclusive access to the
 	 * hardware is relinquished. All read commands within this program are translated to writes and
 	 * replace the pbmem_request for future reinit operations. This is to be used to snapshot (parts
 	 * of) the current state of the hardware prior to releasing the exclusive access to other users
@@ -35,12 +35,14 @@ public:
 	 * reinit.
 	 */
 	void set(
-	    std::shared_ptr<PlaybackProgram> const& pbmem_request,
-	    std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot = std::nullopt,
+	    std::vector<std::shared_ptr<PlaybackProgram>> const& pbmem_requests,
+	    std::optional<std::vector<std::shared_ptr<PlaybackProgram>>> const& pbmem_snapshots =
+	        std::nullopt,
 	    bool enforce = true) SYMBOL_VISIBLE;
 	void set(
-	    std::shared_ptr<PlaybackProgram>&& pbmem_request,
-	    std::optional<std::shared_ptr<PlaybackProgram>>&& pbmem_snapshot = std::nullopt,
+	    std::vector<std::shared_ptr<PlaybackProgram>>&& pbmem_requests,
+	    std::optional<std::vector<std::shared_ptr<PlaybackProgram>>>&& pbmem_snapshots =
+	        std::nullopt,
 	    bool enforce = true) SYMBOL_VISIBLE;
 
 	void enforce() SYMBOL_VISIBLE;
@@ -65,10 +67,11 @@ GENPYBIND_MANUAL({
 	wrapped.def("pop", &ReinitStackEntry::pop);
 	wrapped.def(
 	    "set",
-	    [](ReinitStackEntry& self, std::shared_ptr<PlaybackProgram> const& pbmem_request,
-	       std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot,
-	       bool enforce) { return self.set(pbmem_request, pbmem_snapshot, enforce); },
-	    pybind11::arg("pbmem_request"), pybind11::arg("pbmem_snapshot") = std::nullopt,
+	    [](ReinitStackEntry& self,
+	       std::vector<std::shared_ptr<PlaybackProgram>> const& pbmem_requests,
+	       std::optional<std::vector<std::shared_ptr<PlaybackProgram>>> const& pbmem_snapshots,
+	       bool enforce) { return self.set(pbmem_requests, pbmem_snapshots, enforce); },
+	    pybind11::arg("pbmem_requests"), pybind11::arg("pbmem_snapshots") = std::nullopt,
 	    pybind11::arg("enforce") = true);
 })
 

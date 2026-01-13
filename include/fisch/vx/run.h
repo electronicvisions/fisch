@@ -11,11 +11,13 @@ struct RunTimeInfo;
  *
  * @tparam Connection Connection type to be used for running the program
  * @param connection Connection instance to be used for running the program
- * @param program PlaybackProgram to run
+ * @param programs List of playback-programs with one program for each connection in the
+ * multiconnection.
  * @return Run time information
  */
 template <typename Connection>
-RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& program);
+RunTimeInfo run(
+    Connection& connection, std::vector<std::shared_ptr<PlaybackProgram>> const& programs);
 
 } // namespace fisch::vx
 

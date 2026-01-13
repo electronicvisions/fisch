@@ -84,8 +84,8 @@ TEST(SystimeSync, TimeAnnotation)
 	builder.write(BarrierOnFPGA(), Barrier(Barrier::Value::jtag));
 	auto program = builder.done();
 
-	auto connection = hxcomm::vx::get_connection_from_env();
-	run(connection, program);
+	auto connection = hxcomm::vx::get_connection_from_env(1);
+	run(connection, {program});
 
 	EXPECT_TRUE(ticket.valid());
 	EXPECT_NO_THROW(ticket.get());
