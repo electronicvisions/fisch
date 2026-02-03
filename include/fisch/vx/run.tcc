@@ -21,7 +21,7 @@ RunTimeInfo run(Connection& connection, std::shared_ptr<PlaybackProgram> const& 
 
 	std::vector<typename decltype(result)::value_type::second_type> connection_time_info;
 
-	for (auto single_result : result) {
+	for (auto const& single_result : result) {
 		connection_time_info.push_back(single_result.second);
 	}
 
