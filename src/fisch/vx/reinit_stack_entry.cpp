@@ -47,6 +47,41 @@ void ReinitStackEntry::set(
 	}
 }
 
+void ReinitStackEntry::set(
+    std::shared_ptr<PlaybackProgram>&& pbmem_request,
+    std::optional<std::shared_ptr<PlaybackProgram>>&& pbmem_snapshot,
+    bool enforce)
+{
+	if (!m_impl) {
+		throw std::runtime_error("Unexpected access to moved-from object.");
+	}
+	assert(pbmem_request);
+	assert(pbmem_request->m_impl);
+	if (std::any_of(
+	        pbmem_request->m_impl->m_queue_expected_size.begin(),
+	        pbmem_request->m_impl->m_queue_expected_size.end(),
+	        [](auto const& a) { return a > 0; })) {
+		throw std::runtime_error(
+		    "Reinit stack entry request can only be set to write-only playback programs.");
+	}
+	if (pbmem_snapshot) {
+		assert(*pbmem_snapshot);
+		assert((*pbmem_snapshot)->m_impl);
+		m_impl->set(
+		    {std::vector<std::remove_cvref_t<decltype(pbmem_request->get_to_fpga_messages())>>{
+		         std::move(pbmem_request->m_impl->m_instructions)},
+		     std::vector<std::remove_cvref_t<decltype((*pbmem_snapshot)->get_to_fpga_messages())>>{
+		         std::move((*pbmem_snapshot)->m_impl->m_instructions)},
+		     enforce});
+	} else {
+		m_impl->set(
+		    {std::vector<std::remove_cvref_t<decltype(pbmem_request->get_to_fpga_messages())>>{
+		         std::move(pbmem_request->m_impl->m_instructions)},
+		     {std::nullopt},
+		     enforce});
+	}
+}
+
 void ReinitStackEntry::enforce()
 {
 	if (!m_impl) {

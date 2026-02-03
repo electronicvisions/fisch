@@ -38,6 +38,10 @@ public:
 	    std::shared_ptr<PlaybackProgram> const& pbmem_request,
 	    std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot = std::nullopt,
 	    bool enforce = true) SYMBOL_VISIBLE;
+	void set(
+	    std::shared_ptr<PlaybackProgram>&& pbmem_request,
+	    std::optional<std::shared_ptr<PlaybackProgram>>&& pbmem_snapshot = std::nullopt,
+	    bool enforce = true) SYMBOL_VISIBLE;
 
 	void enforce() SYMBOL_VISIBLE;
 
@@ -60,8 +64,12 @@ GENPYBIND_MANUAL({
 
 	wrapped.def("pop", &ReinitStackEntry::pop);
 	wrapped.def(
-	    "set", &ReinitStackEntry::set, pybind11::arg("pbmem_request"),
-	    pybind11::arg("pbmem_snapshot") = std::nullopt, pybind11::arg("enforce") = true);
+	    "set",
+	    [](ReinitStackEntry& self, std::shared_ptr<PlaybackProgram> const& pbmem_request,
+	       std::optional<std::shared_ptr<PlaybackProgram>> const& pbmem_snapshot,
+	       bool enforce) { return self.set(pbmem_request, pbmem_snapshot, enforce); },
+	    pybind11::arg("pbmem_request"), pybind11::arg("pbmem_snapshot") = std::nullopt,
+	    pybind11::arg("enforce") = true);
 })
 
 } // namespace vx
