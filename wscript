@@ -134,7 +134,7 @@ def build(bld):
         bld.shlib(
             source = bld.path.ant_glob('src/fisch/vx/**/*.cpp'),
             target = f'fisch_vx_v{hx_version}',
-            use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger_obj'],
+            use = ['fisch_inc', 'hxcomm', 'halco_hicann_dls_vx', 'logger'],
             defines = [f'FISCH_VX_CHIP_VERSION={hx_version}'],
             uselib='FISCH',
         )
