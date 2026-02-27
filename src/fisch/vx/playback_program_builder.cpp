@@ -117,10 +117,11 @@ std::shared_ptr<PlaybackProgram> PlaybackProgramBuilder::done()
 {
 	if (size_to_fpga() > playback_memory_size_to_fpga) {
 		auto logger = log4cxx::Logger::getLogger("fisch.PlaybackProgramBuilder");
-		FISCH_LOG_WARN(
-		    logger, "PlaybackProgram instruction size ("
-		                << size_to_fpga() << ") larger than playback memory size on FPGA ("
-		                << playback_memory_size_to_fpga << ") -> no timing guarantees possible.");
+		std::stringstream ss;
+		ss << "PlaybackProgram instruction size (" << size_to_fpga()
+		   << ") larger than playback memory size on FPGA (" << playback_memory_size_to_fpga
+		   << ") -> no timing guarantees possible.";
+		FISCH_LOG_WARN(logger, ss.str());
 	}
 	assert(m_program);
 	assert(m_program->m_impl);

@@ -36,6 +36,11 @@ def options(opt):
                      help="Maximal loglevel to compile in.")
     hopts.add_withoption('fisch-python-bindings', default=True,
                          help='Toggle the generation and build of fisch python bindings')
+    hopts.add_option("--fisch-loglevel-syslog",
+                     choices=["debug", "info",
+                              "warning", "error", "fatal"],
+                     default="warning",
+                     help="Maximal loglevel for syslog to compile in.")
 
 def configure(cfg):
     cfg.load('compiler_cxx')
@@ -54,8 +59,17 @@ def configure(cfg):
          'info':    2,
          'warning': 3,
          'error':   4,
-         'fatal':   5}[cfg.options.fisch_loglevel]
+         'fatal':   5}[cfg.options.fisch_loglevel],
+         "FISCH_SYSLOG_THRESHOLD",
+         {'debug':      0,
+          'info':       1,
+          'warning':    2,
+          'error':      3,
+          'none':       999
+          }[cfg.options.fisch_loglevel_syslog]
     )
+
+
     cfg.env.CXXFLAGS_FISCH = [
         '-fvisibility=hidden',
         '-fvisibility-inlines-hidden',
