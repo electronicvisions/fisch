@@ -222,7 +222,7 @@ void PlaybackProgramBuilder::merge_front(PlaybackProgramBuilder& other)
 	}
 
 	// update position in response queues in tickets of this builder
-	auto ticket_changer = [this, other](auto const& ticket_weak_ptr) {
+	auto ticket_changer = [this](auto const& ticket_weak_ptr) {
 		typedef typename hate::remove_all_qualifiers_t<decltype(ticket_weak_ptr)>::element_type
 		    ticket_type;
 		typedef typename ticket_type::container_type container_type;
