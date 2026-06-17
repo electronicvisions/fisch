@@ -5,6 +5,7 @@
 #include "hxcomm/common/execute_messages.h"
 #include <chrono>
 #include <cstddef>
+#include <sstream>
 
 namespace fisch::vx {
 
@@ -12,9 +13,14 @@ template <typename Connection>
 RunTimeInfo run(
     Connection& connection, std::vector<std::shared_ptr<PlaybackProgram>> const& programs)
 {
-	if (hxcomm::visit_connection([](auto& conn) { return conn.size(); }, connection) !=
-	    programs.size()) {
-		throw std::runtime_error("For each fpga exactly one program is required.");
+	if (auto connection_size =
+	        hxcomm::visit_connection([](auto& conn) { return conn.size(); }, connection);
+	    connection_size != programs.size()) {
+		std::stringstream ss;
+		ss << "For each FPGA exactly one program is required, but ";
+		ss << programs.size() << " programs provided for ";
+		ss << connection_size << " FPGAs";
+		throw std::invalid_argument(ss.str());
 	}
 
 	std::vector<std::reference_wrapper<std::vector<PlaybackProgram::to_fpga_message_type> const>>
