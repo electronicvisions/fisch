@@ -22,6 +22,12 @@ public:
 	~ReinitStackEntry() SYMBOL_VISIBLE;
 
 	/**
+	 * Update the connection on the underlying reinit stack entry implementation.
+	 */
+	template <typename Connection>
+	void update_connection(Connection& connection);
+
+	/**
 	 * Set and maybe enforce reinit stack entry value.
 	 * @param pbmem_requests Playback program to be executed once a reinit is required.
 	 * @param pbmem_snapshots Playback program to be executed once the exclusive access to the
